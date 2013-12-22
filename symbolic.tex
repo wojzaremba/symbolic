@@ -107,7 +107,7 @@ is a Matlab.  We consider following set of operations on matrices :
 &c_{i,j} = a_{i,j}b_{i, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
 &\text{{\bf Matrix multiplication}}\\
 &(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1), (b \in \mathcal{P}^{m \times k}_\beta, B, t_2) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times m}_{\alpha + \beta}, A * B, O(t_1 + t_2 + nmk)) \\
+&(c \in \mathcal{P}^{n \times k}_{\alpha + \beta}, A * B, O(t_1 + t_2 + nmk)) \\
 &c_{i,k} = \sum_{k = 1}^m a_{i,k}b_{k, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
 &\text{{\bf Columns marginalization}}\\
 &(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1) \rightarrow \\ 
