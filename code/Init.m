@@ -10,11 +10,6 @@ function Init()
   all_desc = containers.Map;
   all_bulk_hashes = containers.Map('KeyType', 'double', 'ValueType', 'any');
   addpath(genpath('.'));
-  home = '/Users/wojto';
-  external_tools = [home, '/Dropbox/external/'];  
-  addpath([external_tools, 'mosek/7/toolbox/r2013a']);
-  setenv('MOSEKLM_LICENSE_FILE', [external_tools, 'mosek/mosek.lic']);  
-  setenv('LD_LIBRARY_PATH', [external_tools, 'mosek/7/tools/platform/osx64x86/bin']);   
   n_ = 99;
   m_ = 100;
 end
