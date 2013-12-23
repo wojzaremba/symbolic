@@ -6,3 +6,5 @@
 *.pdf
 *.*~
 *.swp
+.DS_Store
+img/.DS_Store

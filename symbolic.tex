@@ -208,7 +208,7 @@ Let's denote by $g(f, W)$ generalization of partition function as follows :
 
 \begin{gather*}
 g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh) \\
-f : \mathcal{R} \rightarrow \mathcal{R}\\
+f : \mathbb{R} \rightarrow \mathbb{R}\\
 W \in \mathcal{R}^{n \times m}
 \end{gather*}
 
@@ -314,6 +314,16 @@ computation giving the same expression in time O(n(k + m)) :
 \begin{verbatim}
 	sum(sum(A .* repmat(sum(B, 2), [1, n])'))
 \end{verbatim}
+
+Empirical tests indicate that aforementioned computation is indeed faster (Figure \ref{ab}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{img/ab.png}
+\caption{Computation time for $\sum AB$ using standard algorithm vs using inferred optimal algorithm.}
+\label{ab}
+\end{figure}
+
 
 Similarly, we found quadratic time computation instead of cubic for similar expressions like : 
 \begin{align*}
