@@ -44,7 +44,8 @@ abstract
 \end{abstract} 
 
 
-\section{Introduction} \label{introduction} Progress in some branches of
+\section{Introduction} \label{introduction} 
+Progress in some branches of
 mathematics might be restricted by size of symbolic derivations that human can
 handle.  Mathematicians can deal with expressions having up to some small
 number of variables having different purposes in equations. However, there
@@ -68,16 +69,21 @@ close form solutions oppose widespread believe that hardness of partition
 function computation is in its exponential number of elements.
 
 
+Finally, we look on set of generated rules as on small axiomatic system.
+Presented algorithm is deterministic, finite time proof in this system.
+We are excited about using machine learning for automatic reasoning, and
+this subset of mathematics seem to be perfect fit for testing automatic reasoning systems.
+Usually, axiomatic systems like number theory, set theory, or topology have very small
+number of axioms, but their application to terms might be complex. Proofs
+for such systems are difficult to represent in software, and there is no
+baseline algorithms which could brute force proof by iterating over all of them in reasonable finite time.
+Where in the contrary, presented here axiomatic system has very simple representation
+in software, and this paper presents brute force algorithm to find proofs. 
+Surprisingly, even brute force algorithm is able to find new more efficient,
+computational expressions for expressions that we use.
 
-\iffalse
-Add Karol and Yoram as the authors
 
-Consider how to prune expansion of graphs
 
-Consider synthethic example like finding rule for det of structurazed sparsity etc.
-
-How to generalize and find rules fast ? How to do proper optimizations.
-\fi
 
 \section{Related work} \label{relatedwork}
 
