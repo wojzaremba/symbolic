@@ -169,6 +169,20 @@ As long as $Y$ can be expressed using extended grammar, we have a guarantee that
 greedy algorithm. We believe that fining best solution is at least NP-hard problem. 
 
 \subsection{Linear combination}
+We look for linear combination of generated grammar terms, which is equal to the
+target expression. There is few possible scenarios. There might be \emph{no solution} at all. 
+Then our linear solver will indicate it, which means that target expression
+is out of scope of even extended grammar. There might be \emph{multiple solutions} (case
+with a \emph{single solution} is very unlikely). Then we should look for linear combination
+with smallest cost (computational time). 
+This is essentially integer programing problem, or knapsack problem, which 
+are NP-complete. However, it is enough for us to get approximated solution, which can be easily
+obtained with linear solver.
+
+
+Experiments suggest to minimize number of coefficients as well. It helps to rule out
+non-integer coefficient values, which might cause numerical errors. 
+
 
 \subsection{Optimization}
 
@@ -270,23 +284,14 @@ Let us consider following expressions :
 
 One can find that 
 \begin{align*}
-	&g(x \mapsto x^2, W) = 2^{n + m} * \\ 
+	&g(x \mapsto x^2, W) = 2^{n + m} \\ 
  &\Big( 2.5\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + 0.5(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
  &0.5\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + 0.5\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)\\
 \end{align*}
-\begin{align}
-(((\sum_{i = 1, \dots, m} \sum_{j = 1, \dots, m} W_{i, j}  .* \sum_{i = 1, \dots, m} \sum_{j = 1, \dots, m} W_{i, j})    W_{i, j}) \\
-  + (\sum_{i = 1, \dots, m} ( \sum_{j = 1, \dots, m} W_{i, j} .* \sum_{j = 1, \dots, m} W_{i, j})    W_{i, j}) \\
-  + ( \sum_{i = 1, \dots, m} \sum_{j = 1, \dots, m} ( W_{i, j} .* W_{i, j})   W_{i, j})  + (\sum_{i = 1, \dots, m} \sum_{j = 1, \dots, m} ( W_{i, j} .* repmat(\sum_{i = 1, \dots, m} W_{i, j}, [n, 1]))    W_{i, j}))\\
-\end{align}
-This derivation is conducted in $O(nm)$ time.
-
 
 Above derivation is still in scope of human skills. However, manual derivation
 of $g(x \mapsto x^k, W)$ for further $k > 2$  seems to be a feet. Our algorithm
 is able to find such complex computational patterns automatically.
-
-XXX : check above equation.
 
 \section{Experiments}
 
@@ -302,7 +307,7 @@ $\sum AB$
 
 \subsection{Derivations in unbounded grammar domain}
 
-\subsubsection{Guarantees}
+\section{Conjecture on partition function approximation hardness}
 
 \section{Summary}
 \nocite{*}
