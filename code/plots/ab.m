@@ -23,6 +23,7 @@ plot(2.^(5:14), times(5:end, 2), 'Color', 'blue', 'LineStyle', '-', 'LineWidth',
 
 legend('Cubic time computation', 'Quadratic time computation', 'Location', 'NorthWest');
 
-set(gca,'FontSize', 16)
+set(gca,'FontSize', 18);
 xlabel('Size of matrices');
 ylabel('time (s)');
+saveas(gcf, '/Users/wojto/symbolic/ab.png');

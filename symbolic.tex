@@ -198,7 +198,8 @@ associative properties of multiplication, and addition (together with
 commutative property for addition).
 
 
-\section{Partition function of RBM} Algorithm presented in Section
+\section{Partition function of RBM} \label{partitionfunction}
+Algorithm presented in Section
 \ref{sec:grammars} allows to find concise formulas for polynomial expressions.
 However, many interesting functions are outside of this family.  Instead of it,
 we are going to consider Taylor expansion of desired function, and we will
@@ -336,11 +337,66 @@ Similarly, we found quadratic time computation instead of cubic for similar expr
 
 \subsection{Partition function approximation}
 
-\section{Research agenda}
+As we shown in Section \ref{partitionfunction}, we can compute $g(x \rightarrow x^k, W)$ for $k = 1, 2$ in
+linear time with respect to size of $W$. By use of
+our framework, we found rules for $k = 3, 4$. Computation time grows quite fast with power $k$, as we have to consider 
+bigger input matrices to cover all possible monomials of particular degree. Table \ref{grammars} shows time necessary to
+generate all the rules. It is worth to note, that grammar can be evaluated just once, and the resulting coefficients can 
+be stored. Process of partition function approximation involves this steps just once. However, it seems that 
+with use of current algorithm we have to stay constrained to powers $k \leq 4$. As we noted in Section \ref{agenda}
+it is extremely important and interesting to find pattern how to generate $g(x \rightarrow x^k, W)$ for $k \geq 5$, and
+how to generalize optimizations. 
 
-\subsection{Computation generalization}
+\begin{table}
+\tiny
+\centering
+\begin{tabular}{|l||l|l|}
+\hline
+Order & Size of grammar & Computation time (s) \\
+\hline\hline
+2 & 10 & 0.45 \\
+3 & 37 & 10.33 \\
+4 & & \\
+\hline
+\end{tabular}
+\caption{Table summarizes size and computational time for grammars of specific order.}
+\label{grammars}
+\end{table}
 
-\subsection{Derivations in unbounded grammar domain}
+Resulting equations in non 
+
+\begin{table}
+\tiny
+\centering
+\begin{tabular}{|l||l|l|l|}
+\hline
+Order & Number of terms & Optimized & Non-optimized \\
+& & computation time & computation time  \\
+\hline\hline
+2 & & & \\
+3 & & & \\
+4 & & & \\
+\hline
+\end{tabular}
+\caption{Table summarizes computation times of $g(x \rightarrow x^k, W)$.}
+\label{grammars}
+\end{table}
+
+
+\section{Computation generalization}\label{agenda}
+
+Presented in this paper method is a brute force over all possible computations, 
+which could lead to the target result. It seems to work reasonably well
+for polynomials of small degrees $k \leq 4$, however for larger powers 
+brute force methods seems to fail. One of major goals of this paper is to
+bring a small subset of mathematics, which has tractable brute force automatic proving
+system. We look forward to extend this brute force methods to more intelligible approaches, which
+could learn based on rules for smaller powers, how to solve problem for larger powers. This would
+have two-fold implications in machine learning. Firstly, it would bring machine learning techniques
+to the area of automatic theorem proving, which another domain of human intelligence after perception
+of vision, or hearing. Secondly, solution to the problem of partition function approximation
+could have consequences in unsupervised learning of RBMs, deep Bolzmann machines, and deep
+belief networks. 
 
 \section{Conjecture on hardness of partition function approximation}
 

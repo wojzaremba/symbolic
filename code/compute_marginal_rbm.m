@@ -5,9 +5,8 @@ function marginal = compute_marginal_rbm(v_fixed, h_fixed, k)
   W = emptyW();
   for i = 1:v_l
       for j = 1:h_l
-          expr = zeros(2 * v_l * h_l, 1);
+          expr = zeros(v_l * h_l, 1);
           expr((i - 1) * h_l + j, 1) = 1;
-          expr(v_l * h_l + (i - 1) * h_l + j, 1) = 1;
           W(i, j) = fix_exprs(struct('quant', 1, 'expr', expr));
       end
   end  
