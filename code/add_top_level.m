@@ -1,6 +1,6 @@
 function [updated, res] = add_top_level(res, top_level)
   global all_bulk_hashes
-  desc_hash = top_level.power(2) * 10000 + length(top_level.desc);
+  desc_hash = top_level.power(2) * 1000000001 + length(top_level.desc);
   if (isKey(all_bulk_hashes, top_level.bulk_hash))
     map_desc_hash = all_bulk_hashes(top_level.bulk_hash);
     if (map_desc_hash > desc_hash)

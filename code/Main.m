@@ -1,29 +1,47 @@
-clc;
-clear;
-Init();
+% clc;
+% clear all;
+
+addpath(genpath('.'));
 totaltime = tic;
-global lang
-lang = 'matlab';
+Cache(3);
 
-K = 4; 
-data_size = 2 * K;
-maxk2 = 1;
 computation_time = tic;
-fprintf('Power = %d\nSize of data = %d\n', K, data_size);
-[v_fixed, h_fixed] = get_fixed_data(data_size);
-marginal = compute_marginal_rbm(v_fixed, h_fixed, K);
-[grammar, dgrammar] = find_grammar(v_fixed, h_fixed, K);
-fprintf('grammar size = %d\n', length(grammar));
-tgrammar = trim_size(grammar, K, K);
-[X, Y] = encode_data(tgrammar, marginal, K);
-[grammar_solved, coeffs, fail] = get_final_result(X, Y, tgrammar);
 
-if (fail)
-  fprintf('Game over fail = %d\n', fail);
-  return;  
+fprintf('setting up a grammar\n');
+u = 1;
+fprintf('grammar started\n');
+while (norm(u) > 0)
+    single_iter_time = tic;
+    u(:) = 0;
+    u(1) = marginalize(Grammar(1, 1), 2);
+    u(2) = marginalize(Grammar(1, 1), 1);
+
+    u(3) = marginalize(Grammar(1, 0), 1);
+    u(4) = marginalize(Grammar(0, 1), 2);
+
+    u(5) = elementwise_multiply(Grammar(1, 1), Grammar(1, 1));
+    u(6) = elementwise_multiply(Grammar(1, 1), Grammar(1, 0));
+    u(7) = elementwise_multiply(Grammar(1, 1), Grammar(0, 1));
+    u(8) = elementwise_multiply(Grammar(1, 1), Grammar(0, 0));
+
+    u(9) = elementwise_multiply(Grammar(1, 0), Grammar(1, 0));
+    u(10) = elementwise_multiply(Grammar(1, 0), Grammar(0, 0));
+    u(11) = elementwise_multiply(Grammar(0, 1), Grammar(0, 1));
+    u(12) = elementwise_multiply(Grammar(0, 0), Grammar(0, 0));
+    u(13) = elementwise_multiply(Grammar(0, 0), Grammar(0, 0));
+
+    Grammar.Stats();
+    fprintf('length(ONE) = %d\n', length(Grammar(0, 0)));
+    fprintf('single iter takes = %f\n', toc(single_iter_time));
 end
 
+fprintf('grammar size = %d\n', length(Grammar(0, 0)));
+trim_size(Grammar(0, 0));
+marginal = RBM();
+[X, Y] = encode_data(Grammar(0, 0), marginal);
+[grammar_solved, coeffs, fail] = get_final_result(X, Y, grammar);
+
 fprintf('So far, so good !\n');
-normalization = 2^(sum(v_fixed == Inf) + sum(h_fixed == Inf));
-show_results(coeffs, normalization, grammar_solved);
+
+show_results(coeffs, rbm.normalization(), grammar_solved);
 fprintf('total time = %f\n', toc(totaltime));

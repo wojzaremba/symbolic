@@ -1,4 +1,4 @@
-len = 16;
+len = 10;
 times_n3 = zeros(len, 1);
 times_n2 = zeros(len, 1);
 for n_ = 1:len
