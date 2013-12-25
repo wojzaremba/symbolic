@@ -1,4 +1,4 @@
-classdef RBM < Expr
+classdef RBM < ExprMatrix
     properties
     end
     
@@ -33,10 +33,8 @@ classdef RBM < Expr
                     end
                     marginal_val{v + 1, h + 1} = power_expr(Expr().add_many_expr(E), k);
                end
-            end
-            tmp = Expr().add_many_expr(marginal_val);            
-            obj.expr = tmp.expr;
-            obj.quant = tmp.quant;
+            end           
+            obj.exprs = Expr().add_many_expr(marginal_val);
         end
         
         function ret = normalization(obj)

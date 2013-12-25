@@ -18,11 +18,11 @@ classdef Cache < handle
             obj.maxK = maxK;                        
             obj.n = 99;
             obj.m = 100;   
-            obj.prime = 10000000000000000001;
+            obj.prime = 100000000000000001;
             val = 1;
             obj.dot_mult = zeros(100000, 1);
             for i = 1:100000
-              val = mod(val * 1000000000001, obj.prime);
+              val = mod(val * 10000000001, obj.prime);
               obj.dot_mult(i) = val;
             end            
             global cache grammars

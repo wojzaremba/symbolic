@@ -1,9 +1,9 @@
-% clc;
+clc;
 % clear all;
 
 addpath(genpath('.'));
 totaltime = tic;
-Cache(3);
+Cache(2);
 
 computation_time = tic;
 
@@ -29,19 +29,15 @@ while (norm(u) > 0)
     u(11) = elementwise_multiply(Grammar(0, 1), Grammar(0, 1));
     u(12) = elementwise_multiply(Grammar(0, 0), Grammar(0, 0));
     u(13) = elementwise_multiply(Grammar(0, 0), Grammar(0, 0));
-
-    Grammar.Stats();
-    fprintf('length(ONE) = %d\n', length(Grammar(0, 0)));
+    
     fprintf('single iter takes = %f\n', toc(single_iter_time));
 end
-
-fprintf('grammar size = %d\n', length(Grammar(0, 0)));
 trim_size(Grammar(0, 0));
 marginal = RBM();
 [X, Y] = encode_data(Grammar(0, 0), marginal);
-[grammar_solved, coeffs, fail] = get_final_result(X, Y, grammar);
+[grammar_solved, coeffs] = get_final_result(X, Y, Grammar(0, 0));
 
 fprintf('So far, so good !\n');
 
-show_results(coeffs, rbm.normalization(), grammar_solved);
+show_results(coeffs, marginal.normalization(), grammar_solved);
 fprintf('total time = %f\n', toc(totaltime));

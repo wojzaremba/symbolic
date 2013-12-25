@@ -15,6 +15,7 @@ classdef Expr < handle
             A.expr = expr;            
             if (exist('hashes', 'var'))
                 A.hashes = hashes;
+                A.Validate();
                 return;
             end
             
@@ -36,6 +37,15 @@ classdef Expr < handle
             [A.hashes, idx] = sort(A.hashes);
             A.expr = A.expr(:, idx);
             A.quant = A.quant(:, idx);
+            A.Validate();
+        end
+        
+        function Validate(A)
+            assert(length(A.hashes(:)) == length(A.quant(:)));
+            assert(length(A.hashes(:)) == size(A.expr, 2));
+            assert(sum(A.hashes(:) == Inf) == 0);
+            assert(sum(A.hashes(:) == -Inf) == 0);
+            assert(sum(isnan(A.hashes(:))) == 0);
         end
     
         function str = toString(A)
@@ -56,21 +66,21 @@ classdef Expr < handle
             end
         end
         
-        function [ C ] = add_expr( A, B )
+        function [ C ] = add_expr( A, B )                
             if ((isempty(A)) || (isempty(A.quant)))
                 C = B;
                 return;
             elseif ((isempty(B)) || (isempty(B.quant)))
                 C = A;
                 return;
-            end        
+            end          
             hashes = [A.hashes; B.hashes];
             if (length(hashes) == length(unique(hashes)))
                 [hashes, idx] = sort(hashes);
                 quants = [A.quant, B.quant];
                 expr = [A.expr, B.expr];
                 expr = expr(:, idx);
-                C = Expr(quants(idx), expr, hashes);        
+                C = Expr(quants(idx), expr, hashes);                                
                 return;
             end
             if (length(unique(hashes)) == length(A.hashes)) || (length(unique(hashes)) == length(B.hashes))
@@ -91,7 +101,7 @@ classdef Expr < handle
                   end
                 end
               end
-            end
+            end                  
             a = 1;
             b = 1;
             len = length(A) + length(B);
@@ -124,7 +134,10 @@ classdef Expr < handle
             counter = counter - 1;
             C.quant = C.quant(1:counter); 
             C.expr = C.expr(:, 1:counter);     
-            C.hashes = C.hashes(1:counter);     
+            C.hashes = C.hashes(1:counter);   
+            A.hashes = A.hashes(1:(end-1));
+            B.hashes = B.hashes(1:(end-1));            
+            C.Validate();
         end
 
         function [ res ] = power_expr( W, p )
@@ -158,6 +171,7 @@ classdef Expr < handle
                 end
             end
             res = Expr().add_many_expr(res);
+            res.Validate();
         end
                   
         function ret = add_many_expr(ret, exprs)
@@ -178,6 +192,7 @@ classdef Expr < handle
             else 
               ret = Expr();
             end
+            ret.Validate();
         end        
         
         
@@ -197,11 +212,9 @@ classdef Expr < handle
                 end
             end
             val = Expr().add_many_expr(val);
-        end
-
+            val.Validate();
+        end        
         
-        
-    end
-       
+    end       
     
 end

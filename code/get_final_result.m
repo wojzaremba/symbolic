@@ -5,8 +5,7 @@ function [Fcorrect, coeffs] = get_final_result( X, Y, F )
     error = norm(X * invert - Y);
     fprintf('error : %f\n', error);  
     if (error > 1e-5)
-        return;
-    else
+        fprintf('Couldnt find solution\n');
         assert(0);
     end
     
