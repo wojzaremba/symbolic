@@ -43,15 +43,17 @@ classdef Cache < handle
         end        
 
         function ret = find_desc(obj, desc)
-          if (isKey(obj.all_desc, desc))
-            ret = true;
-            return;
-          else 
-            obj.all_desc(desc) = 1;
-            ret = false; 
-          end
+            if (isKey(obj.all_desc, desc))
+                ret = true;
+                return;
+            else 
+                ret = false; 
+            end
         end        
 
+        function add_desc(obj, desc)
+            obj.all_desc(desc) = 1;
+        end       
     end
     
 end

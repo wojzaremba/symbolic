@@ -27,11 +27,12 @@ classdef Marginalize < Computation
             if ((obj.sumdim == 1) || (obj.sumdim == 2))
               str = sprintf('sum(%s, %d)', toString(obj.item), obj.sumdim);
             else
-              str = sprintf('ssum(%s)', toString(obj.item));
+              str = sprintf('sum(sum(%s))', toString(obj.item));
             end
         end    
                 
         function str = latex_toString(obj)
+	    assert(0);
             if (obj.sumdim == 1)
                 str = sprintf('\\sum_{i = 1, \\dots, m} %s', toString(obj.item));
             elseif (obj.sumdim == 2)

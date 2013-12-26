@@ -1,6 +1,4 @@
 clc;
-% clear all;
-
 addpath(genpath('.'));
 totaltime = tic;
 Cache(2);
@@ -15,7 +13,7 @@ while (norm(u) > 0)
     u(:) = 0;
     u(1) = marginalize(Grammar(1, 1), 2);
     u(2) = marginalize(Grammar(1, 1), 1);
-
+    
     u(3) = marginalize(Grammar(1, 0), 1);
     u(4) = marginalize(Grammar(0, 1), 2);
 
@@ -26,8 +24,10 @@ while (norm(u) > 0)
 
     u(9) = elementwise_multiply(Grammar(1, 0), Grammar(1, 0));
     u(10) = elementwise_multiply(Grammar(1, 0), Grammar(0, 0));
+        
     u(11) = elementwise_multiply(Grammar(0, 1), Grammar(0, 1));
-    u(12) = elementwise_multiply(Grammar(0, 0), Grammar(0, 0));
+    u(12) = elementwise_multiply(Grammar(0, 1), Grammar(0, 0));
+    
     u(13) = elementwise_multiply(Grammar(0, 0), Grammar(0, 0));
     
     fprintf('single iter takes = %f\n', toc(single_iter_time));
@@ -41,3 +41,5 @@ fprintf('So far, so good !\n');
 
 show_results(coeffs, marginal.normalization(), grammar_solved);
 fprintf('total time = %f\n', toc(totaltime));
+
+

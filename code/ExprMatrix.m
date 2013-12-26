@@ -123,6 +123,7 @@ classdef ExprMatrix < handle
               end
             end
             ret = ExprMatrix(exprs, computation);
+            cache.add_desc(computation.toString());            
         end        
         
     end

@@ -138,7 +138,7 @@ classdef Grammar < handle
         
         function ret = Add(obj, expr_matrix)
             global grammars      
-            Grammar.Validate();
+%             Grammar.Validate();
             initlen = length(obj.expr_matrices(:));
             if (initlen == 0)
                 obj.expr_matrices = expr_matrix;
@@ -160,18 +160,18 @@ classdef Grammar < handle
             global cache
             rule_marginalize_time = tic; 
             updated = false;             
-            for i = 1:length(obj.expr_matrices)
+            for i = 1:length(obj.expr_matrices(:))
                 if (isempty(obj.expr_matrices(i).computation))
                     continue;
                 end
                 computation = Marginalize(obj.expr_matrices(i).computation, dim);
-                Grammar.Validate();
                 if (cache.find_desc(computation.toString()))
                     continue;
                 end
                 expr_matrix = obj.expr_matrices(i).marginalize(dim);
                 res = Grammar(obj.n && (dim == 2), obj.m && (dim == 1));
-                updated = updated || res.Add(expr_matrix);           
+                updated = updated | res.Add(expr_matrix);           
+                cache.add_desc(computation.toString());
             end
             Grammar.Stats();            
             fprintf('marginalize, toc = %f\n', toc(rule_marginalize_time));
@@ -195,7 +195,7 @@ classdef Grammar < handle
                         continue;
                     end
                     res = Grammar(obj.n, obj.m);                    
-                    updated = updated || res.Add(top_level);
+                    updated = updated | res.Add(top_level);                    
                 end
             end
             Grammar.Stats();            
