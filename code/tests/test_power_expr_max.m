@@ -1,6 +1,6 @@
 function test_power_expr_max
     cache = Cache(5);
-    A = Expr([3, 2, 2], [1,0,2,0; 1,2,3,0; 0,0,0,1]');
+    A = ExprSymbolic([3, 2, 2], [1,0,2,0; 1,2,3,0; 0,0,0,1]');
     B = A.power_expr(4);
     assert(size(B, 2) == 1);
     val = cell(1, 1);

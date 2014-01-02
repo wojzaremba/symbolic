@@ -55,14 +55,14 @@ classdef Grammar < handle
             global cache
             obj.n = n;
             obj.m = m;
-            W = [Expr()];
+            W = [Expr_()];
             obj.expr_matrices = [];
             if (n == 1) && (m == 1)               
                 for i = 1 : cache.maxK
                     for j = 1 : cache.maxK
                         expr = zeros(cache.maxK * cache.maxK, 1);
                         expr((i - 1) * cache.maxK + j, 1) = 1;
-                        W(i, j) = Expr(1, expr);
+                        W(i, j) = Expr_(1, expr);
                     end
                 end  
                 obj.expr_matrices = ExprMatrix(W, Matrix('W', cache.n, cache.m));
@@ -81,41 +81,13 @@ classdef Grammar < handle
             end
             obj.expr_matrices = obj.expr_matrices(idx);
             grammars(obj.n + 1, obj.m + 1) = obj;            
-        end        
-        
-        function [X, Y] = encode_data(F, marginal)
-          global cache
-          powers = [];
-          maxK = cache.maxK;
-          for i = 1:length(F.expr_matrices(:))
-              assert(F.expr_matrices(i).power == maxK);
-              for j = 1:length(F.expr_matrices(i).exprs(:))
-                powers = [powers, F.expr_matrices(i).exprs(j).expr];
-              end
-          end
-          for i = 1:size(marginal.exprs.expr, 2)
-            powers = [powers, marginal.exprs.expr(:, i)];
-          end
-          powers = unique(powers', 'rows')';
-          hashes = [];
-          for i = 1:size(powers, 2)
-              hashes = [hashes, cache.hash(powers(:, i))];        
-          end    
-          if (length(unique(hashes)) ~= length(hashes))
-              assert(0);
-          end
-          hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
-
-          X = F.encode_in_hash(hash_map, maxK);  
-          Y = F.encode_in_hash_exprs(marginal, hash_map);
-        end        
-        
+        end                            
 
         function [ X ] = encode_in_hash( F, hash_map, k )
           X = [];
           for i = 1:length(F.expr_matrices)
             if (F.expr_matrices(i).power == k)   
-              tmp = F.encode_in_hash_exprs( F.expr_matrices(i), hash_map );
+              tmp = F.encode_in_hash_exprs( F.expr_matrices(i).exprs, hash_map );
               X = [X, tmp];
             else 
               assert(0);
@@ -126,28 +98,29 @@ classdef Grammar < handle
         
         function [ res ] = encode_in_hash_exprs(obj, matrix, hash_map)
             global cache
-            res = zeros(length(matrix.exprs(:)) * length(hash_map), 1);
-            for k = 1:length(matrix.exprs(:))
-                offset = (k - 1) * length(hash_map);
-                for j = 1:size(matrix.exprs(k).expr, 2)
-                    idx = hash_map(cache.hash(matrix.exprs(k).expr(:, j)));
-                    res(offset + idx) = res(offset + idx) + matrix.exprs(k).quant(j);
+            res = zeros(length(hash_map), 1);
+            for j = 1:size(matrix.expr, 2)
+                idx = hash_map(cache.hash(matrix.expr(:, j)));
+                if (strcmp(class(Expr_()), 'ExprZp') == 1)
+                    quant = 1;
+                else
+                    quant = matrix.exprs(k).quant(j);
                 end
+                res(idx) = quant;
             end
         end        
         
         function ret = Add(obj, expr_matrix)
             global grammars      
-%             Grammar.Validate();
             initlen = length(obj.expr_matrices(:));
             if (initlen == 0)
                 obj.expr_matrices = expr_matrix;
             else
                 obj.expr_matrices(end + 1) = expr_matrix;
             end
-            hashes = zeros(length(obj.expr_matrices), 1);
+            hashes = cell(length(obj.expr_matrices), 1);
             for i = 1 : length(obj.expr_matrices)
-                hashes(i) = obj.expr_matrices(i).hash;
+                hashes{i} = obj.expr_matrices(i).hash;
             end
             [~, idx] = unique(hashes);
             obj.expr_matrices = obj.expr_matrices(idx);
@@ -201,7 +174,36 @@ classdef Grammar < handle
             Grammar.Stats();            
             fprintf('elementwise_multiply, toc = %f\n', toc(rule_elementwise_multiply_time));
             Grammar.Validate();
-        end       
+        end     
+        
+        
+        function [X, Y] = encode_data(F, marginal)
+          global cache
+          powers = [];
+          maxK = cache.maxK;
+          for i = 1:length(F.expr_matrices(:))
+              assert(F.expr_matrices(i).power == maxK);
+              for j = 1:length(F.expr_matrices(i).exprs(:))
+                powers = [powers, F.expr_matrices(i).exprs(j).expr];
+              end
+          end
+          for i = 1:size(marginal.expr, 2)
+            powers = [powers, marginal.expr(:, i)];
+          end
+          powers = unique(powers', 'rows')';
+          hashes = [];
+          for i = 1:size(powers, 2)
+              hashes = [hashes, cache.hash(powers(:, i))];        
+          end    
+          if (length(unique(hashes)) ~= length(hashes))
+              assert(0);
+          end
+          hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
+
+          X = F.encode_in_hash(hash_map, maxK);  
+          Y = F.encode_in_hash_exprs(marginal, hash_map);
+        end           
+        
     end
         
 end

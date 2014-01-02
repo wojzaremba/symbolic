@@ -8,12 +8,12 @@ classdef RBM < ExprMatrix
             k = cache.maxK;
             v_l = k;
             h_l = k;
-            W = Expr();
+            W = Expr_();
             for i = 1:v_l
                 for j = 1:h_l
                     expr = zeros(v_l * h_l, 1);
                     expr((i - 1) * h_l + j, 1) = 1;
-                    W(i, j) = Expr(1, expr);
+                    W(i, j) = Expr_(1, expr);
                 end
             end  
             marginal_val = cell(2^v_l, 2^h_l);
@@ -31,10 +31,14 @@ classdef RBM < ExprMatrix
                         E{a, b} = W(posv(a), posh(b));
                       end
                     end
-                    marginal_val{v + 1, h + 1} = power_expr(Expr().add_many_expr(E), k);
+                    if (~isempty(E))
+                        marginal_val{v + 1, h + 1} = power_expr(add_many_expr(Expr_(), E), k);
+                    else
+                        marginal_val{v + 1, h + 1} = Expr_();
+                    end
                end
             end           
-            obj.exprs = Expr().add_many_expr(marginal_val);
+            obj.exprs = add_many_expr(Expr_(), marginal_val);
         end
         
         function ret = normalization(obj)
