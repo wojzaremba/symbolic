@@ -227,7 +227,7 @@ classdef ExprSymbolic < Expr
         end 
         
         function ret = is_empty(obj)
-            ret = (sum(obj.expr) ~= 0);
+            ret = (sum(obj.expr(:) ~= 0) == 0);
         end        
         
         function ret = power(obj)
@@ -238,6 +238,35 @@ classdef ExprSymbolic < Expr
             global cache
             ret = mod(dot(cache.dot_mult(1:(2 * length(obj.quant))), [obj.quant(:) ; obj.hashes(:)]), cache.prime);
         end
+        
+        
+        function [grammar_solved, coeffs] = reexpres_data(marginal, F)
+          global cache
+          powers = [];
+          maxK = cache.maxK;
+          for i = 1:length(F.expr_matrices(:))
+              assert(F.expr_matrices(i).power == maxK);
+              for j = 1:length(F.expr_matrices(i).exprs(:))
+                powers = [powers, F.expr_matrices(i).exprs(j).expr];
+              end
+          end
+          for i = 1:size(marginal.expr, 2)
+            powers = [powers, marginal.expr(:, i)];
+          end
+          powers = unique(powers', 'rows')';
+          hashes = [];
+          for i = 1:size(powers, 2)
+              hashes = [hashes, cache.hash(powers(:, i))];        
+          end    
+          if (length(unique(hashes)) ~= length(hashes))
+              assert(0);
+          end
+          hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
+
+          X = F.encode_in_hash(hash_map, maxK);  
+          Y = F.encode_in_hash_exprs(marginal, hash_map);
+          [grammar_solved, coeffs] = get_final_result(X, Y, Grammar(0, 0));          
+        end           
                  
     end
 end

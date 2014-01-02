@@ -35,6 +35,11 @@ classdef Expr < handle
         function ret = is_empty(obj)
             assert(0);
         end
+        
+        function [X, Y] = reexpres_data(marginal, F)
+            assert(0);
+        end
+        
     end       
     
 end
