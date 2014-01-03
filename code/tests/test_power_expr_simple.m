@@ -1,6 +1,6 @@
 function test_power_expr_simple
     cache = Cache(Inf);
-    A = Expr([1, 1], [1, 0; 0, 1]');
+    A = ExprSymbolic([1, 1], [1, 0; 0, 1]');
     B = A.power_expr(2);
     assert(size(B.expr, 2) == 3);
     val = cell(4, 1);
@@ -17,5 +17,12 @@ function test_power_expr_simple
         assert(B.quant(i) == quant{i});
         assert(norm(B.expr(:, i) - expr{i}') == 0);
     end
+    
+    A = ExprZp(A.quant, A.expr);
+    B_ = ExprZp(B.quant, B.expr);
+    B = A.power_expr(2);
+    fprintf('B  = %s\n', B.toString());
+    fprintf('B_ = %s\n', B_.toString());
+    assert(norm(B.vals - B_.vals) == 0);    
 end
 

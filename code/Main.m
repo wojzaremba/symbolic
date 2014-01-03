@@ -1,6 +1,8 @@
 clc;
 addpath(genpath('.'));
 totaltime = tic;
+global expr_type
+expr_type = 'symbolic';
 Cache(2);
 
 computation_time = tic;
@@ -32,14 +34,19 @@ while (norm(u) > 0)
     
     fprintf('single iter takes = %f\n', toc(single_iter_time));
 end
+
 trim_size(Grammar(0, 0));
 marginal = RBM();
-[X, Y] = encode_data(Grammar(0, 0), marginal);
-[grammar_solved, coeffs] = get_final_result(X, Y, Grammar(0, 0));
+
+[grammar_solved, coeffs] = reexpres_data(marginal.exprs(1), Grammar(0, 0));
 
 fprintf('So far, so good !\n');
 
 show_results(coeffs, marginal.normalization(), grammar_solved);
+
 fprintf('total time = %f\n', toc(totaltime));
+
+
+% XXX: wywalic w hashowaniu mnozenie
 
 

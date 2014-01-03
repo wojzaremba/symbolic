@@ -8,42 +8,24 @@ classdef ExprMatrix < handle
     
     methods 
         function obj = ExprMatrix(exprs, computation)          
-            if (exist('exprs', 'var')) && (~isempty(exprs(:))) && (~isempty(exprs(1).expr))
-                obj.power = sum(exprs(1).expr(:, 1));
+            if (exist('exprs', 'var')) && (~isempty(exprs(:))) && (~is_empty(exprs(1)))
+                obj.power = sum(exprs(1).power());
                 obj.exprs = exprs;
-                obj.SetHash();
                 obj.computation = computation;
             else
                 obj.power = 0;
-                obj.hash = 0;
-                obj.exprs = Expr();
+                obj.exprs = Expr_();
             end
-        end
-        
-        function SetHash(obj)
-            global cache
-            prime = cache.prime;
-            dot_mult = cache.dot_mult;
-            % Hash is the same up to multiplicative constant.
-            normalize = 0;
-            exprs = obj.exprs;
-            for j = 1:length(exprs(:))
-                normalize = normalize + sum(abs(exprs(j).quant));
-            end
-            hash = 0;
-            for j = 1:length(exprs(:))
-                hash = mod(10000000000001 * hash + dot(dot_mult(1:(2 * length(exprs(j).quant))), [exprs(j).quant(:) / normalize ; exprs(j).hashes(:)]), prime);
-            end
-            assert(~isnan(hash) && (hash ~= Inf));
-            obj.hash = hash;  
-        end
+            e = Expr_();            
+            obj.hash = e.CombineHash(obj.exprs());            
+        end       
         
         function str = toString(obj)
             str = obj.computation.matlab_toString();
         end
 
         function [ W ] = marginalize( A, dim )   
-            exprs = Expr();
+            exprs = Expr_();
             if (dim == 1)
                 for j = 1:size(A.exprs, 2)
                     for i = 1:size(A.exprs, 1)
@@ -110,13 +92,7 @@ classdef ExprMatrix < handle
             if (cache.find_desc(computation.toString()))
               return;
             end
-%             % If the same size then this operation is symetric.
-%             if ((size(B.exprs, 1) == size(A.exprs, 1)) && (size(B.exprs, 2) == size(A.exprs, 2)))
-%                 computation2 = MultElemwise({B.computation, A.computation});
-%                 cache.find_desc(computation2.toString());
-%             end
-
-            exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr();
+            exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr_();
             for a = 1:size(A.exprs, 1)
               for b = 1:size(A.exprs, 2)              
                 exprs(a, b) = A.exprs(a, b).multiply_expressions(B.exprs(min(a, size(B.exprs, 1)), min(b, size(B.exprs, 2))));

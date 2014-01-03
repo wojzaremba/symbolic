@@ -1,6 +1,6 @@
 function test_power_expr
     Cache(Inf);
-    A = Expr([3, 2], [1,0,2,0; 1,2,3,0]');
+    A = ExprSymbolic([3, 2], [1,0,2,0; 1,2,3,0]');
     fprintf('A = %s\n', A.toString());
     B = A.power_expr(3);
     assert(size(B.expr, 2) == 4);
@@ -15,5 +15,12 @@ function test_power_expr
         end
         assert(valid);
     end
+    
+    A = ExprZp(A.quant, A.expr);
+    B_ = ExprZp(B.quant, B.expr);
+    B = A.power_expr(3);
+    fprintf('B  = %s\n', B.toString());
+    fprintf('B_ = %s\n', B_.toString());
+    assert(norm(B.vals - B_.vals) == 0);        
 end
 

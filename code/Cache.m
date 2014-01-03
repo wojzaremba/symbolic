@@ -18,7 +18,7 @@ classdef Cache < handle
             obj.maxK = maxK;                        
             obj.n = 99;
             obj.m = 100;   
-            obj.prime = 100000000000000001;
+            obj.prime = 688846502588399;
             val = 1;
             obj.dot_mult = zeros(100000, 1);
             for i = 1:100000

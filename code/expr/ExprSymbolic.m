@@ -1,12 +1,24 @@
-classdef Expr < handle
+classdef ExprSymbolic < Expr
     properties
         quant
-        expr
-        hashes
+        hashes    
     end
     
-    methods
-        function A = Expr(quant, expr, hashes)
+    methods(Static)
+        function hash = CombineHash(exprs)
+            global cache
+            hash = 0;            
+            for j = 1:length(exprs(:))
+                hash = mod(cache.prime * hash + exprs(j).hash(), cache.prime);
+            end            
+            assert(~isnan(hash) && (hash ~= Inf));
+        end
+    end
+    
+    
+    
+    methods        
+        function A = ExprSymbolic(quant, expr, hashes)
             global cache
             if (~exist('quant', 'var'))
                 return;
@@ -38,7 +50,7 @@ classdef Expr < handle
             A.expr = A.expr(:, idx);
             A.quant = A.quant(:, idx);
             A.Validate();
-        end
+        end               
         
         function Validate(A)
             assert(length(A.hashes(:)) == length(A.quant(:)));
@@ -46,8 +58,8 @@ classdef Expr < handle
             assert(sum(A.hashes(:) == Inf) == 0);
             assert(sum(A.hashes(:) == -Inf) == 0);
             assert(sum(isnan(A.hashes(:))) == 0);
-        end
-    
+        end        
+        
         function str = toString(A)
             str = '';
             for i = 1 : length(A.quant)
@@ -64,9 +76,9 @@ classdef Expr < handle
                     end
                 end
             end
-        end
+        end        
         
-        function [ C ] = add_expr( A, B )                
+        function [ C ] = add_expr(A, B)
             if ((isempty(A)) || (isempty(A.quant)))
                 C = B;
                 return;
@@ -80,7 +92,7 @@ classdef Expr < handle
                 quants = [A.quant, B.quant];
                 expr = [A.expr, B.expr];
                 expr = expr(:, idx);
-                C = Expr(quants(idx), expr, hashes);                                
+                C = ExprSymbolic(quants(idx), expr, hashes);                                
                 return;
             end
             if (length(unique(hashes)) == length(A.hashes)) || (length(unique(hashes)) == length(B.hashes))
@@ -105,7 +117,7 @@ classdef Expr < handle
             a = 1;
             b = 1;
             len = length(A) + length(B);
-            C = Expr(zeros(1, len), zeros(size(A.expr, 1), len), zeros(len, 1));    
+            C = ExprSymbolic(zeros(1, len), zeros(size(A.expr, 1), len), zeros(len, 1));    
             A.hashes = [A.hashes; Inf];
             B.hashes = [B.hashes; Inf];
             counter = 1;
@@ -138,18 +150,18 @@ classdef Expr < handle
             A.hashes = A.hashes(1:(end-1));
             B.hashes = B.hashes(1:(end-1));            
             C.Validate();
-        end
-
+        end        
+        
         function [ res ] = power_expr( W, p )
             global cache
             maxK = cache.maxK;
             if ((isempty(W)) || (isempty(W.expr)) || (min(sum(W.expr, 1)) * p > maxK))
-                res = Expr();
+                res = ExprSymbolic();
                 return;
             end
             res = cell(size(W.expr, 2)^p, 1);
             for i = 1:(size(W.expr, 2)^p)
-                res{i} = Expr();
+                res{i} = ExprSymbolic();
                 idx = zeros(p, 1);
                 copyi = i - 1;
                 for divs = 1:p
@@ -164,16 +176,16 @@ classdef Expr < handle
                     quant = quant * W.quant(idx(a));
                 end
                 if (quant ~= 0) && (sum(term) <= maxK)
-                    res{i} = Expr(quant, term);
+                    res{i} = ExprSymbolic(quant, term);
                 end
                 if (sum(term) > maxK)
-                    warning('powers over maxK\n');
+                    warning('powers over maxK');
                 end
             end
-            res = Expr().add_many_expr(res);
+            res = ExprSymbolic().add_many_expr(res);
             res.Validate();
-        end
-                  
+        end        
+        
         function ret = add_many_expr(ret, exprs)
             exprs = exprs(:);
             while(length(exprs(:)) > 1) 
@@ -190,11 +202,10 @@ classdef Expr < handle
             if (~isempty(exprs(:)))
               ret = exprs{1};
             else 
-              ret = Expr();
+              ret = ExprSymbolic();
             end
             ret.Validate();
-        end        
-        
+        end                
         
         function [ val ] = multiply_expressions( A, B )
             val = cell(size(A.expr, 2), size(B.expr, 2));
@@ -208,13 +219,54 @@ classdef Expr < handle
                     end;
                     quant = A.quant(a) * B.quant(b);
                     expr = A.expr(:, a) + B.expr(:, b);
-                    val{a, b} = Expr(quant, expr);
+                    val{a, b} = ExprSymbolic(quant, expr);
                 end
             end
-            val = Expr().add_many_expr(val);
+            val = ExprSymbolic().add_many_expr(val);
             val.Validate();
+        end 
+        
+        function ret = is_empty(obj)
+            ret = (sum(obj.expr(:) ~= 0) == 0);
         end        
         
-    end       
-    
+        function ret = power(obj)
+            ret = sum(obj.expr(:, 1));
+        end
+        
+        function ret = hash(obj)
+            global cache
+            ret = mod(dot(cache.dot_mult(1:(2 * length(obj.quant))), [obj.quant(:) ; obj.hashes(:)]), cache.prime);
+        end
+        
+        
+        function [grammar_solved, coeffs] = reexpres_data(marginal, F)
+          global cache
+          powers = [];
+          maxK = cache.maxK;
+          for i = 1:length(F.expr_matrices(:))
+              assert(F.expr_matrices(i).power == maxK);
+              for j = 1:length(F.expr_matrices(i).exprs(:))
+                powers = [powers, F.expr_matrices(i).exprs(j).expr];
+              end
+          end
+          for i = 1:size(marginal.expr, 2)
+            powers = [powers, marginal.expr(:, i)];
+          end
+          powers = unique(powers', 'rows')';
+          hashes = [];
+          for i = 1:size(powers, 2)
+              hashes = [hashes, cache.hash(powers(:, i))];        
+          end    
+          if (length(unique(hashes)) ~= length(hashes))
+              assert(0);
+          end
+          hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
+
+          X = F.encode_in_hash(hash_map, maxK);  
+          Y = F.encode_in_hash_exprs(marginal, hash_map);
+          [grammar_solved, coeffs] = get_final_result(X, Y, Grammar(0, 0));          
+        end           
+                 
+    end
 end
