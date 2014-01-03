@@ -2,8 +2,8 @@ clc;
 addpath(genpath('.'));
 totaltime = tic;
 global expr_type
-expr_type = 'symbolic';
-Cache(2);
+expr_type = 'Zp';
+Cache(3);
 
 computation_time = tic;
 
@@ -48,5 +48,4 @@ fprintf('total time = %f\n', toc(totaltime));
 
 
 % XXX: wywalic w hashowaniu mnozenie
-
 

@@ -4,7 +4,7 @@ classdef ExprZp < Expr
         hash_
     end
     
-    properties(Constant)        
+    properties(Constant)   
        primes = ...
       [5099   5101   5107   5113   5119   5147   5153   5167   5171   5179 ...
        5189   5197   5209   5227   5231   5233   5237   5261   5273   5279 ...
@@ -39,8 +39,8 @@ classdef ExprZp < Expr
        7727   7741   7753   7757   7759   7789   7793   7817   7823   7829 ...
        7841   7853   7867   7873   7877   7879   7883   7901   7907   7919];     
         
-        len = 10;
-        Zp = ExprZp.primes(1:ExprZp.len)';        
+        len = 60;
+        Zp = ExprZp.primes(end);
         mods = RandVals(ExprZp.len, 25, 10, ExprZp.Zp);
     end
     
@@ -68,11 +68,11 @@ classdef ExprZp < Expr
                     val = 1;
                     for i = 1 : size(expr, 1)
                         if (expr(i, j) > 0)
-                            val = mod(val * ExprZp.mods(k, i, expr(i, j)), ExprZp.Zp(k));
+                            val = mod(val * ExprZp.mods(k, i, expr(i, j)), ExprZp.Zp);
                         end
                     end
-                    val = mod(val * quant(j), ExprZp.Zp(k));
-                    exprum = mod(exprum + val, ExprZp.Zp(k));
+                    val = mod(val * quant(j), ExprZp.Zp);
+                    exprum = mod(exprum + val, ExprZp.Zp);
                 end
                 obj.expr(k) = exprum;
             end
@@ -111,9 +111,12 @@ classdef ExprZp < Expr
             C.expr = ret.expr;
             C.power = ret.power;            
             for i = 1 : length(exprs(:))
+                if (isempty(exprs{i}))
+                    continue
+                end
                 C.expr = mod(C.expr + exprs{i}.expr, ExprZp.Zp);
-                if (i > 1)
-                    assert((exprs{i}.power == exprs{i - 1}.power) || (exprs{i}.power * exprs{i - 1}.power == 0));
+                if (C.power > 0)
+                    assert((exprs{i}.power == C.power) || (exprs{i}.power * C.power == 0));
                 end
                 C.power = max(C.power, exprs{i}.power);
             end            
@@ -145,7 +148,7 @@ classdef ExprZp < Expr
             end
             Y = marginal.expr;
             coeffs = [];
-            invert = modsolve(X, Y, ExprZp.Zp);
+            invert = gflineq(X, Y, ExprZp.Zp);
             error = norm(mod(X * invert - Y, ExprZp.Zp));
             fprintf('error : %f\n', error);  
             if (error > 1e-5)
@@ -175,7 +178,7 @@ function ret = RandVals(planes, rows, cols, Zp)
     for k = 1:planes
         for i = 1:rows
             for j = 2:cols
-                ret(k, i, j) = mod(ret(k, i, j - 1) * ret(k, i, 1), Zp(k));
+                ret(k, i, j) = mod(ret(k, i, j - 1) * ret(k, i, 1), Zp);
             end
         end
     end

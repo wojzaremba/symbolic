@@ -18,9 +18,10 @@ classdef RBM < ExprMatrix
             end  
             marginal_val = cell(2^v_l, 2^h_l);
             fprintf('Number of probs = %d\n', 2^(v_l + h_l));
-            for v = 0:(2^v_l - 1)
+            % We start from 1, because v = 0 generates zero value.
+            for v = 1:(2^v_l - 1)
                 v_ = decode_vector(v, v_l) - 1;
-                for h = 0:(2^h_l - 1)
+                for h = 1:(2^h_l - 1)
                   fprintf('.'); 
                   h_ = decode_vector(h, h_l) - 1;     
                     posv = find(v_);
@@ -31,11 +32,7 @@ classdef RBM < ExprMatrix
                         E{a, b} = W(posv(a), posh(b));
                       end
                     end
-                    if (~isempty(E))
-                        marginal_val{v + 1, h + 1} = power_expr(add_many_expr(Expr_(), E), k);
-                    else
-                        marginal_val{v + 1, h + 1} = Expr_();
-                    end
+                    marginal_val{v + 1, h + 1} = power_expr(add_many_expr(Expr_(), E), k);
                end
             end           
             obj.exprs = add_many_expr(Expr_(), marginal_val);
@@ -48,15 +45,3 @@ classdef RBM < ExprMatrix
     end
 end
 
-function [ ret ] = decode_vector( n, l, basis )
-    if (~exist('basis', 'var'))
-        basis = 2;
-    end
-    ret = ones(l, 1);
-    pos = 1;
-    while (n > 0)
-        ret(pos) = mod(n, basis) + 1;
-        n = floor(n / basis);
-        pos = pos + 1;
-    end
-end

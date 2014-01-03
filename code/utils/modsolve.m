@@ -1,3 +1,4 @@
+% XXX : This code is messed up for multiple p.
 function [x, vld] = modsolve(a, b, p)
 %GFLINEQ Find a particular solution of Ax = b over a prime Galois field.
 %   X = GFLINEQ(A, B) outputs a particular solution of the linear
@@ -25,7 +26,7 @@ error(nargchk(2,3,nargin,'struct'));
 % Error checking - P.
 if nargin < 3
     p = 2;
-elseif ( isempty(p))
+elseif ( isempty(p) )
     error(message('comm:gflineq:InvalidP'));
 end;
 
@@ -42,14 +43,14 @@ end
 if ( m_a ~= m_b )
     error(message('comm:gflineq:InvalidAB'));
 end
-if ( any(any( abs(a)~=a | floor(a)~=a | a >= repmat(p, [1, size(a, 2)]) )) )
+if ( any(any( abs(a)~=a | floor(a)~=a )) )
     if ( p == 2 )
         error(message('comm:gflineq:InvalidAForP2'));
     else
         error(message('comm:gflineq:InvalidAElements'));
     end
 end
-if ( any(any( abs(b)~=b | floor(b)~=b | b >= repmat(p, [1, size(b, 2)]) )) )
+if ( any(any( abs(b)~=b | floor(b)~=b )) )
     if ( p == 2 )
         error(message('comm:gflineq:InvalidBForP2'));
     else
@@ -66,12 +67,13 @@ column_idx = 1;
 row_store = [];
 column_store = [];
 
-% Find the multiplicative inverse of the field elements.
-% This will be used for setting major elements in the matrix to one.
 field_inv = cell(length(p), 1);
 ignored = cell(length(p), 1);
+
+% Find the multiplicative inverse of the field elements.
+% This will be used for setting major elements in the matrix to one.
 for i = 1 : length(p)
-    [field_inv{i} ignored{i}] = find( mod( (1:(p(i) - 1)).' * (1:(p(i) - 1)) , p(i) ) == 1 );  %#ok
+    [field_inv{i}, ignored{i}] = find( mod( (1 : (p(i) - 1)).' * (1:(p(i) - 1)) , p(i) ) == 1 );  %#ok
 end
 
 % Search for major elements, trying to form 'identity' matrix.
@@ -90,6 +92,7 @@ while (row_idx <= m_aa) && (column_idx < n_aa)
             column_idx = column_idx + 1;
             
         else
+            assert(0);
             % There is a major element in this column.
             % See if any are already equal to one.            
             idx = [ find(aa(row_idx:m_aa, column_idx) == 1); idx ];
@@ -114,9 +117,7 @@ while (row_idx <= m_aa) && (column_idx < n_aa)
 
         % If the major element is not already one, set it to one.
         if (aa(row_idx,column_idx) ~= 1)
-            for i = 1 : length(row_idx)
-                aa(row_idx(i),:) = mod( field_inv{row_idx(i)}( aa(row_idx(i), column_idx) ) * aa(row_idx(i),:), p(row_idx(i)));
-            end
+           aa(row_idx,:) = mod( field_inv{row_idx}( aa(row_idx,column_idx) ) * aa(row_idx,:), p(row_idx) );
         end;
 
         % Find the other elements in the column that must be cleared,
