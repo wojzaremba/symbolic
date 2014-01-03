@@ -1,43 +1,36 @@
-function fun = Complex(coeffs, funs)
-  assert(length(coeffs) == length(funs));
-  name = '';
-  for i = 1:length(coeffs)
-    if (i > 1)
-      name = sprintf('%s +', name);
+classdef Complex < PrototypeF
+    properties
+        coeffs
+        funs
     end
-    name = sprintf('%s %f*%s', name, coeffs(i), funs(i).name);
-  end
-  fun = PrototypeF(struct('FP_unnorm', @FP_unnorm, ...
-                          'BP_unnorm', @BP_unnorm, ...
-                          'f', @f, ...
-                          'df', @df, ...
-                          'name', name));
 
-  function P = FP_unnorm(v, W, h)
-    P = 0;
-    for i = 1:length(coeffs)
-      P = P + coeffs(i) * funs(i).FP_unnorm(v, W, h);
-    end    
-  end
+    methods    
+      function obj = Complex(coeffs, funs)
+          assert(length(coeffs) == length(funs));
+          name = '';
+          for i = 1:length(coeffs)
+            if (i > 1)
+              name = sprintf('%s +', name);
+            end
+            name = sprintf('%s %f*%s', name, coeffs{i}, funs{i}.name);
+          end
+          obj.name = name;
+          obj.funs = funs;
+          obj.coeffs = coeffs;
+      end
 
-  function dW = BP_unnorm(v, W, h)
-    dW = zeros(size(W));
-    for i = 1:length(coeffs)
-      dW = dW + coeffs(i) * funs(i).BP_unnorm(v, W, h);
-    end    
-  end
+      function P = FP_unnorm(obj, W)
+          P = 0;
+          for i = 1:length(obj.coeffs)
+              P = P + obj.coeffs{i} * obj.funs{i}.FP_unnorm(W);
+          end    
+      end
 
-  function y = f(x)
-    y = 0;
-    for i = 1:length(coeffs)
-      y = y + coeffs(i) * funs(i).f(x);
+      function y = f(obj, x)
+          y = 0;
+          for i = 1:length(obj.coeffs)
+              y = y + obj.coeffs{i} * obj.funs{i}.f(x);
+          end
+      end
     end
-  end
-
-  function y = df(x)
-    y = coeffs(1) * funs(1).df(x);
-    for i = 2:length(coeffs)
-      y = y + coeffs(i) * funs(i).df(x);
-    end
-  end
 end

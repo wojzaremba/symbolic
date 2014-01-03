@@ -21,6 +21,6 @@ function test_power_expr
     B = A.power_expr(3);
     fprintf('B  = %s\n', B.toString());
     fprintf('B_ = %s\n', B_.toString());
-    assert(norm(B.vals - B_.vals) == 0);        
+    assert(norm(B.expr - B_.expr) == 0);        
 end
 

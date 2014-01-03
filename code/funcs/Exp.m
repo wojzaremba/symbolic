@@ -2,8 +2,7 @@ classdef Exp < PrototypeF
     properties
     end
 
-    methods
-    
+    methods    
       function obj = Exp()
           obj.name = 'Exp';
       end

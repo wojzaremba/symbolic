@@ -7,12 +7,12 @@ classdef One < PrototypeF
           obj.name = 'One';
       end
 
-      function P = FP_unnorm(obj, v, W, h)
-        P = 1;
+      function P = FP_unnorm(obj, W)
+          P = 1;
       end
 
       function y = f(obj, x)
-        y = 1;
+          y = 1;
       end
 
     end

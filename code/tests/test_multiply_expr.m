@@ -1,5 +1,5 @@
 function test_multiply_expr
-    Cache();
+    Cache(10);
     A = ExprSymbolic([3, 5, 4], [1,2,3,0; 0,2,3,5; 0,0,1,0]');
     B = ExprSymbolic([6, 7], [0,2,3,5; 0,1,0,0]');
     C = A.multiply_expressions(B);
@@ -11,7 +11,7 @@ function test_multiply_expr
     C_ = ExprZp(C.quant, C.expr);
     C = A.multiply_expressions(B);
     fprintf('%s\n', C.toString());
-    assert(norm(C.vals - C_.vals) == 0);        
+    assert(norm(C.expr - C_.expr) == 0);        
 end
 
 

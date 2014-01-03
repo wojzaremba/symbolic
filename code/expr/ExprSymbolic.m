@@ -1,15 +1,19 @@
 classdef ExprSymbolic < Expr
     properties
         quant
-        hashes    
+        hashes          
+    end
+    
+    properties(Constant)
+        dot_mult = InitDotMult();
     end
     
     methods(Static)
         function hash = CombineHash(exprs)
-            global cache
+            global c
             hash = 0;            
             for j = 1:length(exprs(:))
-                hash = mod(cache.prime * hash + exprs(j).hash(), cache.prime);
+                hash = mod(c.prime * hash + exprs(j).hash(), c.prime);
             end            
             assert(~isnan(hash) && (hash ~= Inf));
         end
@@ -19,7 +23,7 @@ classdef ExprSymbolic < Expr
     
     methods        
         function A = ExprSymbolic(quant, expr, hashes)
-            global cache
+            global c
             if (~exist('quant', 'var'))
                 return;
             end
@@ -36,7 +40,7 @@ classdef ExprSymbolic < Expr
             tmp = 1;
             for i = 1:size(expr, 2)
                 if (quant(i) ~= 0)
-                    A.hashes(tmp) = cache.hash(expr(:, i));
+                    A.hashes(tmp) = A.hash_expr(expr(:, i));
                     nonzero(tmp) = i;
                     tmp = tmp + 1;
                 end
@@ -153,8 +157,8 @@ classdef ExprSymbolic < Expr
         end        
         
         function [ res ] = power_expr( W, p )
-            global cache
-            maxK = cache.maxK;
+            global c
+            maxK = c.maxK;
             if ((isempty(W)) || (isempty(W.expr)) || (min(sum(W.expr, 1)) * p > maxK))
                 res = ExprSymbolic();
                 return;
@@ -235,15 +239,22 @@ classdef ExprSymbolic < Expr
         end
         
         function ret = hash(obj)
-            global cache
-            ret = mod(dot(cache.dot_mult(1:(2 * length(obj.quant))), [obj.quant(:) ; obj.hashes(:)]), cache.prime);
+            global c
+            ret = mod(dot(ExprSymbolic.dot_mult(1:(2 * length(obj.quant))), [obj.quant(:) ; obj.hashes(:)]), c.prime);
         end
+        
+        function [ ret ] = hash_expr(obj, expr)
+            global c
+            assert(size(expr, 2) == 1);
+            ret = mod(dot(obj.dot_mult(1:length(expr(:))), double(expr(:))), c.prime);
+            assert(~isnan(ret) && (ret ~= Inf));
+        end               
         
         
         function [grammar_solved, coeffs] = reexpres_data(marginal, F)
-          global cache
+          global c
           powers = [];
-          maxK = cache.maxK;
+          maxK = c.maxK;
           for i = 1:length(F.expr_matrices(:))
               assert(F.expr_matrices(i).power == maxK);
               for j = 1:length(F.expr_matrices(i).exprs(:))
@@ -256,7 +267,7 @@ classdef ExprSymbolic < Expr
           powers = unique(powers', 'rows')';
           hashes = [];
           for i = 1:size(powers, 2)
-              hashes = [hashes, cache.hash(powers(:, i))];        
+              hashes = [hashes, c.hash(powers(:, i))];        
           end    
           if (length(unique(hashes)) ~= length(hashes))
               assert(0);
@@ -265,8 +276,18 @@ classdef ExprSymbolic < Expr
 
           X = F.encode_in_hash(hash_map, maxK);  
           Y = F.encode_in_hash_exprs(marginal, hash_map);
-          [grammar_solved, coeffs] = get_final_result(X, Y, Grammar(0, 0));          
+          [grammar_solved, coeffs] = get_final_result(X, Y, Grammar(1, 1));          
         end           
                  
     end
+end
+
+function dot_mult = InitDotMult()
+    global c
+    val = 1;
+    dot_mult = zeros(100000, 1);
+    for i = 1 : size(dot_mult, 1)
+      val = mod(val * 10000000001, c.prime);
+      dot_mult(i) = val;
+    end      
 end

@@ -1,7 +1,6 @@
 classdef Cache < handle
     properties
         prime
-        dot_mult
         all_desc
         all_bulk_hashes
         n % number of rows.
@@ -11,22 +10,13 @@ classdef Cache < handle
     
     methods
         function obj = Cache(maxK)
-            if (~exist('maxK', 'var'))
-                maxK = Inf;
-            end
             fprintf('Setting maximum power to %d\n', maxK);
             obj.maxK = maxK;                        
-            obj.n = 99;
-            obj.m = 100;   
-            obj.prime = 688846502588399;
-            val = 1;
-            obj.dot_mult = zeros(100000, 1);
-            for i = 1:100000
-              val = mod(val * 10000000001, obj.prime);
-              obj.dot_mult(i) = val;
-            end            
-            global cache grammars
-            cache = obj;         
+            obj.n = maxK;
+            obj.m = maxK + 1;   
+            obj.prime = 688846502588399;      
+            global c grammars
+            c = obj;         
             grammars = [Grammar()];
             obj.Reset();            
         end
@@ -36,12 +26,6 @@ classdef Cache < handle
             obj.all_bulk_hashes = containers.Map('KeyType', 'double', 'ValueType', 'any');
         end
         
-        function [ ret ] = hash(obj, X)
-            assert(size(X, 2) == 1);
-            ret = mod(dot(obj.dot_mult(1:length(X(:))), double(X(:))), obj.prime);
-            assert(~isnan(ret) && (ret ~= Inf));
-        end        
-
         function ret = find_desc(obj, desc)
             if (isKey(obj.all_desc, desc))
                 ret = true;

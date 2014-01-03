@@ -8,7 +8,7 @@ function test_power_expr_simple
     quant = {1, 2, 1};
     hashes = [];
     for i = 1:length(B.quant)
-        hashes = [hashes, cache.hash(expr{i}')];
+        hashes = [hashes, ExprSymbolic().hash_expr(expr{i}')];
     end
     [~, idx] = sort(hashes);
     expr = expr(idx);
@@ -23,6 +23,6 @@ function test_power_expr_simple
     B = A.power_expr(2);
     fprintf('B  = %s\n', B.toString());
     fprintf('B_ = %s\n', B_.toString());
-    assert(norm(B.vals - B_.vals) == 0);    
+    assert(norm(B.expr - B_.expr) == 0);    
 end
 

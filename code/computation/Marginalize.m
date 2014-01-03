@@ -7,6 +7,7 @@ classdef Marginalize < Computation
     methods
         function obj = Marginalize(item, sumdim)
             obj@Computation();
+            global c
             obj.name = 'Marginalize';
             obj.item = item;
             obj.dim1 = item.dim1;

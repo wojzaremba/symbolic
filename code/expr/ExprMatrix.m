@@ -52,6 +52,31 @@ classdef ExprMatrix < handle
             W = ExprMatrix(exprs, Marginalize(A.computation, dim));                           
         end     
         
+        function [ W ] = repmat_expr( A, dim )   
+            global c
+            exprs = Expr_();
+            if (strcmp(class(Expr_()), 'ExprZp'))
+                if (dim == 1)
+                    inv = ExprZp.field_inv(c.n);
+                else
+                    inv = ExprZp.field_inv(c.m);
+                end
+                for j = 1:size(A.exprs, 2)
+                    for i = 1:size(A.exprs, 1)
+                        if (dim == 1)
+                            exprs(i, j) = A.exprs(1, j);
+                        else
+                            exprs(i, j) = A.exprs(i, 1);
+                        end
+                        exprs(i, j).expr = mod(exprs(i, j).expr * inv, ExprZp.Zp);
+                    end
+                end
+            else
+                assert(0);
+            end
+            W = ExprMatrix(exprs, RepmatScaled(A.computation, dim));                           
+        end             
+        
         function Validate(obj)
             for i = 1 : length(obj.exprs(:))
                 try
@@ -64,32 +89,14 @@ classdef ExprMatrix < handle
         end
         
         function ret = elementwise_multiply(A, B)
-            global cache
+            global c
             ret = ExprMatrix();
             power = A.power + B.power;
-            if (power > cache.maxK) || (isempty(A.computation) || isempty(B.computation))
+            if (power > c.maxK) || (isempty(A.computation) || isempty(B.computation))
                 return;
             end
-            if (size(A.exprs, 1) == size(B.exprs, 1)) && (size(A.exprs, 2) == size(B.exprs, 2))
-                computation = MultElemwise({A.computation, B.computation});
-            elseif (size(A.exprs, 1) == size(B.exprs, 1)) && (size(A.exprs, 2) == 1) 
-                computation = MultElemwise({Repmat(A.computation, 2), B.computation});
-            elseif (size(A.exprs, 1) == size(B.exprs, 1)) && (size(B.exprs, 2) == 1)
-                computation = MultElemwise({A.computation, Repmat(B.computation, 2)});
-            elseif (size(A.exprs, 2) == size(B.exprs, 2)) && (size(A.exprs, 1) == 1)
-                computation = MultElemwise({Repmat(A.computation, 1), B.computation});
-            elseif (size(A.exprs, 2) == size(B.exprs, 2)) && (size(B.exprs, 1) == 1)
-                computation = MultElemwise({A.computation, Repmat(B.computation, 1)});
-            elseif (size(A.exprs, 1) == 1) && (size(A.exprs, 2) == 1)
-                computation = MultElemwise({Repmat(Repmat(A.computation, 1), 2), B.computation});
-            elseif (size(B.exprs, 1) == 1) && (size(B.exprs, 2) == 1)
-                computation = MultElemwise({A.computation, Repmat(Repmat(B.computation, 1), 2)});                
-            else
-                assert(0);
-            end
-                
-                
-            if (cache.find_desc(computation.toString()))
+            computation = MultElemwise({A.computation, B.computation});                
+            if (c.find_desc(computation.toString()))
               return;
             end
             exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr_();
@@ -99,7 +106,7 @@ classdef ExprMatrix < handle
               end
             end
             ret = ExprMatrix(exprs, computation);
-            cache.add_desc(computation.toString());            
+            c.add_desc(computation.toString());            
         end        
         
     end

@@ -8,7 +8,7 @@ function test_power_expr_max
     quant = {2^4};
     hashes = [];
     for i = 1:length(B)
-        hashes = [hashes, cache.hash(expr{i}')];
+        hashes = [hashes, ExprSymbolic().hash_expr(expr{i}')];
     end
     [~, idx] = sort(hashes);
     expr = expr(idx);

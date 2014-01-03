@@ -6,7 +6,7 @@ classdef Repmat < Computation
     
     methods
         function obj = Repmat(item, repdim)
-            global cache           
+            global c           
             obj.name = 'Repmat';
             obj.item = item;
             obj.dim1 = item.dim1;
@@ -14,11 +14,11 @@ classdef Repmat < Computation
             obj.repdim = repdim;
             if (obj.repdim == 1)
                 assert(obj.dim1 == 1);
-                obj.dim1 = cache.n;
+                obj.dim1 = c.n;
             end
             if (obj.repdim == 2)
                 assert(obj.dim2 == 1);
-                obj.dim2 = cache.m;
+                obj.dim2 = c.m;
             end  
             obj.complexity = item.complexity + obj.dim1 * obj.dim2;            
         end       

@@ -4,26 +4,24 @@ classdef RBM < ExprMatrix
     
     methods
         function obj = RBM()
-            global cache
-            k = cache.maxK;
-            v_l = k;
-            h_l = k;
+            global c
+            k = c.maxK;
             W = Expr_();
-            for i = 1:v_l
-                for j = 1:h_l
-                    expr = zeros(v_l * h_l, 1);
-                    expr((i - 1) * h_l + j, 1) = 1;
+            for i = 1:c.n
+                for j = 1:c.m
+                    expr = zeros(c.n * c.m, 1);
+                    expr((i - 1) * c.m + j, 1) = 1;
                     W(i, j) = Expr_(1, expr);
                 end
             end  
-            marginal_val = cell(2^v_l, 2^h_l);
-            fprintf('Number of probs = %d\n', 2^(v_l + h_l));
+            marginal_val = cell(2^c.n, 2^c.m);
+            fprintf('Number of probs = %d\n', 2^(c.n + c.m));
             % We start from 1, because v = 0 generates zero value.
-            for v = 1:(2^v_l - 1)
-                v_ = decode_vector(v, v_l) - 1;
-                for h = 1:(2^h_l - 1)
+            for v = 1:(2^c.n - 1)
+                v_ = decode_vector(v, c.n) - 1;
+                for h = 1:(2^c.m - 1)
                   fprintf('.'); 
-                  h_ = decode_vector(h, h_l) - 1;     
+                  h_ = decode_vector(h, c.m) - 1;     
                     posv = find(v_);
                     posh = find(h_);
                     E = cell(length(posv), length(posh)); 
@@ -39,8 +37,8 @@ classdef RBM < ExprMatrix
         end
         
         function ret = normalization(obj)
-            global cache
-            ret = 2^(2 * cache.maxK);
+            global c
+            ret = 2^(c.n + c.m);
         end
     end
 end
