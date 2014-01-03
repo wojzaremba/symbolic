@@ -64,16 +64,21 @@ faster can be defined as (1) number of operations, or (2) computational time
 for any particular computational hardware.
 
 
-We develop deterministic framework, which discovers relations between
-multi-variable polynomial expressions. First, we construct grammars of
-admissible operations together with cost of every operation. Through linear
-combination of grammar elements, we find solution to desired expressions that
-we want to compute. Finally, we show that this computation solution can be
-further speed up by use of standard techniques of optimization in compiler
-domain. We show power of presented approach by deriving close form, linear time
-solutions to compute partition function like expressions for RBMs. Presented
-close form solutions oppose widespread believe that hardness of partition
-function computation is in its exponential number of elements.
+We propose deterministic, grammar based framework, which discovers relations between
+multi-variable polynomial expressions. First, we construct an attribute grammar
+-- a context-free grammar extended to contain set of attributes, introduced by
+Donald Knuth (TODO:cite). To define the search space we use a set
+context-free grammar rules representing admissible operations. By representing
+the cost of every operation as a synthetized attribute (i.e. computed bottom-up from child node attributes)
+we can search for formula with low time complexity.
+Through linear combination of grammar elements, we find solution to desired 
+expressions that we want to compute. Finally, we
+show that this computation solution can be further speed up by use of standard
+techniques of optimization in compiler domain. We show power of presented
+approach by deriving close form, linear time solutions to compute partition
+function like expressions for RBMs. Presented close form solutions oppose
+widespread believe that hardness of partition function computation is in its
+exponential number of elements.
 
 
 Finally, we look on set of generated rules as on small axiomatic system.
@@ -90,11 +95,35 @@ Surprisingly, even brute force algorithm is able to find new more efficient,
 computational expressions for expressions that we use.
 
 
-
-
 \section{Related work} \label{relatedwork}
 
-compilers, computer vision grammars, nlp grammars. Finding rules in physics.
+
+Attribute grammar, originally developed in 1968 by Knuth (TODO:cite) in context of compiler
+construction, was succesfully used as a tool for design, formal specification
+and implementation of practical systems. It influenced various areas of
+Computer Science such as natural language processing \cite{starkie2002inferring}, 
+definite clause grammars, database query planning and specification of algorithms.
+Thirunarayan \cite{thirunarayan2009attribute} provides a good overview of their
+applications, including static analysis of programs, program translation, specifying information
+extraction algorithms and optimization of datalog programs.
+
+In our work, we focus on applying attribute grammar for optimization problem. This class
+of problems was successfully addressed in (TODO), (TODO) and even music domain\cite{desainte1994using}.
+We are not aware of any previous work related to discovering mathematical formulas. However,
+similar concepts can be found in \cite{cheung1999attribute} where authors are searching
+the space of algorithms and attributes are also computational complexity.
+
+
+% "Modular Natural Language Processing Using Declarative Attribute Grammars"
+% Gramtyki sa rowniez stosowane w innych dziedzinach - op
+% (cite "Grammar-like Functional Rules for Representing Query Optimization Alternatives")
+
+% cite "An attribute grammar approach to compiler optimization of intra-module interprocess communication"
+% cite "Using attribute grammars to find solutions for musical equational programs"
+% "Attribute Grammars and their Applications"
+% NLP: "Womb Grammars: Constraint Solving for Grammar Induction"
+% "An attribute grammar based framework for machine-dependent computational optimization of media processing algorithms"
+% compilers, computer vision grammars, nlp grammars. Finding rules in physics.
 
 \section{Admissible computation as a grammars}\label{sec:grammars}
 
