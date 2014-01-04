@@ -52,26 +52,22 @@ classdef ExprMatrix < handle
             W = ExprMatrix(exprs, Marginalize(A.computation, dim));                           
         end     
         
-        function [ W ] = repmat_expr( A, dim )   
-            global c
+        function [ W ] = repmat_expr( A, dims )   
             exprs = Expr_();
-            d1 = size(A.exprs, 1);                
-            d2 = size(A.exprs, 2);
-            if (dim == 1)
-                d1 = c.n;
-            else
-                d2 = c.m;
-            end
-            for j = 1 : d2
-                for i = 1 : d1
-                    if (dim == 1)
+            d1 = dims(1);
+            d2 = dims(2);
+            for i = 1 : d1            
+                for j = 1 : d2
+                    if (size(A.exprs, 1) == 1) && (dims(1) > 1)
                         exprs(i, j) = A.exprs(1, j);
-                    else
+                    elseif (size(A.exprs, 2) == 1) && (dims(2) > 1)
                         exprs(i, j) = A.exprs(i, 1);
+                    else
+                        assert(0);
                     end
                 end
             end
-            W = ExprMatrix(exprs, Repmat(A.computation, dim));                           
+            W = ExprMatrix(exprs, Repmat(A.computation, dims));                           
         end             
         
         function Validate(obj)
@@ -93,9 +89,6 @@ classdef ExprMatrix < handle
                 return;
             end
             computation = MultElemwise({A.computation, B.computation});                
-            if (c.find_desc(computation.toString()))
-                return;
-            end
             exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr_();
             for a = 1:size(A.exprs, 1)
                 for b = 1:size(A.exprs, 2)              
@@ -103,11 +96,45 @@ classdef ExprMatrix < handle
                 end
             end
             ret = ExprMatrix(exprs, computation);
-            c.add_desc(computation.toString());
-            % Elementwise multiplication is symmetric. 
-            computation = MultElemwise({B.computation, A.computation});
-            c.add_desc(computation.toString());
         end        
+        
+        function ret = multiply(A, B)
+            global c
+            ret = ExprMatrix();
+            power = A.power + B.power;
+            if (power > c.maxK) || (isempty(A.computation) || isempty(B.computation))
+                return;
+            end
+            computation = Mult({A.computation, B.computation});                
+            assert(size(A.exprs, 2) == size(B.exprs, 1));
+            exprs(size(A.exprs, 1), size(B.exprs, 2)) = Expr_();
+            e = Expr_();
+            for x = 1:size(A.exprs, 1)                
+                for z = 1:size(B.exprs, 2)                                             
+                    partial = cell(size(B.exprs, 2), 1);
+                    for y = 1:size(A.exprs, 2)                               
+                        partial{y} = A.exprs(x, y).multiply_expressions(B.exprs(y, z));
+                    end
+                    exprs(x, z) = e.add_many_expr(partial);
+                end
+            end
+            ret = ExprMatrix(exprs, computation);
+        end      
+        
+        function ret = transpose(A)
+            ret = ExprMatrix();
+            if (isempty(A.computation))
+                return;
+            end
+            computation = Transpose(A.computation); 
+            exprs(size(A.exprs, 2), size(A.exprs, 1)) = Expr_();
+            for x = 1:size(A.exprs, 1)                
+                for y = 1:size(A.exprs, 2)                               
+                    exprs(y, x) = A.exprs(x, y);
+                end                    
+            end
+            ret = ExprMatrix(exprs, computation);
+        end            
         
     end
 end

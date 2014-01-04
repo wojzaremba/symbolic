@@ -33,7 +33,7 @@
 
 \begin{document} 
 
-\icmltitle{Mathematical formulas discovery among polynomial expressions}
+\icmltitle{Mathematical formulas discovery for polynomial expressions}
 
 \icmlauthor{Wojciech Zaremba}{zaremba@cs.nyu.edu}
 \icmlauthor{Karol Kurach}{kkurach@google.com}
@@ -99,7 +99,7 @@ computational expressions for expressions that we use.
 
 
 Attribute grammar, originally developed in 1968 by Knuth (TODO:cite) in context of compiler
-construction, was succesfully used as a tool for design, formal specification
+construction, was successfully used as a tool for design, formal specification
 and implementation of practical systems. It influenced various areas of
 Computer Science such as natural language processing \cite{starkie2002inferring}, 
 definite clause grammars, database query planning and specification of algorithms.
@@ -231,6 +231,12 @@ Further, we optimized our symbolic tree by exploiting (1) distributive, and (2)
 associative properties of multiplication, and addition (together with
 commutative property for addition).
 
+\subsection{Grammars}
+Presented attributive grammar is just a example of grammar which is finite
+and seems to solve many problems. However, one could extend it with 
+other operations like e.g. inverse of matrix. Moreover, one could exploit
+rules which could discover recurrencies (to be able to discover discreet Fourier transform, or
+Strassen algorithm for fast matrix multiplication).
 
 \section{Partition function of RBM} \label{partitionfunction}
 Algorithm presented in Section
@@ -239,7 +245,9 @@ However, many interesting functions are outside of this family.  Instead of it,
 we are going to consider Taylor expansion of desired function, and we will
 derive close form fast formula for it.
 
-Let's denote by $g(f, W)$ generalization of partition function as follows : 
+Let's denote by $g(f, W)$ generalization of partition function. 
+$g$ is a functional, and it takes as argument a function $f : \mathbb{R} \rightarrow \mathbb{R}$,
+and weights $W$. It is defined as follow : 
 
 \begin{gather*}
 g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh) \\
@@ -248,7 +256,7 @@ W \in \mathbb{R}^{n \times m}
 \end{gather*}
 
 We consider computation of $g(x \rightarrow x^k, W)$ for a given $k$ for any $W
-\in \mathcal{R}^{n \times m}$, for any $n, m$. Potentially, if we would be able
+\in \mathbb{R}^{n \times m}$, for any $n, m$. Potentially, if we would be able
 to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, than partition
 function for finite energy $v^TWh < C$ could be approximated arbitrarily well.
 This is consequence of expressing $e^{x}$ as finite sum approximation through
@@ -489,7 +497,18 @@ Clearly, this inequality is fulfilled for $n > \frac{Ce}{\epsilon}$ :
 \end{proof}
 
 
-\section{Summary}
+\section{Discussion and future work}
+We have presented automatic method of polynomial formulas discovery. Method itself is novel, as well 
+as derived results of partition function approximation are unexpected.
+There are two major directions of future research. First, concerns with computation of partition function,
+its derivatives, using approximation for learning, 
+approximations of deep Bolzmann machine, optimization of derived formulas, and 
+understanding mathematical principles behind formulas derived by our programs. Second, is in 
+learning how to generalize computation, and replace current brute force process with something more
+intelligent. E.g. We could generalize computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2, 3, 4$ to
+$k > 4$. 
+
+
 \nocite{*}
 \bibliography{bibliography}
 \bibliographystyle{icml2012}

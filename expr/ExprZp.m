@@ -146,6 +146,8 @@ classdef ExprZp < Expr
     end           
 end
 
+% Linear time algorithm to invert numbers modulo p. It searches for
+% generator (there are phi(p - 1) of them, so it gets it fast).
 function ret = Inverse(p)
     ret = zeros(p - 1, 1); 
     for i = 1 : (p - 1)

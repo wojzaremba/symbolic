@@ -5,21 +5,12 @@ classdef Repmat < Computation
     end
     
     methods
-        function obj = Repmat(item, repdim)
-            global c           
+        function obj = Repmat(item, dims)   
             obj.name = 'Repmat';
             obj.item = item;
-            obj.dim1 = item.dim1;
-            obj.dim2 = item.dim2;
-            obj.repdim = repdim;
-            if (obj.repdim == 1)
-                assert(obj.dim1 == 1);
-                obj.dim1 = c.n;
-            end
-            if (obj.repdim == 2)
-                assert(obj.dim2 == 1);
-                obj.dim2 = c.m;
-            end  
+            obj.dim1 = dims(1);
+            obj.dim2 = dims(2);            
+            assert((item.dim1 == 1) || (item.dim2 == 1));
             obj.complexity = item.complexity + obj.dim1 * obj.dim2;            
         end       
         
