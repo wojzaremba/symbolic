@@ -3,10 +3,29 @@ classdef Grammar < handle
         n
         m
         expr_matrices
+        hashmap
         inited
     end
     
     methods(Static)
+        
+        function FullStats()
+            global grammars c
+            ns = [c.n, c.n, 1, 1];
+            ms = [c.m, 1, c.m, 1];
+            for i = 1 : length(ns)
+                G = grammars(ns(i), ms(i));
+                fprintf('len G(%d, %d) = %d\n', ns(i), ms(i), length(G.expr_matrices(:)));
+                for j = 1 : length(G.expr_matrices(:))
+                    if (isempty(G.expr_matrices(j).computation))
+                        continue;
+                    end
+                    fprintf('\t%s\n', G.expr_matrices(j).toString());
+                end
+            end
+            fprintf('\n');
+        end        
+        
         function Stats()
             global grammars c
             ns = [c.n, c.n, 1, 1];
@@ -27,7 +46,10 @@ classdef Grammar < handle
             for i = 1 : length(ns)                 
                 for k = 1:length(grammars(ns(i), ms(i)).expr_matrices(:))
                     try
-                        grammars(ns(i), ms(i)).expr_matrices(k).Validate();
+                        expr_matrix = grammars(ns(i), ms(i)).expr_matrices(k);
+                        expr_matrix.Validate();
+                        assert(size(expr_matrix.exprs, 1) == ns(i));
+                        assert(size(expr_matrix.exprs, 2) == ms(i));
                     catch
                         fprintf('Grammar validation failed for Grammar(%d, %d)\n', ns(i), ms(i));
                         assert(0);
@@ -55,6 +77,12 @@ classdef Grammar < handle
             global c
             obj.n = n;
             obj.m = m;
+            if (strcmp(class(Expr_()), 'ExprZp'))
+                type = 'char';
+            else
+                type = 'int64';
+            end
+            obj.hashmap = containers.Map('KeyType', type, 'ValueType', 'any');                        
             W = [Expr_()];
             obj.expr_matrices = [];
             if (n == c.n) && (m == c.m)               
@@ -65,7 +93,7 @@ classdef Grammar < handle
                         W(i, j) = Expr_(1, expr);
                     end
                 end  
-                obj.expr_matrices = ExprMatrix(W, Matrix('W', c.n, c.m));
+                obj.Add(ExprMatrix(W, Matrix('W', c.n, c.m)));
             end
             grammars(n, m) = obj;
         end
@@ -112,26 +140,28 @@ classdef Grammar < handle
         
         function ret = Add(obj, expr_matrix)
             global grammars      
-            initlen = length(obj.expr_matrices(:));
-            if (initlen == 0)
-                obj.expr_matrices = expr_matrix;
+            hash = expr_matrix.hash;
+            if (isempty(expr_matrix.computation))
+                ret = false;
+                return;
+            end
+            if (obj.hashmap.isKey(hash))
+                idx = obj.hashmap(hash);
+                if (obj.expr_matrices(idx).computation.complexity < expr_matrix.computation.complexity)
+                    ret = false;
+                    return;
+                end
+                obj.expr_matrices(idx) = expr_matrix;
+                ret = true;
+                return;
+            end
+            if (isempty(obj.expr_matrices))
+                obj.expr_matrices = expr_matrix;                
             else
                 obj.expr_matrices(end + 1) = expr_matrix;
             end
-            if (strcmp(class(Expr_()), 'ExprZp') == 1)
-                hashes = cell(length(obj.expr_matrices), 1);
-                for i = 1 : length(obj.expr_matrices)
-                    hashes{i} = obj.expr_matrices(i).hash;
-                end
-            else
-                hashes = zeros(length(obj.expr_matrices), 1);
-                for i = 1 : length(obj.expr_matrices)
-                    hashes(i) = obj.expr_matrices(i).hash;
-                end
-            end
-            [~, idx] = unique(hashes);            
-            obj.expr_matrices = obj.expr_matrices(idx);
-            ret = (length(obj.expr_matrices(:)) > initlen);
+            obj.hashmap(hash) = length(obj.expr_matrices);
+            ret = true;            
             grammars(obj.n, obj.m) = obj;
         end       
         
@@ -170,7 +200,7 @@ classdef Grammar < handle
                 if (isempty(obj.expr_matrices(i).computation))
                     continue;
                 end
-                computation = RepmatScaled(obj.expr_matrices(i).computation, dim);
+                computation = Repmat(obj.expr_matrices(i).computation, dim);
                 if (c.find_desc(computation.toString()))
                     continue;
                 end
@@ -180,7 +210,7 @@ classdef Grammar < handle
                 elseif (dim == 2)
                     res = Grammar(obj.n, c.m);
                 end
-                updated = updated | res.Add(expr_matrix);           
+                updated = updated | res.Add(expr_matrix);
                 c.add_desc(computation.toString());
             end
             Grammar.Stats();            

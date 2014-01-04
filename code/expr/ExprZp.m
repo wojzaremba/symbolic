@@ -6,7 +6,7 @@ classdef ExprZp < Expr
     
     properties(Constant)             
         len = 60;
-        Zp = 7919;
+        Zp = 100069;
         mods = RandVals(ExprZp.len, 25, 10, ExprZp.Zp);
         field_inv = Inverse(ExprZp.Zp);
     end
@@ -109,7 +109,7 @@ classdef ExprZp < Expr
                 else
                     % It multiplies expr by mean of them. So this value is
                     % invariant to multiplications of expr by constant.
-                    ret = char(mod(obj.expr * ExprZp.len * ExprZp.field_inv(mod(sum(obj.expr(:)), ExprZp.Zp)), ExprZp.Zp))';
+                    ret = sprintf('%d\n', mod(obj.expr * ExprZp.len * ExprZp.field_inv(mod(sum(obj.expr(:)), ExprZp.Zp)), ExprZp.Zp));
                 end
                 obj.hash_ = ret;
             else
@@ -124,7 +124,7 @@ classdef ExprZp < Expr
             end
             Y = marginal.expr;
             coeffs = [];
-            invert = gflineq(X, Y, ExprZp.Zp);
+            invert = modlinear(X, Y, ExprZp.Zp, ExprZp.field_inv);
             error = norm(mod(X * invert - Y, ExprZp.Zp));
             fprintf('error : %f\n', error);  
             if (error > 1e-5)
@@ -147,7 +147,30 @@ classdef ExprZp < Expr
 end
 
 function ret = Inverse(p)
-    [ret, ~] = find(mod((1 : (p - 1)).' * (1 : (p - 1)) , p ) == 1);  
+    ret = zeros(p - 1, 1); 
+    for i = 1 : (p - 1)
+        for invi = 1 : (p - 1)
+            if (mod(i * invi, p) == 1)
+                break;                
+            end
+        end
+        ret(:) = 0;
+        a = 1;   
+        b = 1;  
+        fail = false;
+        for k = 1 : (p - 1)
+            if (ret(a) ~= 0)
+                fail = true;
+                break;
+            end
+            ret(a) = b;
+            a = mod(a * i, p);
+            b = mod(b * invi, p);
+        end
+        if (~fail)
+            return;
+        end
+    end
 end
 
 function ret = RandVals(planes, rows, cols, Zp)

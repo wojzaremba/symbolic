@@ -55,26 +55,23 @@ classdef ExprMatrix < handle
         function [ W ] = repmat_expr( A, dim )   
             global c
             exprs = Expr_();
-            if (strcmp(class(Expr_()), 'ExprZp'))
-                if (dim == 1)
-                    inv = ExprZp.field_inv(c.n);
-                else
-                    inv = ExprZp.field_inv(c.m);
-                end
-                for j = 1:size(A.exprs, 2)
-                    for i = 1:size(A.exprs, 1)
-                        if (dim == 1)
-                            exprs(i, j) = A.exprs(1, j);
-                        else
-                            exprs(i, j) = A.exprs(i, 1);
-                        end
-                        exprs(i, j).expr = mod(exprs(i, j).expr * inv, ExprZp.Zp);
+            d1 = size(A.exprs, 1);                
+            d2 = size(A.exprs, 2);
+            if (dim == 1)
+                d1 = c.n;
+            else
+                d2 = c.m;
+            end
+            for j = 1 : d2
+                for i = 1 : d1
+                    if (dim == 1)
+                        exprs(i, j) = A.exprs(1, j);
+                    else
+                        exprs(i, j) = A.exprs(i, 1);
                     end
                 end
-            else
-                assert(0);
             end
-            W = ExprMatrix(exprs, RepmatScaled(A.computation, dim));                           
+            W = ExprMatrix(exprs, Repmat(A.computation, dim));                           
         end             
         
         function Validate(obj)
@@ -97,16 +94,19 @@ classdef ExprMatrix < handle
             end
             computation = MultElemwise({A.computation, B.computation});                
             if (c.find_desc(computation.toString()))
-              return;
+                return;
             end
             exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr_();
             for a = 1:size(A.exprs, 1)
-              for b = 1:size(A.exprs, 2)              
-                exprs(a, b) = A.exprs(a, b).multiply_expressions(B.exprs(min(a, size(B.exprs, 1)), min(b, size(B.exprs, 2))));
-              end
+                for b = 1:size(A.exprs, 2)              
+                    exprs(a, b) = A.exprs(a, b).multiply_expressions(B.exprs(a, b));
+                end
             end
             ret = ExprMatrix(exprs, computation);
-            c.add_desc(computation.toString());            
+            c.add_desc(computation.toString());
+            % Elementwise multiplication is symmetric. 
+            computation = MultElemwise({B.computation, A.computation});
+            c.add_desc(computation.toString());
         end        
         
     end

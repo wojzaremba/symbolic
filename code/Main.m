@@ -2,8 +2,11 @@ clc;
 addpath(genpath('.'));
 totaltime = tic;
 global expr_type c
-expr_type = 'Zp';
-Cache(2);
+% Two options : Zp, and symbolic. Zp is much faster.
+expr_type = 'Zp'; 
+% Indicates for which power we are looking for a formula discovery.
+power = 4;
+Cache(power);
 
 computation_time = tic;
 
@@ -29,12 +32,14 @@ while (norm(u) > 0)
     u(11) = repmat_expr(Grammar(1, 1), 1);  
     u(12) = repmat_expr(Grammar(1, 1), 2);  
     
+    % Checks if there is enough mod p evaluations of polynomial
+    % to recover coefficients.
     G11 = Grammar(1, 1);
     assert(length(G11.expr_matrices) < 0.9 * ExprZp.len);
     
     fprintf('single iter takes = %f\n', toc(single_iter_time));
 end
-
+Grammar.FullStats();
 trim_size(Grammar(1, 1));
 marginal = RBM();
 

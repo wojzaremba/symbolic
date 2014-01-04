@@ -1,5 +1,5 @@
 function str = printf_list(params, op)
-  assert(length(params) > 1);
+  assert(length(params) >= 1);
   chunk = toString(params{1});
   str = '';
   for j = 2:length(params)

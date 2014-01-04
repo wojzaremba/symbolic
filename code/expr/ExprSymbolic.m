@@ -251,7 +251,7 @@ classdef ExprSymbolic < Expr
         end               
         
         
-        function [grammar_solved, coeffs] = reexpres_data(marginal, F)
+        function [expr_matrices, coeffs] = reexpres_data(marginal, F)
           global c
           powers = [];
           maxK = c.maxK;
@@ -275,9 +275,26 @@ classdef ExprSymbolic < Expr
           hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
 
           X = F.encode_in_hash(hash_map, maxK);  
-          Y = F.encode_in_hash_exprs(marginal, hash_map);
-          [grammar_solved, coeffs] = get_final_result(X, Y, Grammar(1, 1));          
-        end           
+          Y = F.encode_in_hash_exprs(marginal, hash_map);  
+          coeffs = [];
+          invert = quadprog(eye(size(X, 2)), zeros(size(X, 2), 1), [], [], X, Y, [], [], [], optimset('Algorithm', 'active-set', 'Display','off'));    
+          error = norm(X * invert - Y);
+          fprintf('error : %f\n', error);  
+          if (error > 1e-5)
+              fprintf('Couldnt find solution\n');
+              assert(0);
+          end
+
+          expr_matrices = {};
+          for i = 1:length(invert)
+              if (abs(invert(i)) < 1e-5)
+                  continue;
+              end
+              expr_matrices{end + 1} = F.expr_matrices(i);
+              coeffs = [coeffs; invert(i)];
+          end   
+          fprintf('nr coeffs = %d\n', length(coeffs));
+        end        
                  
     end
 end
@@ -290,4 +307,8 @@ function dot_mult = InitDotMult()
       val = mod(val * 10000000001, c.prime);
       dot_mult(i) = val;
     end      
+end
+
+function [ res ] = compare_expr( A, a, B, b ) 
+  res = sign(A.hashes(a) - B.hashes(b));
 end

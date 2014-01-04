@@ -8,11 +8,7 @@ classdef Sum < Computation
         
         function obj = Sum(params)  
           obj.name = 'Sum';
-          if (length(params) == 1)
-              obj = params{1};
-              return;
-          end
-          assert(length(params) > 1);  
+          assert(length(params) >= 1);  
           obj.params = params;
           obj.ones_params = {};
           obj.rest_params = {};  
