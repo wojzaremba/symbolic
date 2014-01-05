@@ -34,10 +34,22 @@ S.AddMultRules();
 S.Run();
 
 Grammar.FullStats();
-trim_size(Grammar(1, 1));
 
-marginal = RBM();
+global grammars c
+save('~/grammar', 'grammars', 'c');
 
-[grammar_solved, coeffs] = reexpres_data(marginal.exprs(1), Grammar(1, 1));
-show_results(coeffs, marginal.normalization(), grammar_solved);
-fprintf('total time = %f\n', toc(totaltime));
+% Check if here are all from X4 
+% Check if here are all from X4 
+% Check if here are all from X4 
+% Check if here are all from X4 
+% Check if here are all from X4 
+% Check if here are all from X4 
+
+
+% trim_size(Grammar(1, 1));
+% 
+% marginal = RBM();
+% 
+% [grammar_solved, coeffs] = reexpres_data(marginal.exprs(1), Grammar(1, 1));
+% show_results(coeffs, marginal.normalization(), grammar_solved);
+% fprintf('total time = %f\n', toc(totaltime));
