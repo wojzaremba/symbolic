@@ -11,13 +11,13 @@ classdef Grammar < handle
         
         function FullStats()
             global grammars
-            for i = 1 : size(grammars, 1)
-                for j = 1 : size(grammars, 2)
+            for i = size(grammars, 1) : -1 : 1
+                for j = size(grammars, 2) : -1 : 1
                     G = grammars(i, j);
                     if (isempty(G)) || (isempty(G.expr_matrices))
                         continue;
                     end
-                    fprintf('len G(%d, %d) = %d\n', i, j, length(G.expr_matrices(:)));
+                    fprintf('|G(%d, %d)| = %d\n', i, j, length(G.expr_matrices(:)));
                     for k = 1 : length(G.expr_matrices(:))                
                         if (isempty(G.expr_matrices(k).computation))
                             continue;
@@ -42,7 +42,7 @@ classdef Grammar < handle
                     if (i ~= size(grammars, 1)) || (j ~= size(grammars, 2))
                         fprintf(', ');
                     else
-                        fprintf('\t\t');
+                        fprintf('\t');
                     end                                        
                 end
             end
@@ -156,18 +156,17 @@ classdef Grammar < handle
         function ret = Add(obj, expr_matrix)
             global grammars      
             hash = expr_matrix.hash;
+            ret = false;            
             if (isempty(expr_matrix.computation))
-                ret = false;
                 return;
             end
             if (obj.hashmap.isKey(hash))
                 idx = obj.hashmap(hash);
                 if (obj.expr_matrices(idx).computation.complexity <= expr_matrix.computation.complexity)
-                    ret = false;
                     return;
                 end
                 obj.expr_matrices(idx) = expr_matrix;
-                ret = true;
+                ret = false;
                 return;
             end
             if (isempty(obj.expr_matrices))

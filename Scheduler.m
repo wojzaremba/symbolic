@@ -22,19 +22,105 @@ classdef Scheduler < handle
         
         function ResizeTried(obj, idx)
             grammars = obj.grammars{idx};
+            g1 = Grammar(grammars{1}(1), grammars{1}(2));
+            l1 = length(g1.expr_matrices(:));            
             if (length(grammars) == 1)
-                if (length(obj.tried{idx}(:)) < length(grammars{1}.expr_matrices(:)))
-                    obj.tried{idx}(length(grammars{1}.expr_matrices(:))) = 0;
+                if (length(obj.tried{idx}(:)) < l1)
+                    obj.tried{idx}(l1) = 0;
                 end
             elseif (length(grammars) == 2)
-                if ((size(obj.tried{idx}, 1) < length(grammars{1}.expr_matrices(:))) || ...
-                   (size(obj.tried{idx}, 2) < length(grammars{2}.expr_matrices(:)))) && ...
-                    (length(grammars{1}.expr_matrices(:)) ~= 0) && (length(grammars{2}.expr_matrices(:)) ~= 0)
-                    obj.tried{idx}(length(grammars{1}.expr_matrices(:)), length(grammars{2}.expr_matrices(:))) = 0;
+                g2 = Grammar(grammars{2}(1), grammars{2}(2));                
+                l2 = length(g2.expr_matrices(:));
+                if ((size(obj.tried{idx}, 1) < l1) || ...
+                   (size(obj.tried{idx}, 2) < l2)) && ...
+                    (l1 ~= 0) && (l2 ~= 0)
+                    obj.tried{idx}(l1, l2) = 0;
                 end
             else
                 assert(0);
             end            
+        end
+        
+        function AddBasicRules(S)
+            global c            
+            S.Add(@marginalize, {[c.n, c.m]}, {2});
+            S.Add(@marginalize, {[c.n, c.m]}, {1});            
+            S.Add(@marginalize, {[c.n, 1]}, {1});            
+            S.Add(@marginalize, {[1, c.m]}, {2});    
+            
+            S.Add(@elementwise_multiply, {[c.n, c.m], [c.n, c.m]}, {});            
+            S.Add(@elementwise_multiply, {[c.n, 1], [c.n, 1]}, {});         
+            S.Add(@elementwise_multiply, {[1, c.m], [1, c.m]}, {});
+            S.Add(@elementwise_multiply, {[1, 1], [1, 1]}, {});        
+            
+            S.Add(@repmat_expr, {[c.n, 1]}, {[c.n, c.m]});   
+            S.Add(@repmat_expr, {[1, c.m]}, {[c.n, c.m]});            
+            S.Add(@repmat_expr, {[1, 1]}, {[c.n, 1]});
+            S.Add(@repmat_expr, {[1, 1]}, {[1, c.m]});
+        end
+        
+        function AddMultRules(S)
+            global c
+            S.Add(@marginalize, {[c.m, c.n]}, {2});    
+            S.Add(@marginalize, {[c.m, c.m]}, {2});
+            S.Add(@marginalize, {[c.n, c.n]}, {2});    
+
+            S.Add(@marginalize, {[c.m, c.n]}, {1});    
+            S.Add(@marginalize, {[c.m, c.m]}, {1});
+            S.Add(@marginalize, {[c.n, c.n]}, {1});    
+
+            S.Add(@marginalize, {[1, c.n]}, {2});    
+            S.Add(@marginalize, {[c.m, 1]}, {1});        
+
+            S.Add(@elementwise_multiply, {[c.m, c.n], [c.m, c.n]}, {});    
+            S.Add(@elementwise_multiply, {[c.n, c.n], [c.n, c.n]}, {});    
+            S.Add(@elementwise_multiply, {[c.m, c.m], [c.m, c.m]}, {});
+            S.Add(@elementwise_multiply, {[1, c.n], [1, c.n]}, {});    
+            S.Add(@elementwise_multiply, {[c.m, 1], [c.m, 1]}, {});   
+
+            S.Add(@repmat_expr, {[c.n, 1]}, {[c.n, c.n]});        
+            S.Add(@repmat_expr, {[1, c.m]}, {[c.m, c.m]});    
+            S.Add(@repmat_expr, {[1, 1]}, {[c.m, 1]});    
+            S.Add(@repmat_expr, {[1, 1]}, {[1, c.n]});  
+
+            S.Add(@transpose, {[c.n, c.m]}, {});
+            S.Add(@transpose, {[c.n, c.n]}, {});
+            S.Add(@transpose, {[c.m, c.m]}, {});    
+            S.Add(@transpose, {[c.n, 1]}, {});
+            S.Add(@transpose, {[1, c.m]}, {});
+            S.Add(@transpose, {[c.m, c.n]}, {});
+            S.Add(@transpose, {[1, c.n]}, {});
+            S.Add(@transpose, {[c.m, 1]}, {});
+
+            S.Add(@multiply, {[c.n, c.m], [c.m, 1]}, {});
+            S.Add(@multiply, {[c.n, c.m], [c.m, c.n]}, {});
+            S.Add(@multiply, {[c.n, c.m], [c.m, c.m]}, {});
+            S.Add(@multiply, {[c.n, 1], [1, 1]}, {});
+            S.Add(@multiply, {[c.n, 1], [1, c.n]}, {});
+            S.Add(@multiply, {[c.n, 1], [1, c.m]}, {});    
+            S.Add(@multiply, {[c.n, c.n], [c.n, 1]}, {});
+            S.Add(@multiply, {[c.n, c.n], [c.n, c.n]}, {});
+            S.Add(@multiply, {[c.n, c.n], [c.n, c.m]}, {});
+
+            S.Add(@multiply, {[c.m, c.m], [c.m, 1]}, {});
+            S.Add(@multiply, {[c.m, c.m], [c.m, c.n]}, {});
+            S.Add(@multiply, {[c.m, c.m], [c.m, c.m]}, {});
+            S.Add(@multiply, {[c.m, 1], [1, 1]}, {});
+            S.Add(@multiply, {[c.m, 1], [1, c.n]}, {});
+            S.Add(@multiply, {[c.m, 1], [1, c.m]}, {});    
+            S.Add(@multiply, {[c.m, c.n], [c.n, 1]}, {});
+            S.Add(@multiply, {[c.m, c.n], [c.n, c.n]}, {});
+            S.Add(@multiply, {[c.m, c.n], [c.n, c.m]}, {});         
+
+            S.Add(@multiply, {[1, c.m], [c.m, 1]}, {});
+            S.Add(@multiply, {[1, c.m], [c.m, c.n]}, {});
+            S.Add(@multiply, {[1, c.m], [c.m, c.m]}, {});
+            S.Add(@multiply, {[1, 1], [1, 1]}, {});
+            S.Add(@multiply, {[1, 1], [1, c.n]}, {});
+            S.Add(@multiply, {[1, 1], [1, c.m]}, {});    
+            S.Add(@multiply, {[1, c.n], [c.n, 1]}, {});
+            S.Add(@multiply, {[1, c.n], [c.n, c.n]}, {});
+            S.Add(@multiply, {[1, c.n], [c.n, c.m]}, {});      
         end
         
         function Run(obj)
@@ -47,29 +133,33 @@ classdef Scheduler < handle
                     rule_time = tic;
                     grammars = obj.grammars{i};
                     params = obj.params{i};
+                    g1 = Grammar(grammars{1}(1), grammars{1}(2));                    
                     if (length(grammars) == 2)
+                        g2 = Grammar(grammars{2}(1), grammars{2}(2));
                         for x = 1 : size(obj.tried{i}, 1)
                             for y = 1 : size(obj.tried{i}, 2)
                                 if (obj.tried{i}(x, y) == 0)
-                                    if (isempty(grammars{1}.expr_matrices(x))) || (isempty(grammars{2}.expr_matrices(y))) 
+                                    if (isempty(g1.expr_matrices(x))) || (isempty(g2.expr_matrices(y))) 
                                         obj.tried{i}(x, y) = 1;
                                         continue;
                                     end
-                                    A = grammars{1}.expr_matrices(x);
-                                    B = grammars{2}.expr_matrices(y);
-                                    u(i) = u(i) | obj.rules{i}(grammars{1}, A, B, params{:});
+                                    A = g1.expr_matrices(x);
+                                    B = g2.expr_matrices(y);
+                                    u(i) = u(i) | obj.rules{i}(g1, A, B, params{:});
+                                    obj.tried{i}(x, y) = 1;                                    
                                 end
                             end
                         end
                     elseif (length(grammars) == 1)
-                        for x = 1 : size(obj.tried{i}, 1)
+                        for x = 1 : length(obj.tried{i}(:))
                             if (obj.tried{i}(x) == 0)
-                                if (isempty(grammars{1}.expr_matrices(x)))
+                                if (isempty(g1.expr_matrices(x)))
                                     obj.tried{i}(x) = 1;
                                     continue;
                                 end
-                                A = grammars{1}.expr_matrices(x);
-                                u(i) = u(i) | obj.rules{i}(grammars{1}, A, params{:});
+                                A = g1.expr_matrices(x);
+                                u(i) = u(i) | obj.rules{i}(g1, A, params{:});
+                                obj.tried{i}(x) = 1;
                             end
                         end                        
                     else
