@@ -67,7 +67,7 @@ for any particular computational hardware.
 We propose deterministic, grammar based framework, which discovers relations between
 multi-variable polynomial expressions. First, we construct an attribute grammar
 -- a context-free grammar extended to contain set of attributes, introduced by
-Donald Knuth (TODO:cite). To define the search space we use a set
+Donald Knuth \cite{knuth1968semantics}. To define the search space we use a set
 context-free grammar rules representing admissible operations. By representing
 the cost of every operation as a synthetized attribute (i.e. computed bottom-up from child node attributes)
 we can search for formula with low time complexity.
@@ -98,17 +98,18 @@ computational expressions for expressions that we use.
 \section{Related work} \label{relatedwork}
 
 
-Attribute grammar, originally developed in 1968 by Knuth (TODO:cite) in context of compiler
+Attribute grammar, originally developed in 1968 by Knuth \cite{knuth1968semantics} in context of compiler
 construction, was successfully used as a tool for design, formal specification
 and implementation of practical systems. It influenced various areas of
-Computer Science such as natural language processing \cite{starkie2002inferring}, 
-definite clause grammars, database query planning and specification of algorithms.
+Computer Science such as natural language processing \cite{hafiz2011modular}, \cite{starkie2002inferring}, 
+definite clause grammars \cite{bratko2001prolog}, query processing \cite{koch2007attribute}, \cite{ramakrishnan1991top} and specification of algorithms \cite{bellanova1984examples}.
 Thirunarayan \cite{thirunarayan2009attribute} provides a good overview of their
 applications, including static analysis of programs, program translation, specifying information
 extraction algorithms and optimization of datalog programs.
 
 In our work, we focus on applying attribute grammar for optimization problem. This class
-of problems was successfully addressed in (TODO), (TODO) and even music domain\cite{desainte1994using}.
+of problems was successfully addressed in range of domains: from well-known algorithmic problems 
+like knapsack packing \cite{o2004solving}, through bioinformatics \cite{waldispuhl2002approximate} to music domain\cite{desainte1994using}.
 We are not aware of any previous work related to discovering mathematical formulas. However,
 similar concepts can be found in \cite{cheung1999attribute} where authors are searching
 the space of algorithms and attributes are also computational complexity.
