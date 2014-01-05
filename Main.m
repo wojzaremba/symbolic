@@ -1,4 +1,18 @@
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+% XXX : Reverse engineer previous X4() working solution !!!!!!
+
+
 % XXXX : If it doesn't work. write tests for transpose and mult. !!!!!
+% XXXX : Think, why the WRR, W0R, WR0, WOO could make a diference
 
 global expr_type
 % Two options : Zp, and symbolic. Zp is much faster.

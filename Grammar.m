@@ -17,7 +17,7 @@ classdef Grammar < handle
                     if (isempty(G)) || (isempty(G.expr_matrices))
                         continue;
                     end
-                    fprintf('|G(%d, %d)| = %d\n', i, j, length(G.expr_matrices(:)));
+                    fprintf('|G(%d, %d)|=%d\n', i, j, length(G.expr_matrices(:)));
                     for k = 1 : length(G.expr_matrices(:))                
                         if (isempty(G.expr_matrices(k).computation))
                             continue;
@@ -38,7 +38,7 @@ classdef Grammar < handle
                     if (isempty(G)) || (isempty(G.expr_matrices))
                         continue;
                     end
-                    fprintf('len G(%d, %d) = %d', i, j, length(G.expr_matrices(:)));
+                    fprintf('|G(%d, %d)|=%d', i, j, length(G.expr_matrices(:)));
                     if (i ~= size(grammars, 1)) || (j ~= size(grammars, 2))
                         fprintf(', ');
                     else
@@ -166,7 +166,7 @@ classdef Grammar < handle
                     return;
                 end
                 obj.expr_matrices(idx) = expr_matrix;
-                ret = false;
+                ret = false; %XXX : This might give suboptimal solution.
                 return;
             end
             if (isempty(obj.expr_matrices))

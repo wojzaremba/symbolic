@@ -175,7 +175,7 @@ classdef Scheduler < handle
                 G11 = Grammar(1, 1);
                 assert(length(G11.expr_matrices) < 0.9 * ExprZp.len);
 
-                fprintf('single iter takes = %f, updates = sum(u)\n', toc(single_iter_time));                
+                fprintf('single iter takes = %f, updates = %d\n', toc(single_iter_time), sum(u));
             end
             
         end
