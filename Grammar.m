@@ -180,97 +180,47 @@ classdef Grammar < handle
             grammars(obj.n, obj.m) = obj;
         end       
         
-        function updated = marginalize(obj, dim)
-            global c
-            rule_marginalize_time = tic; 
-            updated = false;             
-            for i = 1:length(obj.expr_matrices(:))
-                if (isempty(obj.expr_matrices(i).computation))
-                    continue;
-                end
-                computation = Marginalize(obj.expr_matrices(i).computation, dim);
-                expr_matrix = obj.expr_matrices(i).marginalize(dim);
-                if (dim == 1)
-                    res = Grammar(1, obj.m);
-                elseif (dim == 2)
-                    res = Grammar(obj.n, 1);
-                end
-                updated = updated | res.Add(expr_matrix);           
+        function updated = marginalize(obj, A, dim)            
+            expr_matrix = A.marginalize(dim);
+            if (dim == 1)
+                res = Grammar(1, obj.m);
+            elseif (dim == 2)
+                res = Grammar(obj.n, 1);
             end
-            Grammar.Stats();            
-            fprintf('marginalize, toc = %f\n', toc(rule_marginalize_time));
-            Grammar.Validate();
+            updated = res.Add(expr_matrix);           
         end   
         
         
-        function updated = repmat_expr(obj, dims)
-            rule_repmat_time = tic; 
-            updated = false;             
-            for i = 1:length(obj.expr_matrices(:))
-                if (isempty(obj.expr_matrices(i).computation))
-                    continue;
-                end
-                expr_matrix = obj.expr_matrices(i).repmat_expr(dims);
-                res = Grammar(dims(1), dims(2));
-                updated = updated | res.Add(expr_matrix);
-            end
-            Grammar.Stats();            
-            fprintf('u = %d, repmat, toc = %f\n', updated, toc(rule_repmat_time));
-            Grammar.Validate();
+        function updated = repmat_expr(obj, A, dims)
+            expr_matrix = A.repmat_expr(dims);
+            res = Grammar(dims(1), dims(2));
+            updated = res.Add(expr_matrix);
         end           
-
         
-        function updated = elementwise_multiply(obj)
-            rule_elementwise_multiply_time = tic;
+        function updated = elementwise_multiply(obj, A, B)
             updated = false;    
-            for i = 1 : length(obj.expr_matrices(:))
-                idx = i;
-                for j = idx : length(obj.expr_matrices)
-                    top_level = obj.expr_matrices(i).elementwise_multiply(obj.expr_matrices(j));
-                    if (isempty(top_level)) || (isempty(top_level.exprs))
-                        continue;
-                    end
-                    res = Grammar(obj.n, obj.m);                    
-                    updated = updated | res.Add(top_level);                    
-                end
+            top_level = A.elementwise_multiply(B);
+            if (isempty(top_level)) || (isempty(top_level.exprs))
+                return;
             end
-            Grammar.Stats();            
-            fprintf('u = %d, elementwise_multiply, toc = %f\n', updated, toc(rule_elementwise_multiply_time));
-            Grammar.Validate();
+            res = Grammar(obj.n, obj.m);                    
+            updated = res.Add(top_level);                           
         end             
         
-        function updated = transpose(obj)
-            rule_transpose_time = tic;
-            updated = false;    
-            for i = 1 : length(obj.expr_matrices(:))
-                if (isempty(obj.expr_matrices(i).computation))
-                    continue;
-                end
-                expr_matrix = obj.expr_matrices(i).transpose();
-                res = Grammar(obj.m, obj.n);
-                updated = updated | res.Add(expr_matrix);                   
-            end
-            Grammar.Stats();            
-            fprintf('u = %d, rule_transpose_time, toc = %f\n', updated, toc(rule_transpose_time));
-            Grammar.Validate();
+        function updated = transpose(obj, A)
+            expr_matrix = A.transpose();
+            res = Grammar(obj.m, obj.n);
+            updated = res.Add(expr_matrix);                   
         end     
         
-        function updated = multiply(A, B)
-            rule_multiply_time = tic;
+        function updated = multiply(obj, A, B, ~)
             updated = false;    
-            for i = 1 : length(A.expr_matrices(:))
-                for j = 1 : length(B.expr_matrices)
-                    top_level = A.expr_matrices(i).multiply(B.expr_matrices(j));
-                    if (isempty(top_level)) || (isempty(top_level.exprs))
-                        continue;
-                    end
-                    res = Grammar(A.n, B.m);
-                    updated = updated | res.Add(top_level);                    
-                end
+            top_level = A.multiply(B);
+            if (isempty(top_level)) || (isempty(top_level.exprs))
+                return;
             end
-            Grammar.Stats();            
-            fprintf('u = %d, rule_multiply_time, toc = %f\n', updated, toc(rule_multiply_time));
-            Grammar.Validate();
+            res = Grammar(size(A.exprs, 1), size(B.exprs, 2));
+            updated = updated | res.Add(top_level);                    
         end             
         
     end
