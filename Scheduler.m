@@ -53,8 +53,8 @@ classdef Scheduler < handle
             S.Add(@elementwise_multiply, {[1, c.m], [1, c.m]}, {});
             S.Add(@elementwise_multiply, {[1, 1], [1, 1]}, {});        
             
-            S.Add(@repmat_expr, {[c.n, 1]}, {[c.n, c.m]});   
-            S.Add(@repmat_expr, {[1, c.m]}, {[c.n, c.m]});            
+            S.Add(@repmat_expr, {[c.n, 1]}, {[1, c.m]});   
+            S.Add(@repmat_expr, {[1, c.m]}, {[c.n, 1]});            
             S.Add(@repmat_expr, {[1, 1]}, {[c.n, 1]});
             S.Add(@repmat_expr, {[1, 1]}, {[1, c.m]});
         end
@@ -78,8 +78,8 @@ classdef Scheduler < handle
             S.Add(@elementwise_multiply, {[1, c.n], [1, c.n]}, {});    
             S.Add(@elementwise_multiply, {[c.m, 1], [c.m, 1]}, {});   
 
-            S.Add(@repmat_expr, {[c.n, 1]}, {[c.n, c.n]});        
-            S.Add(@repmat_expr, {[1, c.m]}, {[c.m, c.m]});    
+            S.Add(@repmat_expr, {[c.n, 1]}, {[1, c.n]});        
+            S.Add(@repmat_expr, {[1, c.m]}, {[c.m, 1]});    
             S.Add(@repmat_expr, {[1, 1]}, {[c.m, 1]});    
             S.Add(@repmat_expr, {[1, 1]}, {[1, c.n]});  
 
@@ -146,7 +146,7 @@ classdef Scheduler < handle
                                     A = g1.expr_matrices(x);
                                     B = g2.expr_matrices(y);
                                     u(i) = u(i) | obj.rules{i}(g1, A, B, params{:});
-                                    obj.tried{i}(x, y) = 1;                                    
+                                    obj.tried{i}(x, y) = 1;
                                 end
                             end
                         end

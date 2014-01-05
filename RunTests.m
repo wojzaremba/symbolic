@@ -1,6 +1,6 @@
 addpath(genpath('.'));
-test_repmat_inv_sum()
 test_normalization_ExprZp();
+test_repmat();
 test_add_expr();
 test_many_add_expr();
 test_multiply_expr();

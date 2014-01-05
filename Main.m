@@ -1,23 +1,12 @@
 % XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-% XXX : Reverse engineer previous X4() working solution !!!!!!
-
-
 % XXXX : If it doesn't work. write tests for transpose and mult. !!!!!
-% XXXX : Think, why the WRR, W0R, WR0, WOO could make a diference
 
-global expr_type
+global expr_type debug
 % Two options : Zp, and symbolic. Zp is much faster.
 expr_type = 'Zp'; 
+debug = 0;
 % Indicates for which power we are looking for a formula discovery.
+
 power = 4;
 
 clc;
@@ -44,6 +33,9 @@ save('~/grammar', 'grammars', 'c');
 % Check if here are all from X4 
 % Check if here are all from X4 
 % Check if here are all from X4 
+% Make sure that there is no hash collision, verify it by setting random
+% real values (maybe even write a Expr). Maybe my hash is order invariant,
+% and it kills too much.
 
 
 % trim_size(Grammar(1, 1));
