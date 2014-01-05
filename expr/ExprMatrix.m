@@ -54,8 +54,8 @@ classdef ExprMatrix < handle
         
         function [ W ] = repmat_expr( A, dims )   
             exprs = Expr_();
-            d1 = dims(1);
-            d2 = dims(2);
+            d1 = size(A.exprs, 1) * dims(1);
+            d2 = size(A.exprs, 2) * dims(2);
             for i = 1 : d1            
                 for j = 1 : d2
                     if (size(A.exprs, 1) == 1) && (dims(1) > 1)

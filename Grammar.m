@@ -49,7 +49,10 @@ classdef Grammar < handle
         end
         
         function Validate()
-            global grammars
+            global grammars debug
+            if (debug == 0)
+                return;
+            end
             for i = 1 : size(grammars, 1)
                 for j = 1 : size(grammars, 2)
                     G = grammars(i, j);
@@ -192,7 +195,10 @@ classdef Grammar < handle
         
         function updated = repmat_expr(obj, A, dims)
             expr_matrix = A.repmat_expr(dims);
-            res = Grammar(dims(1), dims(2));
+            assert((obj.n == 1) || (obj.m == 1));
+            assert((dims(1) == 1) || (dims(2) == 1));
+            assert((dims(1) ~= obj.n) || (dims(2) ~= obj.m))
+            res = Grammar(obj.n * dims(1), obj.m * dims(2));
             updated = res.Add(expr_matrix);
         end           
         
