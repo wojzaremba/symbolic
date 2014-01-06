@@ -18,11 +18,4 @@ ShowResults(coeffs, marginal.normalization(), grammar_solved);
 fprintf('total time = %f\n', toc(totaltime));
 
 
-%%%%% XXX : Make sure that generated rule for X4 generalizes !!!!!!!!!!!!!!
-%%%%% XXX : Find smallest complexity solution (prefer .* over *)
-
-% Check what is really smallest size for k = 4
-% Verify that symbolic works as well !!!
-
-
 % Solve normalization issue for symbolic.

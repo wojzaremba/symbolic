@@ -9,7 +9,14 @@ classdef Repmat < Computation
             obj.name = 'Repmat';
             obj.item = item;
             obj.dim1 = item.dim1 * dims(1);
-            obj.dim2 = item.dim2 * dims(2);            
+            obj.dim2 = item.dim2 * dims(2);     
+            if (dims(1) > 1) && (dims(2) == 1)
+                obj.repdim = 1;
+            elseif (dims(1) == 1) && (dims(2) > 1)
+                obj.repdim = 2;
+            else
+                assert(0);
+            end
             assert((item.dim1 == 1) || (item.dim2 == 1));
             assert((dims(1) == 1) || (dims(2) == 1));
             assert((item.dim1 ~= obj.dim1) || (item.dim2 ~= obj.dim2));
