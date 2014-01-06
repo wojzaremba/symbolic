@@ -1,4 +1,4 @@
-Mathematical formulas discovery for polynomial expressions
+Formulas discovery for polynomial expressions
 ==========================================================
 
 Main.m allows to find approximations for partition function.

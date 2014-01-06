@@ -29,11 +29,12 @@
 \newtheorem{corollary}[theorem]{Corollary}
 
 \usepackage[accepted]{icml2012}  % XXX : just set temporarly to print out authors corretly.
+\newcommand{\myverb}[1]{ \indent{ \begin{verbatim} #1 \end{verbatim} } }
 
 
 \begin{document} 
 
-\icmltitle{Mathematical formulas discovery for polynomial expressions}
+\icmltitle{Formulas discovery for polynomial expressions}
 
 \icmlauthor{Wojciech Zaremba}{zaremba@cs.nyu.edu}
 \icmlauthor{Karol Kurach}{kkurach@google.com}
@@ -344,13 +345,45 @@ Let us consider following expressions :
 One can find that 
 \begin{align*}
 	&g(x \mapsto x^2, W) = 2^{n + m} \\ 
- &\Big( 2.5\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + 0.5(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
+ &\Big( 0.5\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + 0.5(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
  &0.5\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + 0.5\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)\\
 \end{align*}
 
 Above derivation is still in scope of human skills. However, manual derivation
 of $g(x \mapsto x^k, W)$ for further $k > 2$  seems to be a feet. Our algorithm
-is able to find such complex computational patterns automatically.
+is able to find such complex computational patterns automatically. 
+
+\subsubsection{$g(x \rightarrow x^3, W)$}
+Power $k = 3$ is beyond our linear algebra capabilities of derivation. However, it is
+interesting to have a look on all derived expressions in $\mathcal{P}^{1 \times 1}_3$. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{itemize}
+	\itemsep-5px 
+	\item \begin{verbatim} sum(sum(W, 2), 1) \end{verbatim}
+	\item \begin{verbatim} (sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 1) .* sum(W, 1)), 2) \end{verbatim}
+	\item \begin{verbatim} sum(sum(((repmat(sum(W, 2), [1, m]) .*  ...
+		repmat(sum(W, 1), [n, 1])) .* W), 2), 1) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 1) .* (sum(W, 1) .* sum(W, 1))), 2) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 2) .* sum(W, 2)), 1) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 2) .* (sum(W, 2) .* sum(W, 2))), 1) \end{verbatim}
+	\item \begin{verbatim} sum(sum((W .* W), 2), 1) \end{verbatim}
+	\item \begin{verbatim} sum(sum(W, 2), 1) .^ 3 \end{verbatim}
+	\item \begin{verbatim} sum(sum((repmat(sum(W, 1), [n, 1]) .^ 2  .* ...
+		 (repmat(sum(W, 2), [1, m]))), 1), 2) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 1) .* sum((W .* W), 1)), 2) \end{verbatim}
+	\item \begin{verbatim} (sum(sum(W, 2), 1) .* sum(sum((W .* W), 2), 1)) \end{verbatim}
+	\item \begin{verbatim} sum(sum((repmat(sum(W, 2), [1, m]) .^ 2 .* ...
+		repmat(sum(W, 1), [n, 1]))), 2), 1) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 2) .* sum((W .* W), 2)), 1) \end{verbatim}
+	\item \begin{verbatim} sum(sum((W .* (W .* W)), 2), 1) \end{verbatim}
+\end{itemize}
+\endgroup
+
+
+
 
 \section{Experiments}
 
@@ -410,12 +443,12 @@ how to generalize optimizations.
 \hline
 Order & Size of grammar & Computation time (s) \\
 \hline\hline
-2 & 10 & ?0.45 \\
-3 & 37 & ?10.33 \\
+2 & 5 & 17 \\
+3 & 15 & 188 \\
 4 & 48 & 2535\\
 \hline
 \end{tabular}
-\caption{Table summarizes size and computational time for grammars of specific order.}
+\caption{Table summarizes size and computational time for grammars of specific degree.}
 \label{grammars}
 \end{table}
 
@@ -426,10 +459,9 @@ Order & Size of grammar & Computation time (s) \\
 \hline
 Order & Number of terms & Evaluation time & Complexity \\
 \hline\hline
-1 & & & $O(n^2)$\\
-2 & & & $O(n^2)$\\
-3 & & & $O(n^2)$\\
-4 & & & $\mathbf{O(n^3)}$\\
+2 & 4 & & $O(n^2)$\\
+3 & 5 & & $O(n^2)$\\
+4 & 21 & & $\mathbf{O(n^3)}$\\
 \hline
 \end{tabular}
 \caption{Table summarizes evaluation time of $g(x \rightarrow x^k, W)$ for $W \in \mathbb{R}^{100 \times 100}$.}
