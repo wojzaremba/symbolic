@@ -14,5 +14,8 @@ l = legend('\fontsize{20}{0}\selectfont$e^x$', ...
            'Location', 'NorthWest');
 set(l, 'Interpreter', 'Latex');
 set(gca, 'FontSize', 20);
+xlabel('x');
+ylabel('f(x)');
+
 
 remove_border('/Users/wojto/symbolic/paper/img/approximations.png');

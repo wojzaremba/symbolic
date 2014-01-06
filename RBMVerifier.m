@@ -4,7 +4,7 @@ global debug
 debug = 1;
 W = TestData(8, 7);
 
-funcs = {One(), X(), X2(), X3(), X4(), Complex({1, 1, 1 / 2, 1 / 6, 1 / 24}, {One(), X(), X2(), X3(), X4()})};
+funcs = {One(), X(), X2(), X3(), X4(), X5(), Complex({1, 1, 1 / 2, 1 / 6, 1 / 24, 1 / 120}, {One(), X(), X2(), X3(), X4(), X5()})};
 
 for i = 1 : length(funcs)
   fun = funcs{i};
