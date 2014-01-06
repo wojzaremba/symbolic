@@ -1,7 +1,7 @@
 Init(struct('expr_type', 'Zp', ...
             'complexity', 'O', ...
             'debug', 0, ...
-            'power', 4));
+            'power', 5));
 
 totaltime = tic;
 S = Scheduler();
@@ -18,4 +18,6 @@ ShowResults(coeffs, marginal.normalization(), grammar_solved);
 fprintf('total time = %f\n', toc(totaltime));
 
 
-% Solve normalization issue for symbolic.
+% Solve normalization issue for symbolic. Podziel przez najwiekszy wspolny
+% dzielnik, tak zeby pierwszy wspolrzedna byla dodatnia. Albo jak mam tam
+% mod p to tak jak w Zp.

@@ -134,6 +134,13 @@ the space of algorithms and attributes are also computational complexity.
 
 \section{Admissible computation as a grammars}\label{sec:grammars}
 
+{\bf Terminology}
+Grammar
+Expression
+Literal
+
+
+
 We consider grammar on tuples : (expression, computation, computational time).
 We focus attention on expressions, which are matrices of polynomials. We denote
 matrix of size $n \times m$ of $k$-th degree polynomials by $\mathcal{P}^{n
@@ -403,33 +410,38 @@ how to generalize optimizations.
 \hline
 Order & Size of grammar & Computation time (s) \\
 \hline\hline
-2 & 10 & 0.45 \\
-3 & 37 & 10.33 \\
-4 & & \\
+2 & 10 & ?0.45 \\
+3 & 37 & ?10.33 \\
+4 & 48 & 2535\\
 \hline
 \end{tabular}
 \caption{Table summarizes size and computational time for grammars of specific order.}
 \label{grammars}
 \end{table}
 
-Resulting equations in non 
-
 \begin{table}
 \tiny
 \centering
 \begin{tabular}{|l||l|l|l|}
 \hline
-Order & Number of terms & Optimized & Non-optimized \\
-& & computation time & computation time  \\
+Order & Number of terms & Evaluation time & Complexity \\
 \hline\hline
-2 & & & \\
-3 & & & \\
-4 & & & \\
+1 & & & $O(n^2)$\\
+2 & & & $O(n^2)$\\
+3 & & & $O(n^2)$\\
+4 & & & $\mathbf{O(n^3)}$\\
 \hline
 \end{tabular}
-\caption{Table summarizes computation times of $g(x \rightarrow x^k, W)$.}
+\caption{Table summarizes evaluation time of $g(x \rightarrow x^k, W)$ for $W \in \mathbb{R}^{100 \times 100}$.}
 \label{grammars}
 \end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{img/approximations.png}
+\caption{Comparison of approximations with various degree of Taylor approximations.}
+\label{approximations}
+\end{figure}
 
 
 \section{Computation generalization}\label{agenda}
