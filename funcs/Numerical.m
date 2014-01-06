@@ -15,8 +15,10 @@ classdef Numerical < PrototypeF
         hsize = 2^(size(W, 2));
         for i = 1 : vsize
           for j = 1 : hsize
-            bin_i = decode_vector(i, size(W, 1), 2);
-            bin_j = decode_vector(j, size(W, 2), 2);   
+            bin_i = decode_vector(i - 1, size(W, 1), 2);
+            bin_j = decode_vector(j - 1, size(W, 2), 2); 
+            assert((sum(bin_i < 0) == 0) && (sum(bin_i > 1) == 0));
+            assert((sum(bin_j < 0) == 0) && (sum(bin_j > 1) == 0));
             val = obj.testfun.f(bin_i' * W * bin_j);
             Zvals(i, j, :, :) = val;
           end

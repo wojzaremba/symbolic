@@ -13,8 +13,15 @@ classdef Repmat < Computation
             assert((item.dim1 == 1) || (item.dim2 == 1));
             assert((dims(1) == 1) || (dims(2) == 1));
             assert((item.dim1 ~= obj.dim1) || (item.dim2 ~= obj.dim2));
-            obj.complexity = item.complexity + obj.dim1 * obj.dim2;            
         end       
+        
+        function ret = O_complexity(obj)
+            ret = max(obj.item.complexity, 2);
+        end
+        
+        function ret = NrOper_complexity(obj)
+            ret = obj.item.complexity + obj.dim1 * obj.dim2;
+        end
         
         function str = matlab_toString(obj)
             p = obj.item;

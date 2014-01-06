@@ -11,7 +11,7 @@ function test_multiply_expr
     C_ = ExprZp(C.quant, C.expr);
     C = A.multiply_expressions(B);
     fprintf('%s\n', C.toString());
-    assert(norm(C.expr - C_.expr) == 0);        
+    assert(norm(double(C.expr - C_.expr)) == 0);        
 end
 
 

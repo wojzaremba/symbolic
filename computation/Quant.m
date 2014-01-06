@@ -13,6 +13,14 @@ classdef Quant < Computation
           obj.complexity = 1;
         end
         
+        function ret = O_complexity(obj)
+            ret = 1;
+        end
+        
+        function ret = NrOper_complexity(obj)
+            ret = 1;
+        end           
+        
         function str = matlab_toString(obj)
           str = obj.val;
         end

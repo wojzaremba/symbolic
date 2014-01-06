@@ -21,8 +21,15 @@ classdef Marginalize < Computation
               obj.dim1 = 1;
               obj.dim2 = 1;
             end
-            obj.complexity = item.complexity + item.dim1 * item.dim2;            
         end
+        
+        function ret = O_complexity(obj)
+            ret = max(obj.item.complexity, 2);
+        end
+        
+        function ret = NrOper_complexity(obj)
+            ret = obj.item.complexity + obj.dim1 * obj.dim2;
+        end        
         
         function str = matlab_toString(obj)            
             if ((obj.sumdim == 1) || (obj.sumdim == 2))
@@ -30,18 +37,7 @@ classdef Marginalize < Computation
             else
               str = sprintf('sum(sum(%s))', toString(obj.item));
             end
-        end    
-                
-        function str = latex_toString(obj)
-	    assert(0);
-            if (obj.sumdim == 1)
-                str = sprintf('\\sum_{i = 1, \\dots, m} %s', toString(obj.item));
-            elseif (obj.sumdim == 2)
-                str = sprintf('\\sum_{j = 1, \\dots, m} %s', toString(obj.item));
-            else
-                str = sprintf('qqq(%s)', toString(obj.item));
-            end        
-        end  
+        end                    
         
     end
 end

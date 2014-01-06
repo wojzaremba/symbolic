@@ -8,6 +8,7 @@ classdef Scheduler < handle
     
     methods
         function obj = Scheduler()
+            fprintf('Creating Scheduler\n');
             obj.rules = {};
             obj.params = {};
         end
@@ -42,7 +43,8 @@ classdef Scheduler < handle
         end
         
         function AddBasicRules(S)
-            global c            
+            global c         
+            fprintf('Registering basic grammar rules\n');
             S.Add(@marginalize, {[c.n, c.m]}, {2});
             S.Add(@marginalize, {[c.n, c.m]}, {1});            
             S.Add(@marginalize, {[c.n, 1]}, {1});            
@@ -61,6 +63,7 @@ classdef Scheduler < handle
         
         function AddMultRules(S)
             global c
+            fprintf('Registering multiplication and transpose grammar rules\n');
             S.Add(@marginalize, {[c.m, c.n]}, {2});    
             S.Add(@marginalize, {[c.m, c.m]}, {2});
             S.Add(@marginalize, {[c.n, c.n]}, {2});    
@@ -165,8 +168,15 @@ classdef Scheduler < handle
                     else
                         assert(0);
                     end                    
-                    Grammar.Stats();            
-                    fprintf('u = %d, %s, toc = %f\n', u(i), func2str(obj.rules{i}), toc(rule_time));
+                    Grammar.Stats();    
+                    params_str = '';
+                    for k = 1 : length(grammars)
+                        params_str = sprintf('%sG(%d, %d) ', params_str, grammars{k}(1), grammars{k}(2));
+                    end
+                    for k = 1 : length(params)
+                        params_str = sprintf('%s%d ', params_str, params{k});
+                    end
+                    fprintf('u = %d, %s(%s), toc = %f\n', u(i), func2str(obj.rules{i}), params_str, toc(rule_time));
                     Grammar.Validate();      
                     obj.ResizeTried(i);
                 end

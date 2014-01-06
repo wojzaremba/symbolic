@@ -1,5 +1,6 @@
 function [x, vld] = modlinear(a, b, p, field_inv)
-%GFLINEQ Find a particular solution of Ax = b over a prime Galois field.
+%Modified GFLINEQ 
+% Find a particular solution of Ax = b over a prime Galois field.
 %   X = GFLINEQ(A, B) outputs a particular solution of the linear
 %   equation A X = B in GF(2).  The elements in A, B and X are either
 %   0 or 1.  If the equation has no solution, then X is empty.
@@ -126,16 +127,15 @@ while (row_idx <= m_aa) && (column_idx < n_aa)
 
 end
 
-if ( rank(aa) > rank( aa(:,1:n_a) ) )
+if ( rank(double(aa)) > rank( double(aa(:,1:n_a)) ) )
     % The case of no solution.
     warning(message('comm:gflineq:NoSolution'));
     x = [];
     vld = 0;
 else
-    x = zeros(n_a, 1);
+    x = int64(zeros(n_a, 1));
     x(column_store,1) = aa(row_store,n_aa);
     vld = 1;
+    x(x > (p / 2)) = x(x > (p / 2)) - p;
 end
-
-% --- end of GFLINEQ.M--
 

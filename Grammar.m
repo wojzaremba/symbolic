@@ -7,8 +7,7 @@ classdef Grammar < handle
         inited
     end
     
-    methods(Static)
-        
+    methods(Static)        
         function FullStats()
             global grammars
             for i = size(grammars, 1) : -1 : 1
@@ -95,12 +94,7 @@ classdef Grammar < handle
             global c
             obj.n = n;
             obj.m = m;
-            if (strcmp(class(Expr_()), 'ExprZp'))
-                type = 'char';
-            else
-                type = 'int64';
-            end
-            obj.hashmap = containers.Map('KeyType', type, 'ValueType', 'any');                        
+            obj.hashmap = containers.Map('KeyType', obj.hashtype(), 'ValueType', 'any');
             W = [Expr_()];
             obj.expr_matrices = [];
             if (n == c.n) && (m == c.m)               
@@ -116,6 +110,14 @@ classdef Grammar < handle
             grammars(n, m) = obj;
         end
         
+        function ret = hashtype(obj)
+            if (strcmp(class(Expr_()), 'ExprZp'))
+                ret = 'char';
+            else
+                ret = 'int64';
+            end            
+        end
+        
         function trim_size(obj)
             global c grammars
             maxK = c.maxK;
@@ -124,8 +126,12 @@ classdef Grammar < handle
                 if (obj.expr_matrices(i).power == maxK)
                     idx = [idx; i];
                 end
-            end
+            end            
             obj.expr_matrices = obj.expr_matrices(idx);
+            obj.hashmap = containers.Map('KeyType', obj.hashtype(), 'ValueType', 'any');
+            for i = 1:length(obj.expr_matrices)
+                obj.hashmap(obj.expr_matrices(i).hash) = i;
+            end
             grammars(obj.n, obj.m) = obj;            
         end                            
 
@@ -169,7 +175,7 @@ classdef Grammar < handle
                     return;
                 end
                 obj.expr_matrices(idx) = expr_matrix;
-                ret = false; %XXX : This might give suboptimal solution.
+                ret = true;
                 return;
             end
             if (isempty(obj.expr_matrices))

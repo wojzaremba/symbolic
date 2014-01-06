@@ -11,6 +11,6 @@ function test_many_add_expr
     C_ = ExprZp(C.quant, C.expr);
     C = ExprZp().add_many_expr({A, A, B, B});
     fprintf('%s\n', C.toString());
-    assert(norm(C.expr - C_.expr) == 0);        
+    assert(norm(double(C.expr - C_.expr)) == 0);        
 end
 

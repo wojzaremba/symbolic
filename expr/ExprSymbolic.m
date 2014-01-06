@@ -192,11 +192,22 @@ classdef ExprSymbolic < Expr
         
         function ret = add_many_expr(ret, exprs)
             exprs = exprs(:);
+            idx = [];
+            for i = 1:length(exprs)
+                if (~isempty(exprs{i}))
+                    idx = [idx, i];
+                end
+            end
+            exprs = exprs(idx);
             while(length(exprs(:)) > 1) 
               exprs_copy = {};
               for i = 1:ceil(length(exprs(:)) / 2)
                 if (i + ceil(length(exprs(:)) / 2) <= length(exprs(:)))
+                    try
                   exprs_copy{i} = exprs{i}.add_expr(exprs{i + ceil(length(exprs(:)) / 2)});
+                    catch
+                        0
+                    end
                 else
                   exprs_copy{i} = exprs{i};
                 end
@@ -251,7 +262,7 @@ classdef ExprSymbolic < Expr
         end               
         
         
-        function [expr_matrices, coeffs] = reexpres_data(marginal, F)
+        function [expr_matrices, coeffs] = ReexpresData(marginal, F)
           global c
           powers = [];
           maxK = c.maxK;

@@ -2,7 +2,7 @@ clc;
 addpath(genpath('.'));
 global debug
 debug = 1;
-W = TestData(8, 9);
+W = TestData(8, 7);
 
 funcs = {X4(), One(), X(), X2(), X3(), X4(), Complex({1, 1, 1 / 2, 1 / 6, 1 / 24}, {One(), X(), X2(), X3(), X4()})};
 

@@ -1,20 +1,26 @@
 classdef Transpose < Computation
     properties
-        ones_params
-        rest_params
+        item
     end
     
     methods
-        function obj = Transpose(a)
+        function obj = Transpose(item)
           obj.name = 'Transpose';
-          obj.params = {a};
-          obj.dim1 = a.dim2;
-          obj.dim2 = a.dim1;
-          obj.complexity = a.complexity + a.dim1 * a.dim2;
+          obj.item = item;
+          obj.dim1 = item.dim2;
+          obj.dim2 = item.dim1;
         end
   
+        function ret = O_complexity(obj)
+            ret = max(obj.item.complexity, 2);
+        end
+        
+        function ret = NrOper_complexity(obj)
+            ret = obj.item.complexity + obj.dim1 * obj.dim2;
+        end           
+        
         function str = matlab_toString(obj)   
-            p = obj.params{1};
+            p = obj.item;
             str = sprintf('(%s'')', toString(p));
         end          
     end

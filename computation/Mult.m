@@ -2,24 +2,21 @@ classdef Mult < Computation
     properties
         ones_params
         rest_params
+        params
     end
     
     methods
         function obj = Mult(params)
           obj.name = 'Mult';
+          obj.params = params;
           assert(length(params) > 1);  
           obj.ones_params = {};
           obj.rest_params = {};  
-          obj.complexity = 0;
           for i = 1:length(params)
             if ((params{i}.dim1 == 1) && (params{i}.dim2 == 1))
               obj.ones_params{end + 1} = params{i};
             else
               obj.rest_params{end + 1} = params{i};
-            end
-            obj.complexity = obj.complexity + params{i}.complexity;
-            if (i > 1)
-                obj.complexity = obj.complexity + params{i - 1}.dim1 * params{i - 1}.dim2 * params{i}.dim2;
             end
           end
           for i = 1:(length(obj.rest_params) - 1)
@@ -35,6 +32,23 @@ classdef Mult < Computation
           obj.params = [obj.ones_params(:); obj.rest_params(:)];
         end
   
+        function ret = O_complexity(obj)
+            ret = 3;
+            for i = 1 : length(obj.params)
+                ret = max(ret, obj.params{i}.complexity);
+            end
+        end
+        
+        function ret = NrOper_complexity(obj)
+            ret = obj.item.complexity;
+            for i = 2 : length(obj.params)
+                ret = ret + ...
+                    obj.params{i - 1}.dim1 * ...
+                    obj.params{i - 1}.dim2 * ...
+                    obj.params{i}.dim2;
+            end
+        end        
+        
         function str = matlab_toString(obj)   
             str = printf_list(obj.params, '*');
         end          

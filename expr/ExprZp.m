@@ -5,9 +5,9 @@ classdef ExprZp < Expr
     end
     
     properties(Constant)             
-        len = 60;
-        Zp = 100069;
-        mods = RandVals(ExprZp.len, 25, 10, ExprZp.Zp);
+        len = int64(60);
+        Zp = int64(Cache.prime);
+        mods = RandVals(ExprZp.len, 100, 10, ExprZp.Zp);
         field_inv = Inverse(ExprZp.Zp);
     end
     
@@ -28,12 +28,12 @@ classdef ExprZp < Expr
                 obj.power = 0;
                 return
             end
-            obj.expr = zeros(ExprZp.len, 1);
+            obj.expr = int64(zeros(ExprZp.len, 1));
             for k = 1 : ExprZp.len
-                exprum = 0;
+                exprum = 0;      
                 for j = 1 : size(expr, 2)                
                     val = 1;
-                    for i = 1 : size(expr, 1)
+                    for i = 1 : size(expr, 1)                              
                         if (expr(i, j) > 0)
                             val = mod(val * ExprZp.mods(k, i, expr(i, j)), ExprZp.Zp);
                         end
@@ -47,8 +47,7 @@ classdef ExprZp < Expr
             if (length(unique(sum(expr(:, :), 1))) > 1)
                 warning('Inconsistent powers\n');
                 obj.power = max(sum(expr(:, :), 1));
-            end
-            
+            end          
         end
         
         function Validate(A)
@@ -68,7 +67,10 @@ classdef ExprZp < Expr
 
         function [ res ] = power_expr( W, p )
             res = ExprZp();
-            res.expr = mod(W.expr .^ p, ExprZp.Zp);
+            res.expr = mod(W.expr, ExprZp.Zp);            
+            for i = 1 : (p - 1)
+                res.expr = mod(res.expr .* W.expr, ExprZp.Zp);
+            end
             assert(W.power > 0);
             res.power = W.power * p;
         end
@@ -117,7 +119,7 @@ classdef ExprZp < Expr
             end
         end       
         
-        function [expr_matrices, coeffs] = reexpres_data(marginal, F)
+        function [expr_matrices, coeffs] = ReexpresData(marginal, F)
             X = [];
             for i = 1 : length(F.expr_matrices)
                 X = [X, F.expr_matrices(i).exprs.expr];
@@ -125,7 +127,8 @@ classdef ExprZp < Expr
             Y = marginal.expr;
             coeffs = [];
             invert = modlinear(X, Y, ExprZp.Zp, ExprZp.field_inv);
-            error = norm(mod(X * invert - Y, ExprZp.Zp));
+            residual = int64(double(X) * double(invert) - double(Y));
+            error = norm(double(mod(residual, ExprZp.Zp)));
             fprintf('error : %f\n', error);  
             if (error > 1e-5)
                 fprintf('Couldnt find solution\n');
@@ -178,7 +181,7 @@ end
 function ret = RandVals(planes, rows, cols, Zp)
     rand('seed', 1);
     randn('seed', 1);
-    ret = zeros(planes, rows, cols);
+    ret = int64(zeros(planes, rows, cols));
     ret(:, :, 1) = randi(min(Zp(:)) - 1, [planes, rows, 1]);
     for k = 1:planes
         for i = 1:rows

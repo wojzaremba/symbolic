@@ -11,6 +11,6 @@ function test_add_expr
     C_ = ExprZp(C.quant, C.expr);
     C = A.add_expr(B);
     fprintf('%s\n', C.toString());
-    assert(norm(C.expr - C_.expr) == 0);        
+    assert(norm(double(C.expr - C_.expr)) == 0);        
 end
 

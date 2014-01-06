@@ -2,7 +2,6 @@ function [ ret ] = decode_vector( n, l, basis )
     if (~exist('basis', 'var'))
         basis = 2;
     end
-    n = n - 1;
     ret = zeros(l, 1);
     pos = 1;
     while (n > 0)

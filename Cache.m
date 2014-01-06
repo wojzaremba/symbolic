@@ -1,6 +1,10 @@
 classdef Cache < handle
-    properties
-        prime
+    
+    properties(Constant)
+        prime = int64(100069);
+    end
+    
+    properties        
         all_bulk_hashes
         n % number of rows.
         m % number of columns.
@@ -13,7 +17,6 @@ classdef Cache < handle
             obj.maxK = maxK;                        
             obj.n = max(maxK, 2);
             obj.m = obj.n + 1;
-            obj.prime = 688846502588399;      
             global c grammars
             c = obj;         
             grammars = [Grammar()];

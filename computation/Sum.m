@@ -2,6 +2,7 @@ classdef Sum < Computation
     properties
         ones_params
         rest_params
+        params
     end
     
     methods
@@ -12,14 +13,12 @@ classdef Sum < Computation
           obj.params = params;
           obj.ones_params = {};
           obj.rest_params = {};  
-          obj.complexity = 0;
           for i = 1:length(params)
             if ((params{i}.dim1 == 1) && (params{i}.dim2 == 1))
               obj.ones_params{end + 1} = params{i};
             else
               obj.rest_params{end + 1} = params{i};
             end
-            obj.complexity = obj.complexity + params{i}.complexity + params{i}.dim1 * params{i}.dim2;
           end    
           for i = 2:length(obj.rest_params)   
             assert(obj.rest_params{i}.dim1 == obj.rest_params{1}.dim1);
@@ -34,6 +33,22 @@ classdef Sum < Computation
           end
           obj.params = [obj.ones_params(:); obj.rest_params(:)];    
         end
+        
+        function ret = O_complexity(obj)
+            ret = 2;
+            for i = 1 : length(obj.params)
+                ret = max(ret, obj.params{i}.complexity);
+            end
+        end
+        
+        function ret = NrOper_complexity(obj)
+            ret = obj.item.complexity;
+            for i = 1 : length(obj.rest_params)
+                ret = ret + ...
+                    obj.rest_params{i}.dim1 * ...
+                    obj.rest_params{i}.dim2;
+            end
+        end            
         
         function str = matlab_toString(obj)
             str = printf_list(obj.params, '+');

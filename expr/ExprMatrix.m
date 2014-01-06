@@ -90,9 +90,9 @@ classdef ExprMatrix < handle
             end
             computation = MultElemwise({A.computation, B.computation});                
             exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr_();
-            for a = 1:size(A.exprs, 1)
-                for b = 1:size(A.exprs, 2)              
-                    exprs(a, b) = A.exprs(a, b).multiply_expressions(B.exprs(a, b));
+            for a = 1 : max(size(A.exprs, 1), size(B.exprs, 1))
+                for b = 1 : max(size(A.exprs, 2), size(B.exprs, 2))
+                    exprs(a, b) = A.exprs(min(a, size(A.exprs, 1)), min(b, size(A.exprs, 2))).multiply_expressions(B.exprs(min(a, size(B.exprs, 1)), min(b, size(B.exprs, 2))));
                 end
             end
             ret = ExprMatrix(exprs, computation);
