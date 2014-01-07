@@ -32,13 +32,15 @@
 
 \usepackage[accepted]{icml2012}  % XXX : just set temporarly to print out authors corretly.
 
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
 \begin{document} 
 
 \icmltitle{Formulas discovery for polynomial expressions}
 
 \icmlauthor{Wojciech Zaremba}{zaremba@cs.nyu.edu}
 \icmlauthor{Karol Kurach}{kkurach@google.com}
-\icmlauthor{Yoram Singer}{singer@google.com}
 \icmlauthor{Rob Fergus}{fergus@cs.nyu.edu}
 
 
@@ -56,6 +58,7 @@ we encourage to apply machine learning based reasoning methods like probabilisti
 \end{abstract} 
 
 \section{Introduction} \label{introduction} 
+
 Progress in some branches of
 mathematics might be restricted by size of symbolic derivations that human can
 handle.  Mathematicians can deal with expressions having up to some small
@@ -121,36 +124,25 @@ similar concepts can be found in \cite{cheung1999attribute} where authors are se
 the space of algorithms and attributes are also computational complexity.
 
 
-% "Modular Natural Language Processing Using Declarative Attribute Grammars"
-% Gramtyki sa rowniez stosowane w innych dziedzinach - op
-% (cite "Grammar-like Functional Rules for Representing Query Optimization Alternatives")
+\section{Terminology}
+Before delving into content of this work, we will establish vocabulary.
 
-% cite "An attribute grammar approach to compiler optimization of intra-module interprocess communication"
-% cite "Using attribute grammars to find solutions for musical equational programs"
-% "Attribute Grammars and their Applications"
-% NLP: "Womb Grammars: Constraint Solving for Grammar Induction"
-% "An attribute grammar based framework for machine-dependent computational optimization of media processing algorithms"
-% compilers, computer vision grammars, nlp grammars. Finding rules in physics.
-
-\section{Admissible computation as a grammars}\label{sec:grammars}
-
-{\bf Terminology}
-
-
-{\bf Grammar} - we consider a attributive grammar on tuples (expression, computation, computational time). Where expression are literals.Every expression can a be terminal symbol, but also can be use in production.
-
-
-{\bf Expression} - it is a literal in our grammar. Expressions are from matrices of polynomials $\mathcal{P}^{n \times m}$
+{\bf Grammar} - We consider a attributive grammar on tuples (expression, computation, computational time). We refer to this tuples as literals. 
 
 
 {\bf Production rules} - describes how to transform an tuple (expressions, computation, computation time), or few tuples to the new tuple.
 
 
-{\bf Computation} - represents computation on particular architecture or programming language. It our examples we consider matlab as underlaying computation language.
+{\bf Expression} - Expressions are matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which rules can be 
+applied to literals containing such expressions. We denote them with capital characters (e.g. $\mathbb{E}$).
 
 
-{\bf Computation Time} - contains computation time for a particular architecture and programming language. In such case this value is dependent on size of our input (during derivation we have to choose some arbitrary values with respect to which we optimize). Moreover, we can perform optimization with respect to computational complexity.
+{\bf Computation} - Represents a computation on particular architecture or programming language. It our examples we consider matlab as underlaying computation language. We denote them with capital, calligraphic characters (e.g. $\mathcal{C}$).
 
+
+{\bf Computation Time} - It is a computation time for a particular architecture and programming language, or it can represent computation complexity. For a computation $\mathcal{C}$, we refer to this time as $t_{\mathcal{C}}$
+
+\section{Admissible computation as a grammars}\label{sec:grammars}
 
 We focus attention on expressions, which are matrices of polynomials. We denote
 matrix of size $n \times m$ of $k$-th degree polynomials by $\mathcal{P}^{n
@@ -227,7 +219,30 @@ In order to find cheap way of expressing $Y$ as function of $X$, we proceed as f
 \end{itemize}
 
 As long as $Y$ can be expressed using extended grammar, we have a guarantee that above procedure will find a computation of $Y$. However, solution might be suboptimal, as we are using
-greedy algorithm. Table \ref{pseudocode} presents pseudo-code.
+greedy algorithm. Algorithm \ref{pseudocode} presents pseudo-code.
+
+\begin{algorithm}
+\caption{Find computation for expression}
+\begin{algorithmic} 
+\REQUIRE Target expression $T$, initial expression $W$, Rules $R_1, \dots, R_n$, maximum degree of polynomials $k$
+\ENSURE Computation $\mathcal{C}$ of expression $T$.
+\STATE Initialize set $\mathbb{S}$ of all admissible literals with $(W, \mathcal{W}, t_W)$
+\WHILE{$\mathbb{S}$ grows}
+\STATE Get any literal $L$ from the $\mathbb{S}$
+\STATE Get any rule $R$
+\STATE Apply rule $R$ to $L$ to get $L'$
+\STATE Continue if degree of $L'$ is not larger than $k$.
+\IF {$L'.expression \in \mathbb{S}$}
+	\IF {$L'.computation_time$ faster than for previous expression in $\mathbb{S}$} 
+		\STATE Add $L'$ to $\mathbb{S}$
+	\ENDIF
+\ELSE[$L'$ contains a new, unseen expression]
+	\STATE Add $L'$ to $\mathbb{S}$
+\ENDIF
+\ENDWHILE
+\end{algorithmic}
+\label{pseudocode}
+\end{algorithm}
 
 
 \subsection{Linear combination}
@@ -263,6 +278,14 @@ and seems to solve many problems. However, one could extend it with
 other operations like e.g. inverse of matrix. Moreover, one could exploit
 rules which could discover recurrencies (to be able to discover discreet Fourier transform, or
 Strassen algorithm for fast matrix multiplication).
+
+\subsection{Representation of expressions}
+
+\subsubsection{Evaluation of polynomials in $\mathbb{R}$}
+
+\subsubsection{Symbolic representation}
+
+\subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
 
 \section{Partition function of RBM} \label{partitionfunction}
 Algorithm presented in Section
@@ -588,8 +611,8 @@ its derivatives, using approximation for learning,
 approximations of deep Bolzmann machine, optimization of derived formulas, and 
 understanding mathematical principles behind formulas derived by our programs. Second, is in 
 learning how to generalize computation, and replace current brute force process with something more
-intelligent. E.g. We could generalize computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2, 3, 4$ to
-$k > 4$. 
+intelligent. E.g. We could generalize computation of $g(x \rightarrow x^k, W)$ for $k = 1, \dots, 5$ to
+$k > 5$. 
 
 
 \nocite{*}
