@@ -128,8 +128,6 @@ while (row_idx <= m_aa) && (column_idx < n_aa)
 end
 
 if ( rank(double(aa)) > rank( double(aa(:,1:n_a)) ) )
-    % The case of no solution.
-    warning(message('comm:gflineq:NoSolution'));
     x = [];
     vld = 0;
 else

@@ -5,7 +5,7 @@ classdef ExprZp < Expr
     end
     
     properties(Constant)             
-        len = int64(300);
+        len = int64(150);
         Zp = int64(Cache.prime);
         mods = RandVals(ExprZp.len, 100, 10, ExprZp.Zp);
         field_inv = Inverse(ExprZp.Zp);
@@ -119,23 +119,30 @@ classdef ExprZp < Expr
             end
         end       
         
-        function [expr_matrices, coeffs] = ReexpresData(marginal, F)
+        function [expr_matrices, coeffs, success] = ReexpresData(marginal, F)
             X = [];
+            expr_matrices = {};
+            coeffs = [];
+            success = false;
+            if (length(F.expr_matrices) < 4)
+                return;
+            end
             for i = 1 : length(F.expr_matrices)
                 X = [X, F.expr_matrices(i).exprs.expr];
             end
             Y = marginal.expr;
-            coeffs = [];
             invert = modlinear(X, Y, ExprZp.Zp, ExprZp.field_inv);
+            if (isempty(invert))               
+                return;
+            end
             residual = int64(double(X) * double(invert) - double(Y));
             error = norm(double(mod(residual, ExprZp.Zp)));
             fprintf('error : %f\n', error);  
             if (error > 1e-5)
                 fprintf('Couldnt find solution\n');
-                assert(0);
+                return;
             end
 
-            expr_matrices = {};
             for i = 1:length(invert)
                 if (abs(invert(i)) < 1e-5)
                     continue;
@@ -144,6 +151,7 @@ classdef ExprZp < Expr
                 coeffs = [coeffs; invert(i)];
             end   
             fprintf('nr coeffs = %d\n', length(coeffs));          
+            success = true;             
         end             
         
     end           
@@ -153,7 +161,7 @@ end
 % generator (there are phi(p - 1) of them, so it gets it fast).
 function ret = Inverse(p)
     ret = zeros(p - 1, 1); 
-    for i = 1 : (p - 1)
+    for i = 10 : (p - 1)
         for invi = 1 : (p - 1)
             if (mod(i * invi, p) == 1)
                 break;                
