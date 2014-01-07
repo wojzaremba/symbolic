@@ -12,6 +12,7 @@
 
 % For algorithms
 \usepackage{comment}
+\usepackage{framed}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{amsmath}
@@ -164,6 +165,8 @@ Let's ground our approach in an example. We assume that we are interest in
 finding algorithm with smallest operation complexity, and computation platform
 is a Matlab.  We consider following set of operations on matrices : 
 
+\begin{figure}
+\begin{framed}
 \begin{align*}
 &\text{{\bf Element wise multiplication}}\\
 &(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}), (\mathbb{B} \in \mathcal{P}^{n \times m}_\beta, \mathcal{B}, t_\mathcal{B}) \rightarrow \\ 
@@ -197,9 +200,13 @@ is a Matlab.  We consider following set of operations on matrices :
 &(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
 &(\mathbb{C} \in \mathcal{P}^{m \times n}_\alpha, A', O(t_\mathcal{A} + nm)) \\
 &\mathbb{C}_{j, i} = \mathbb{A}_{i, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
-\label{grammar}
 \end{align*}
+\caption{Set of rules for attributive grammar. There is always finite number of literals up to degree $\alpha$.}
+\end{framed}
+\label{rules}
+\end{figure}
 
+% XXX : Speak somewhere about mutliplicative constant.
 
 To find any (or cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows : 
 \begin{itemize}
@@ -274,35 +281,42 @@ Strassen algorithm for fast matrix multiplication).
 
 \subsection{Representation of expressions}
 
-Expressions can be represented in various way. We present three approaches, which we explored.
+Expressions are defined as belonging to $\mathcal{P}^{n \times m}_\alpha$. There are various
+ways how they can be represented in software. This representation is crucial, and has consequences in
+ correctness of solution (due to numerical errors), and computation speed.
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
 As expressions correspond to the matrices of polynomials, one could just record their values
 for many random numbers. If number of evaluations is large enough, then polynomials can be
-recovered based on such values. However, it turns out, that this methods is numerically unstable
+recovered based on such values. Or even one could keep this representation over entire 
+computation without recovering polynomials, but deriving final relation between polynomials (that's what we implemented).
+It turns out, that this methods is numerically unstable
 , and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
 
 Nice part about this representation is that operations like element-wise matrix multiplication, addition of matrices, etc.
-correspond just to the same operations in our representation. i.e. For element-wise multiplication of matrices of expressions, we
+correspond just to the same operations in our representation (of same computational cost). i.e. For element-wise multiplication of matrices of expressions, we
 have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
 
 \subsubsection{Symbolic representation}
 Expressions can represented as matrices of polynomials. Every expression has list of coefficients and monomials, which it constitutes of.
 This representation is exact, and gives us guarantees on correctness. However,
-it might be quite slow. For instance, if two polynomials, which we want to multiply consist of 1000 coefficients, then
+it might be quite slow. For instance, if two polynomials, which we want to multiply constitutes of 1000 coefficients, then
 it takes $\sim 1mln.$ operations. We have implemented expressions in such representation, and it allowed us
-to find patterns for polynomials up to degree $4$ (above $4$ it was consuming too much time).
+to find patterns for polynomials up to degree $4$ (above degree $4$ it was consuming too much time).
 
+This solution guarantees correctness, and it is easiest to debug.
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
 We use similar strategy as in case of looking into evaluations of polynomials in $\mathbb{R}$. However, in order
-to avoid numerical errors, we use integers, and we perform computation in the group $\mathbb{Z}_p$ (for large prime number $p$). This
-guarantees that all the results of the computation can be represented correctly. Nonetheless, there are few potential
+to avoid numerical errors, we replace real number computation with computation in $\mathbb{Z}_p$ group (for large prime number $p$). This
+guarantees that all the results of the computation are represented correctly (there is no round off errors on integers). Nonetheless, there are few potential
 issues. We could have two different expressions being represented the same way (conflict of representations). In the
 real setting, we haven't run into this problem. Moreover, all the final coefficients after applying linear solver are
 accurate up to $p$ offset. This turns out also not to be an issue. For all coefficients above $\frac{p}{2}$, we subtract $p$. 
 This way all final coefficients are in the range $[-\frac{p}{2}, \frac{p}{2}]$. We have verified that such solutions are correct
 (it can be considered as prior on magnitude of coefficients). 
+
+This solution is fastest, and most reliable. However, it is difficult to debug.
 
 
 \section{Partition function of RBM} \label{partitionfunction}
@@ -386,19 +400,19 @@ Let us consider following expressions :
   0 & 1 & 1 & 0 \\ 
   0 & 1 & 0 & 1 \\ 
   0 & 1 & 0 & 0 \\     
-\end{pmatrix}t = 2^{n + m}\begin{pmatrix} 
-  2^{-2}\\ 
-  2^{-3}\\ 
-  2^{-3}\\ 
-  2^{-4}\\     
+\end{pmatrix}t = 2^{n + m - 4}\begin{pmatrix} 
+  2^{2}\\ 
+  2^{1}\\ 
+  2^{1}\\ 
+  2^{0}\\     
 \end{pmatrix} \\
  \end{equation}
 
 One can find that 
 \begin{align*}
-	&g(x \mapsto x^2, W) = 2^{n + m} \\ 
- &\Big( 0.5\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + 0.5(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
- &0.5\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + 0.5\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)\\
+	&g(x \mapsto x^2, W) = 2^{n + m - 4} \\ 
+ &\Big(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + (\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
+ &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)\\
 \end{align*}
 
 Above derivation is still in scope of human skills. However, manual derivation
@@ -406,8 +420,8 @@ of $g(x \mapsto x^k, W)$ for further $k > 2$  seems to be a feet. Our algorithm
 is able to find such complex computational patterns automatically. 
 
 \subsubsection{$g(x \rightarrow x^3, W)$}
-Power $k = 3$ is beyond our linear algebra capabilities of derivation. However, it is
-interesting to have a look on all derived expressions in $\mathcal{P}^{1 \times 1}_3$. 
+Manual derivation for $k = 3$ seems to be a hard task. We present here all derived computations in
+for expressions in $\mathcal{P}^{1 \times 1}_3$. 
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -435,8 +449,7 @@ interesting to have a look on all derived expressions in $\mathcal{P}^{1 \times 
 \endgroup
 
 
-Here is the solution generated by our code : 
-
+Expression $g(x \rightarrow x^3, W)$ can be computed exactly with :
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
@@ -456,13 +469,13 @@ Here is the solution generated by our code :
 
 \section{Experiments}
 
-We present various mathematical expressions, which can be computed much more efficiently
-than initial formulation would suggest. This section is closed with automatically derivated
-approximations for partition function. 
+We present various mathematical expressions, which can be computed more efficiently
+than initial formulation would suggest. This section is finalized with  
+approximations of partition function. 
 
 \subsection{Snippets}
 
-We are given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m \times k}$. 
+There are given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m \times k}$. 
 Goal is to compute 
 \begin{align*}
 	\sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
@@ -492,18 +505,25 @@ Similarly, we found quadratic time computation instead of cubic for similar expr
 	\sum AA^TA\\
 \end{align*}
 
+One could automatically analyze large code repositories to find other expressions, which are computed inefficiently. 
+Our optimization rules could be placed into compilers.
 
 \subsection{Partition function approximation}
 
-As we shown in Section \ref{partitionfunction}, we can compute $g(x \rightarrow x^k, W)$ for $k = 1, 2$ in
-linear time with respect to size of $W$. By use of
-our framework, we found rules for $k = 3, 4$ (however for $k = 4$ it takes $O(n^3)$ time) . Computation time grows quite fast with power $k$, as we have to consider 
-bigger input matrices to cover all possible monomials of particular degree. Table \ref{grammars} shows time necessary to
+As we shown in Section \ref{partitionfunction}, we can manually find $O(n^2)$ computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2$ 
+instead of native exponential time computation. By use of
+our framework, we found rules for $k = 3, 4, 5$ (however for $k = 4, 5$ we found only computation in $O(n^3)$ time). 
+Finding computation for higher degree polynomials is expensive.
+Table \ref{grammars} shows time necessary to
 generate all the rules. It is worth to note, that grammar can be evaluated just once, and the resulting coefficients can 
-be stored. Process of partition function approximation involves this steps just once. However, it seems that 
-with use of current algorithm we have to stay constrained to powers $k \leq 5$. As we noted in Section \ref{agenda}
-it is extremely important and interesting to find pattern how to generate $g(x \rightarrow x^k, W)$ for $k \geq 6$, and
-how to generalize optimizations. 
+be stored. Process of partition function approximation involves step of computation discovery only once. However, due to limited computation power
+we analyzed only powers $k \leq 5$. As we noted in Section \ref{agenda}
+it is extremely important and interesting to find pattern how to generate $g(x \rightarrow x^k, W)$ for $k \geq 6$.
+
+
+Table \ref{eval} shows number of terms necessary to derive $g(x \rightarrow x^k, W)$ for various $k$. Plot \ref{approximations} shows 
+how well partition function is approximated with finite Taylor expansion. Finally, plot \ref{time_approx} 
+compares computation time of derived rules to the computation time of naive exponential time algorithm.
 
 \begin{table}
 \tiny
@@ -525,8 +545,8 @@ Order & Size of grammar & Computation time (s) \\
 \begin{table}
 \tiny
 \centering
-\begin{tabular}{||l|l|l|}
-\hline
+\begin{tabular}{|l|l|l|}
+\hline\hline
 Order & Number of terms & Complexity \\
 \hline\hline
 2 & 4 & $O(n^2)$\\
@@ -536,7 +556,7 @@ Order & Number of terms & Complexity \\
 \hline
 \end{tabular}
 \caption{Table summarizes complexity of computation of $g(x \rightarrow x^k, W)$.} 
-\label{grammars}
+\label{eval}
 \end{table}
 
 \begin{figure}[h]
@@ -551,15 +571,15 @@ Order & Number of terms & Complexity \\
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.24]{img/time_approx.png}
-\caption{Comparison of computation time for naive exponential time algorithm, and our optimized derivation.}
-\label{approximations}
+\caption{Comparison of computation time for naive exponential time algorithm vs our optimized derivation.}
+\label{time_approx}
 \end{figure}
 
 \section{Computation generalization}\label{agenda}
 
 Presented in this paper method is a brute force over all possible computations, 
 which could lead to the target result. It seems to work reasonably well
-for polynomials of small degrees $k \leq 4$, however for larger powers 
+for polynomials of small degrees $k \leq 5$, however for larger powers 
 brute force methods seems to fail. One of major goals of this paper is to
 bring a small subset of mathematics, which has tractable brute force automatic proving
 system. We look forward to extend this brute force methods to more intelligible approaches, which
@@ -575,7 +595,7 @@ belief networks.
 We present our believes on hardness of approximation of partition function. 
 We were not able to prove, or disprove conjectures presented in this chapter.
 \begin{conjecture}
-Linear combination of terms for a matrix $W$ generated by use of rules \ref{grammar}.
+Linear combination of terms for a matrix $W$ generated by use of rules defined on Figure \ref{rules}.
 consists of $g(x \rightarrow x^k, W)$. Moreover, size of generated grammar
 up to degree $k$ is exponential in $k$.
 \label{simple}
@@ -585,7 +605,7 @@ Corollary and all implications assumes that Conjecture \ref{simple} is valid.
 
 \begin{corollary}
 	$g(x \rightarrow k, W)$
-	can be computed in exponential time in $k$, but in linear time with respect to size of $W$.
+	can be computed in exponential time in $k$, but in $O(n^3)$ time with respect to size of $W$ ($W$ is of size $n \times n$).
 \end{corollary}
 
 \begin{lemma}
