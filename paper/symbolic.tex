@@ -153,15 +153,11 @@ in $\mathbb{R}^{n \times m}$, which is computed in time $t_\mathcal{C}$. This ti
 
 \section{Admissible computation as a grammars}\label{sec:grammars}
 
-We focus attention on expressions, which are matrices of polynomials. 
-
-
-The final goal is to find tuple for a given expression having
-a shortest computational time. Where computational time is any measure of
-complexity, which we care about. For instance, for theoretical computer science
-purposes it might be number of operations, or computation complexity. However,
-from perspective of engineering, it might be computation time on specific GPU
-model. 
+The final goal is to find a fast way of expressing target expression.
+We will achieve it by developing literals in grammar (up to degree of target expression). Next, we
+will look for the linear combination of obtained expressions to find how to express target expression.
+We know how to compute every obtained expression, as the literal which consists of it, has also computation field.
+Moreover, if there multiple literals with the same expression, we choose one with the shortest computation time.
 
 
 Let's ground our approach in an example. We assume that we are interest in
@@ -170,56 +166,57 @@ is a Matlab.  We consider following set of operations on matrices :
 
 \begin{align*}
 &\text{{\bf Element wise multiplication}}\\
-&(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1), (b \in \mathcal{P}^{n \times m}_\beta, B, t_2) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times m}_{\alpha + \beta}, A .* B, O(t_1 + t_2 + nm)) \\
-&c_{i,j} = a_{i,j}b_{i, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
+&(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}), (\mathbb{B} \in \mathcal{P}^{n \times m}_\beta, \mathcal{B}, t_\mathcal{B}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{n \times m}_{\alpha + \beta}, \mathcal{A} .* \mathcal{B}, O(t_\mathcal{A} + t_\mathcal{B} + nm)) \\
+&\mathbb{C}_{i,j} = \mathbb{A}_{i,j}\mathbb{B}_{i, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
 &\text{{\bf Matrix multiplication}}\\
-&(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1), (b \in \mathcal{P}^{m \times k}_\beta, B, t_2) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times k}_{\alpha + \beta}, A * B, O(t_1 + t_2 + nmk)) \\
-&c_{i,k} = \sum_{k = 1}^m a_{i,k}b_{k, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
+&(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}), (\mathbb{B} \in \mathcal{P}^{m \times k}_\beta, \mathcal{B}, t_\mathcal{B}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{n \times k}_{\alpha + \beta}, \mathcal{A} * \mathcal{B}, O(t_\mathcal{A} + t_\mathcal{B} + nmk)) \\
+&\mathbb{C}_{i,k} = \sum_{k = 1}^m \mathbb{A}_{i,k}b_{k, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
 &\text{{\bf Columns marginalization}}\\
-&(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times 1}_\alpha, sum(A, 2), O(t_1 + nm)) \\
-&c_{i, 1} = \sum_{j = 1}^m a_{i, j} \text{ for } i \in \{1, \dots, n\}\\
+&(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{n \times 1}_\alpha, sum(\mathcal{A}, 2), O(t_\mathcal{A} + nm)) \\
+&\mathbb{C}_{i, 1} = \sum_{j = 1}^m \mathbb{A}_{i, j} \text{ for } i \in \{1, \dots, n\}\\
 &\text{{\bf Rows marginalization}}\\
-&(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1) \rightarrow \\ 
-&(c \in \mathcal{P}^{1 \times m}_\alpha, sum(A, 1), O(t_1 + nm)) \\
-&c_{1, j} = \sum_{i = 1}^m a_{i, j} \text{ for } j \in \{1, \dots, m\}\\
+&(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{1 \times m}_\alpha, sum(\mathcal{A}, 1), O(t_\mathcal{A} + nm)) \\
+&\mathbb{C}_{1, j} = \sum_{i = 1}^m \mathbb{A}_{i, j} \text{ for } j \in \{1, \dots, m\}\\
 &\text{{\bf Columns repetition}}\\
-&(a \in \mathcal{P}^{n \times 1}_\alpha, A, t_1) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times m}_\alpha, repmat(A, 1, m), O(t_1 + nm)) \\
-&c_{i, j} = a_{i, 1} \text{ for } i \in \{1, \dots, n\}\\
+&(\mathbb{A} \in \mathcal{P}^{n \times 1}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{n \times m}_\alpha, repmat(\mathcal{A}, 1, m), O(t_\mathcal{A} + nm)) \\
+&\mathbb{C}_{i, j} = \mathbb{A}_{i, 1} \text{ for } i \in \{1, \dots, n\}\\
 &\text{{\bf Rows repetition}}\\
-&(a \in \mathcal{P}^{1 \times m}_\alpha, A, t_1) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times m}_\alpha, repmat(A, n, 1), O(t_1 + nm)) \\
-&c_{i, j} = a_{1, j} \text{ for } j \in \{1, \dots, m\}\\
+&(\mathbb{A} \in \mathcal{P}^{1 \times m}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{n \times m}_\alpha, repmat(\mathcal{A}, n, 1), O(t_\mathcal{A} + nm)) \\
+&\mathbb{C}_{i, j} = \mathbb{A}_{1, j} \text{ for } j \in \{1, \dots, m\}\\
 &\text{{\bf Entry repetition}}\\
-&(a \in \mathcal{P}^{1 \times 1}_\alpha, A, t_1) \rightarrow \\ 
-&(c \in \mathcal{P}^{n \times m}_\alpha, repmat(A, n, m), O(t_1 + nm)) \\
-&c_{i, j} = a_{1, 1} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\}\\
+&(\mathbb{A} \in \mathcal{P}^{1 \times 1}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{n \times m}_\alpha, repmat(\mathcal{A}, n, m), O(t_\mathcal{A} + nm)) \\
+&\mathbb{C}_{i, j} = \mathbb{A}_{1, 1} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\}\\
 &\text{{\bf Transposition}}\\
-&(a \in \mathcal{P}^{n \times m}_\alpha, A, t_1) \rightarrow \\ 
-&(c \in \mathcal{P}^{m \times n}_\alpha, A', O(t_1 + nm)) \\
-&c_{j, i} = a_{i, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
+&(\mathbb{A} \in \mathcal{P}^{n \times m}_\alpha, \mathcal{A}, t_\mathcal{A}) \rightarrow \\ 
+&(\mathbb{C} \in \mathcal{P}^{m \times n}_\alpha, A', O(t_\mathcal{A} + nm)) \\
+&\mathbb{C}_{j, i} = \mathbb{A}_{i, j} \text{ for } i \in \{1, \dots, n\}, j \in \{1, \dots, m\} \\
 \label{grammar}
 \end{align*}
 
 
-In order to find cheap way of expressing $Y$ as function of $X$, we proceed as follows : 
+To find any (or cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows : 
 \begin{itemize}
-\item develop grammar to obtain all possible expressions up to degree $k$. It gives rise to finite number of expressions.
-\item find linear combination of expressions which is equal to polynomial $Y$ (this relation is a symbolic relation, which is valid for any assignment of symbols $X$). This linear problem can be constrained to simultaneously find set of expressions which sum of computational times is smallest.
-\item apply optimization like subexpression elimination, and exploit distributive property of multiplication in order to decrees final computational time of $Y$.
+\item develop grammar to obtain all possible literals up to degree $k$. It gives rise to finite number of literals.
+\item if there are multiple way of computing the same expression, choose one with shortest time
+\item find linear combination of expressions which is equal the target expression $\mathbb{T}$ (this relation is a symbolic relation, which is valid for any assignment of symbols). While solving this linear set of systems, choose solution with
+smallest sum of computation times.
+\item apply optimization like subexpression elimination, and exploit distributive property of multiplication in order to decrees final computational time of $Y$. This step is optional, and it won't decrease computational complexity.
 \end{itemize}
 
-As long as $Y$ can be expressed using extended grammar, we have a guarantee that above procedure will find a computation of $Y$. However, solution might be suboptimal, as we are using
-greedy algorithm. Algorithm \ref{pseudocode} presents pseudo-code.
+Aforementioned algorithm can be expressed with a psedocode \ref{pseudocode}.
 
 \begin{algorithm}
 \caption{Find computation for expression}
 \begin{algorithmic} 
-\REQUIRE Target expression $T$, initial expression $W$, Rules $R_1, \dots, R_n$, maximum degree of polynomials $k$
-\ENSURE Computation $\mathcal{C}$ of expression $T$.
+\REQUIRE Target expression $\mathbb{T}$, initial expression $W$, Rules $R_1, \dots, R_n$, maximum degree of polynomials $k$
+\ENSURE Computation $\mathcal{C}$ of expression $\mathbb{T}$.
 \STATE Initialize set $\mathbb{S}$ of all admissible literals with $(W, \mathcal{W}, t_W)$
 \WHILE{$\mathbb{S}$ grows}
 \STATE Get any literal $L$ from the $\mathbb{S}$
@@ -234,18 +231,20 @@ greedy algorithm. Algorithm \ref{pseudocode} presents pseudo-code.
 	\STATE Add $L'$ to $\mathbb{S}$
 \ENDIF
 \ENDWHILE
+\STATE Find linear combination of expressions from literals stored in $\mathbb{S}$ to express $\mathbb{T}$
+\STATE Run optimizer
 \end{algorithmic}
 \label{pseudocode}
 \end{algorithm}
 
 
 \subsection{Linear combination}
-We look for linear combination of generated grammar terms, which is equal to the
+We look for linear combination of generated expressions in our literals, which is equal to the
 target expression. There is few possible scenarios. There might be \emph{no solution} at all. 
 Then our linear solver will indicate it, which means that target expression
-is out of scope of even extended grammar. There might be \emph{multiple solutions} (case
-with a \emph{single solution} is very unlikely). Then we should look for linear combination
-with smallest cost (computational time). 
+is out of scope for computation defined by our grammar. There might be \emph{multiple solutions} (case
+with a \emph{single solution} is very uncommon). Then we should look for linear combination
+with the smallest cost (computational time). 
 This is essentially integer programing problem, or knapsack problem, which 
 are NP-complete. However, it is enough for us to get approximated solution, which can be easily
 obtained with linear solver.
@@ -270,14 +269,26 @@ commutative property for addition).
 Presented attributive grammar is just a example of grammar which is finite
 and seems to solve many problems. However, one could extend it with 
 other operations like e.g. inverse of matrix. Moreover, one could exploit
-rules which could discover recurrencies (to be able to discover discreet Fourier transform, or
+rules which could discover recurrences (to be able to discover discreet Fourier transform, or
 Strassen algorithm for fast matrix multiplication).
 
 \subsection{Representation of expressions}
 
+Expressions can be represented in various way. We present three approaches, which we explored.
+
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
+As expressions correspond to the matrices of polynomials, one could just record their values
+for many random numbers. If number of evaluations is large enough, than polynomials can be
+recovered based on such values. However, it turns out, that this methods is numerically unstable
+, and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
+
+Nice part about this representation is that operations like element-wise matrix multiplication, addition of matrices, etc.
+correspond just to the same operations in our representation. i.e. For element-wise multiplication of matrices of expressions, we
+have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
 
 \subsubsection{Symbolic representation}
+Expressions can
+
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
 
@@ -491,7 +502,7 @@ Order & Size of grammar & Computation time (s) \\
 2 & 5 & 17 \\
 3 & 15 & 188 \\
 4 & 48 & 2535\\
-5 & 139 & ?33234 \\
+5 & 139 & 31320 \\
 \hline
 \end{tabular}
 \caption{Table summarizes size and computational time for grammars of specific degree.}
