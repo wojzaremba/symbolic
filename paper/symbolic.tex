@@ -278,7 +278,7 @@ Expressions can be represented in various way. We present three approaches, whic
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
 As expressions correspond to the matrices of polynomials, one could just record their values
-for many random numbers. If number of evaluations is large enough, than polynomials can be
+for many random numbers. If number of evaluations is large enough, then polynomials can be
 recovered based on such values. However, it turns out, that this methods is numerically unstable
 , and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
 
@@ -287,10 +287,23 @@ correspond just to the same operations in our representation. i.e. For element-w
 have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
 
 \subsubsection{Symbolic representation}
-Expressions can
+Expressions can represented as matrices of polynomials. Every expression has list of coefficients and monomials, which it constitutes of.
+This representation is exact, and gives us guarantees on correctness. However,
+it might be quite slow. For instance, if two polynomials, which we want to multiply consist of 1000 coefficients, then
+it takes $\sim 1mln.$ operations. We have implemented expressions in such representation, and it allowed us
+to find patterns for polynomials up to degree $4$ (above $4$ it was consuming too much time).
 
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
+We use similar strategy as in case of looking into evaluations of polynomials in $\mathbb{R}$. However, in order
+to avoid numerical errors, we use integers, and we perform computation in the group $\mathbb{Z}_p$ (for large prime number $p$). This
+guarantees that all the results of the computation can be represented correctly. Nonetheless, there are few potential
+issues. We could have two different expressions being represented the same way (conflict of representations). In the
+real setting, we haven't run into this problem. Moreover, all the final coefficients after applying linear solver are
+accurate up to $p$ offset. This turns out also not to be an issue. For all coefficients above $\frac{p}{2}$, we subtract $p$. 
+This way all final coefficients are in the range $[-\frac{p}{2}, \frac{p}{2}]$. We have verified that such solutions are correct
+(it can be considered as prior on magnitude of coefficients). 
+
 
 \section{Partition function of RBM} \label{partitionfunction}
 Algorithm presented in Section
