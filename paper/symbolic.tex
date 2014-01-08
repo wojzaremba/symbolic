@@ -222,21 +222,30 @@ Aforementioned algorithm can be expressed with a psedocode \ref{pseudocode}.
 \begin{algorithm}
 \caption{Find computation for expression}
 \begin{algorithmic} 
-\REQUIRE Target expression $\mathbb{T}$, initial expression $W$, Rules $R_1, \dots, R_n$, maximum degree of polynomials $k$
+\REQUIRE Target expression $\mathbb{T}$, initial expression $W$, $Rules$ = \{$R_1, \dots, R_n$\}, maximum degree of polynomials $k$
 \ENSURE Computation $\mathcal{C}$ of expression $\mathbb{T}$.
 \STATE Initialize set $\mathbb{S}$ of all admissible literals with $(W, \mathcal{W}, t_W)$
 \WHILE{$\mathbb{S}$ grows}
-\STATE Get any literal $L$ from the $\mathbb{S}$
-\STATE Get any rule $R$
-\STATE Apply rule $R$ to $L$ to get $L'$
-\STATE Continue if degree of $L'$ is not larger than $k$.
-\IF {$L'.expression \in \mathbb{S}$}
-	\IF {$L'.computation_time$ faster than for previous expression in $\mathbb{S}$} 
-		\STATE Add $L'$ to $\mathbb{S}$
-	\ENDIF
-\ELSE[$L'$ contains a new, unseen expression]
-	\STATE Add $L'$ to $\mathbb{S}$
+\FORALL{literal $L \in \mathbb{S}$}
+\FORALL{rule $R \in Rules$}
+\STATE $L' \gets$ Apply rule $R$ to $L$
+\IF {degree($L'$) $>$ $k$}
+  \STATE \textbf{continue}
 \ENDIF
+\STATE \emph{// If expression not yet in $\mathbb{S}$ or it can be}
+\STATE \emph{// computed faster add it.}
+\IF {$L'.expr \not\in \mathbb{S}$ \textbf{or} $L'.time < S[L'].time$}
+  \STATE Add $L'$ to $\mathbb{S}$
+\ENDIF
+%\IF {$L'.expression \in \mathbb{S}$ }
+%	\IF {$L'.computation\_time$ faster than for previous expression in $\mathbb{S}$} 
+%		\STATE Add $L'$ to $\mathbb{S}$
+%	\ENDIF
+%\ELSE[$L'$ contains a new, unseen expression]
+%	\STATE Add $L'$ to $\mathbb{S}$
+%\ENDIF
+\ENDFOR
+\ENDFOR
 \ENDWHILE
 \STATE Find linear combination of expressions from literals stored in $\mathbb{S}$ to express $\mathbb{T}$
 \STATE Run optimizer
