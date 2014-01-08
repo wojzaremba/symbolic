@@ -1,0 +1,45 @@
+Progress in some branches of
+mathematics might be restricted by size of symbolic derivations that human can
+handle.  Mathematicians can deal with expressions having dozens of
+variables but would struggle to discover useful relations between hundreds or
+thousands of variables. We will show how the task of finding equivalent
+mathematical expressions can be automated. Our focus is on finding equivalent
+mathematical formulas (i.e.~which give an identical numerical result),
+but are faster to compute than the original expression. The definition
+of faster can be either (i) the number of operations or (ii) the computational time
+for particular hardware.
+
+We propose deterministic, grammar based framework, which discovers relations between
+multi-variable polynomial expressions. First, we construct an attribute grammar
+-- a context-free grammar extended to contain set of attributes, introduced by
+Donald Knuth \cite{knuth1968semantics}. To define the search space we use a set
+context-free grammar rules representing admissible operations. By representing
+the cost of every operation as a synthetized attribute (i.e. computed bottom-up from child node attributes)
+we can search for formula with low time complexity.
+Through linear combination of grammar elements, we find solution to desired 
+expressions that we want to compute. Finally, this computation solution can be further speed up by use of standard
+techniques of optimization in compiler domain. We show the power of the
+approach by deriving closed form, $O(n^3)$ time solutions for a 
+a Taylor series approximation to the partition
+function of an RBM. These close form solutions oppose
+the widespread belief that accurately computation of the partition function requires
+an exponential number of elements.
+
+
+Finally, we can regard the set of generated rules as a small axiomatic system.
+The presented algorithm is deterministic, and provably runs in finite
+time. We are excited about using machine learning for automatic reasoning, and
+this subset of mathematics seems to be perfect fit for testing automatic reasoning systems.
+Usually, axiomatic systems like number theory, set theory, or topology have very small
+number of axioms, but their application to terms might be complex. Proofs
+for such systems are difficult to represent in software, and there is no
+baseline algorithms which could brute force proof by iterating over all of them in reasonable finite time.
+Where in the contrary, presented here axiomatic system has very simple representation
+in software, and this paper presents brute force algorithm to find proofs. 
+Surprisingly, even brute force algorithm is able to find new more efficient,
+computational expressions for expressions that we use.
+
+By the time of publication we are going to release code.
+
+
+

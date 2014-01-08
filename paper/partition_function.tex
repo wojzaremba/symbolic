@@ -1,0 +1,148 @@
+Algorithm presented in Section
+\ref{sec:grammars} allows to find concise formulas for polynomial expressions.
+However, many interesting functions are outside of this family.  Instead of it,
+we are going to consider Taylor expansion of desired function, and we will
+derive close form fast formula for it.
+
+Let's denote by $g(f, W)$ generalization of partition function. 
+$g$ is a functional, and it takes as argument a function $f : \mathbb{R} \rightarrow \mathbb{R}$,
+and weights $W$. It is defined as follow : 
+
+\begin{gather*}
+g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh) \\
+f : \mathbb{R} \rightarrow \mathbb{R}\\
+W \in \mathbb{R}^{n \times m}
+\end{gather*}
+
+We consider computation of $g(x \rightarrow x^k, W)$ for a given $k$ for any $W
+\in \mathbb{R}^{n \times m}$, for any $n, m$. Potentially, if we would be able
+to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, than partition
+function for finite energy $v^TWh < C$ could be approximated arbitrarily well.
+This is consequence of expressing $e^{x}$ as finite sum approximation through
+Taylor expansion.
+
+\subsection{Low degree examples} In order to present how our algorithm works,
+we will manually derive fast computation procedure for $g(x \rightarrow k, W)$.
+However, this can be done manually only for very small $k = 1, 2$. 
+
+
+\subsubsection{$g(x \rightarrow x, W)$} Let's consider function $f(x) = x$. We
+will show that function $g(x \mapsto x, W)$ is computable in $O(nm)$ time
+(linear with respect to number of entries in $W$ matrix).
+ 
+\begin{gather*}
+	g(x \mapsto x, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} v^TWh
+\end{gather*}
+
+Entry $w_{i,j}$ in above sum is counted only if $v_i = 1$ and $h_j = 1$. Other variables
+$v_1, \dots v_{i-1}, v_{i+1}, \dots v_n$ and $h_1, \dots h_{i-1}, h_{j+1}, \dots h_m$ can be 
+assigned arbitrary. Number of arbitrary assignments of remaining variables is $2^{n + m - 2}$. 
+This concludes that 
+
+\begin{gather*}
+	\sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} v^TWh = 2^{n + m - 2}\sum_{i = 1, \dots, n, j = 1, \dots, m} W_{i, j}
+\end{gather*}
+, which is the close form solution for sum over exponentially many elements.
+
+\subsubsection{$g(x \rightarrow x^2, W)$}
+
+We are interest in computing following expression : 
+\begin{gather*}
+	g(x \mapsto x^2, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} (v^TWh)^2
+\end{gather*}
+
+There are multiple second order monomials that emerge: 
+
+\begin{itemize}
+	\item $w_{i,j}^2$ - present iff $v_i = 1, h_j = 1$. Appears $2^{n + m - 2}$ times.
+	\item $w_{i,j} w_{i, k}, j \neq k$ - present iff $v_i = 1, h_j = 1, h_k = 1$. Appears $2^{n + m - 3}$ times.	
+	\item $w_{i,j} w_{k, j}, i \neq k$ - present iff $v_i = 1, v_k = 1, h_j = 1$. Appears $2^{n + m - 3}$ times.
+	\item $w_{i,j} w_{k, l}, i \neq k, j \neq l$ - present iff $v_i = 1, v_k = 1, h_j = 1, h_l = 1$. Appears $2^{n + m - 4}$ times.			
+\end{itemize}
+We encode above quantities in a vector, which indicate how many times particular monomials 
+appear. Vector expressing this relation for $g(x \mapsto x^2, W)$ is $(2^{n + m - 2}, 2^{n + m - 3}, 2^{n + m - 3}, 2^{n + m - 4})$
+
+
+Let us consider following expressions : 
+\begin{itemize}
+ \item $\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2$ encodes $(1, 0, 0, 0)$. 
+ \item $(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2$ encodes $(1, 1, 1, 1)$.
+ \item $\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2$ encodes $(1, 1, 0, 0)$. 
+ \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes $(1, 1, 0, 0)$. 
+\end{itemize}
+ 
+ By solving linear equation :
+ \begin{equation}
+ \begin{pmatrix} 
+  1 & 1 & 1 & 1 \\ 
+  0 & 1 & 1 & 0 \\ 
+  0 & 1 & 0 & 1 \\ 
+  0 & 1 & 0 & 0 \\     
+\end{pmatrix}t = 2^{n + m - 4}\begin{pmatrix} 
+  2^{2}\\ 
+  2^{1}\\ 
+  2^{1}\\ 
+  2^{0}\\     
+\end{pmatrix} \\
+ \end{equation}
+
+One can find that 
+\begin{align*}
+	&g(x \mapsto x^2, W) = 2^{n + m - 4} \\ 
+ &\Big(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + (\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
+ &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)\\
+\end{align*}
+
+Above derivation is still in scope of human skills. However, manual derivation
+of $g(x \mapsto x^k, W)$ for further $k > 2$  seems to be a feet. Our algorithm
+is able to find such complex computational patterns automatically. 
+
+\subsubsection{$g(x \rightarrow x^3, W)$}
+Manual derivation for $k = 3$ seems to be a hard task. We present here all derived computations in
+for expressions in $\mathcal{P}^{1 \times 1}_3$. 
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{itemize}
+	\itemsep-5px 
+	\item \begin{verbatim} sum(sum(W, 2), 1) \end{verbatim}
+	\item \begin{verbatim} (sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 1) .* sum(W, 1)), 2) \end{verbatim}
+	\item \begin{verbatim} sum(sum(((repmat(sum(W, 2), [1, m]) .*  ...
+		repmat(sum(W, 1), [n, 1])) .* W), 2), 1) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 1) .* (sum(W, 1) .* sum(W, 1))), 2) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 2) .* sum(W, 2)), 1) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 2) .* (sum(W, 2) .* sum(W, 2))), 1) \end{verbatim}
+	\item \begin{verbatim} sum(sum((W .* W), 2), 1) \end{verbatim}
+	\item \begin{verbatim} sum(sum(W, 2), 1) .^ 3 \end{verbatim}
+	\item \begin{verbatim} sum(sum((repmat(sum(W, 1), [n, 1]) .^ 2  .* ...
+		 (repmat(sum(W, 2), [1, m]))), 1), 2) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 1) .* sum((W .* W), 1)), 2) \end{verbatim}
+	\item \begin{verbatim} (sum(sum(W, 2), 1) .* sum(sum((W .* W), 2), 1)) \end{verbatim}
+	\item \begin{verbatim} sum(sum((repmat(sum(W, 2), [1, m]) .^ 2 .* ...
+		repmat(sum(W, 1), [n, 1]))), 2), 1) \end{verbatim}
+	\item \begin{verbatim} sum((sum(W, 2) .* sum((W .* W), 2)), 1) \end{verbatim}
+	\item \begin{verbatim} sum(sum((W .* (W .* W)), 2), 1) \end{verbatim}
+\end{itemize}
+\endgroup
+
+
+Expression $g(x \rightarrow x^3, W)$ can be computed exactly with :
+
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+((((sum(sum(W, 2), 1) .* (sum(sum(W, 2), 1) ...
+.* sum(sum(W, 2), 1)))) + ((sum(sum(W, 2), 1) ...
+.* sum((sum(W, 2) .* sum(W, 2)), 1)) .* 3) ...
++ ((sum(sum(W, 2), 1) ...
+.* sum(sum((W .* W), 2), 1)) .* 3) ...
++ ((sum(sum(W, 2), 1) .* sum((sum(W, 1) ...
+.* sum(W, 1)), 2)) .* 3) + (sum((sum(W, 2) ...
+.* sum((W .* repmat(sum(W, 1), ...
+[n, 1])), 2)), 1) .* 6))) / 64;
+\end{verbatim}
+\endgroup
+
+
+

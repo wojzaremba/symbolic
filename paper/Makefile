@@ -1,7 +1,9 @@
-all: 
-	rm -f symbolic.pdf
+PARTS=symbolic.tex admissible_computation.tex conjecture.tex discussion.tex experiments.tex generalization.tex introduction.tex partition_function.tex related_work.tex terminology.tex
+
+symbolic.pdf: $(PARTS) bibliography.bib 
 	pdflatex symbolic.tex
 	bibtex symbolic
+	pdflatex symbolic.tex
 	pdflatex symbolic.tex
 	pdflatex symbolic.tex
 
