@@ -1,7 +1,7 @@
 classdef Cache < handle
     
     properties(Constant)
-        prime = int64(100069);
+        prime = int64(1299827);
     end
     
     properties        

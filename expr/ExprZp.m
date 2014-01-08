@@ -5,7 +5,7 @@ classdef ExprZp < Expr
     end
     
     properties(Constant)             
-        len = int64(150);
+        len = int64(400);
         Zp = int64(Cache.prime);
         mods = RandVals(ExprZp.len, 100, 10, ExprZp.Zp);
         field_inv = Inverse(ExprZp.Zp);
@@ -160,8 +160,13 @@ end
 % Linear time algorithm to invert numbers modulo p. It searches for
 % generator (there are phi(p - 1) of them, so it gets it fast).
 function ret = Inverse(p)
+    try
+        load(sprintf('field_inverse_%d', p), 'ret');
+        return;
+    catch
+    end
     ret = zeros(p - 1, 1); 
-    for i = 10 : (p - 1)
+    for i = 2 : (p - 1)
         for invi = 1 : (p - 1)
             if (mod(i * invi, p) == 1)
                 break;                
@@ -181,6 +186,7 @@ function ret = Inverse(p)
             b = mod(b * invi, p);
         end
         if (~fail)
+            save(sprintf('field_inverse_%d', p), 'ret');
             return;
         end
     end

@@ -630,7 +630,7 @@ For every $x < C$ there exists $t < x$, such that :
 This implies
 \begin{align*}
 	|e^x - (1 + \frac{x}{1!} + \frac{x^2}{2!} + \dots + \frac{x^{k - 1}}{(k - 1)!}) | < \frac{C^k}{k!}e^C \\
-	\sim \exp(n\log{C} + C - k\log{k} + k) < \epsilon
+	\sim \exp(k\log{C} + C - k\log{k} + k) < \epsilon
 \end{align*}
 
 We require that 
@@ -639,12 +639,15 @@ We require that
 	k (\log{Ce} - \log{k}) < \log{\epsilon} - C
 \end{align*}
 
-Let's assume, that $\log{\epsilon} < -1$, and $1 - Ce < -C$. 
-Clearly, this inequality is fulfilled for $k > \frac{Ce}{\epsilon}$ :
+Let's assume, that $\log{\epsilon} < -1$, and $1 - Ce < -C$. This assumptions are valid if $\epsilon$ is small
+enough, and $C$ is large enough.
+
+
+For such $\epsilon$ and $C$, and $k > \frac{Ce}{\epsilon}$, above inequalities are fullfied :
 \begin{align*}
 	\frac{Ce}{\epsilon} (\log{Ce} - \log{\frac{Ce}{\epsilon}}) < \log{\epsilon} - C \\
 	\frac{Ce}{\epsilon} \log{\epsilon} < \log{\epsilon} - C\\
-	C < \log{\epsilon}(1 - Ce)
+	C < \log{\epsilon}(1 - \frac{Ce}{\epsilon})
 \end{align*}
 
 This implies that for bounded by $C$ energy of RBMs, we can do up to $\epsilon$ approximation of partition function (in log scale) by using
