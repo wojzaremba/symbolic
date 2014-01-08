@@ -57,11 +57,21 @@
   for humans with thousands of
   terms. We apply the approach to
   computing a Taylor series approximation of the partition function of
-  a restricted Boltzmann machine (RBM). We show how to compute a 4th
+  a restricted Boltzmann machine (RBM). We show how to compute a 5th
   order approximation in polynomial time, compared to exponential time
-  of the naive approach. Moreover, our method can be considered a
-  formal system to which machine learning methods such as
-  probabilistic programming can be applied. 
+  of the naive approach. Moreover, we apply it to the simple
+  matrix expressions like $\sum AB$ (where $A$, $B$ are matrices) and it finds
+  derivation with lower computation complexity ($O(n^2)$ instead of $O(n^3$)).
+
+
+  Finally, we look on our method as a small axiomatic system. Where our derivations
+  are proofs. Method presented here is a brute force search over
+  proofs in this formal system. Goal is to bring automatic theorem proving 
+  to the field of machine learning, and apply smarted techniques than brute force
+  to find proofs. We believe, that tackling symbolic systems problems with machine learning
+  is crucial step in machine perception after computer vision, and natural language processing.
+  Moreover, it is very difficult problem from structural prediction perspective (due to the rich structure).
+
 \end{abstract} 
 
 \section{Introduction} \label{introduction} 
@@ -85,8 +95,7 @@ context-free grammar rules representing admissible operations. By representing
 the cost of every operation as a synthetized attribute (i.e. computed bottom-up from child node attributes)
 we can search for formula with low time complexity.
 Through linear combination of grammar elements, we find solution to desired 
-expressions that we want to compute. Finally, we
-show that this computation solution can be further speed up by use of standard
+expressions that we want to compute. Finally, this computation solution can be further speed up by use of standard
 techniques of optimization in compiler domain. We show the power of the
 approach by deriving closed form, $O(n^3)$ time solutions for a 
 a Taylor series approximation to the partition
@@ -97,8 +106,7 @@ an exponential number of elements.
 
 Finally, we can regard the set of generated rules as a small axiomatic system.
 The presented algorithm is deterministic, and provably runs in finite
-time. ROB:????
-We are excited about using machine learning for automatic reasoning, and
+time. We are excited about using machine learning for automatic reasoning, and
 this subset of mathematics seems to be perfect fit for testing automatic reasoning systems.
 Usually, axiomatic systems like number theory, set theory, or topology have very small
 number of axioms, but their application to terms might be complex. Proofs
@@ -136,23 +144,23 @@ the space of algorithms and attributes are also computational complexity.
 Before delving into content of this work, we will establish vocabulary.
 
 
-{\bf Space of matrices of polynomials} - We consider matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_k$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
+{\bf Space of matrices of polynomials} - a matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_k$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
 
 
-{\bf Grammar} - We consider a attributive grammar on tuples (expression, computation, computational time). We refer to this tuples as literals. 
+{\bf Grammar} - a attributive grammar on tuples (expression, computation, computational time). We refer to this tuples as literals. 
 
 
-{\bf Production rules} - describes how to transform a tuple (expressions, computation, computation time), or few tuples to the new tuple. 
+{\bf Production rules} - transformation on tuple (expressions, computation, computation time), or tuples to the new tuple. Equivalently, we refer to such tuples as literals. 
 
 
-{\bf Expression} - Expressions are matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which rules can be 
+{\bf Expression} - matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which rules can be 
 applied to literals containing such expressions. We denote them with capital characters (e.g. $\mathbb{E}$).
 
 
-{\bf Computation} - Represents a computation on particular architecture or programming language. It our examples we consider Matlab as underlaying computation language. We denote them with capital, calligraphic characters (e.g. $\mathcal{C}$).
+{\bf Computation} - is a computation on particular architecture or programming language. It our examples we consider Matlab as underlaying computation language. We denote them with calligraphic, capital characters (e.g. $\mathcal{C}$).
 
 
-{\bf Computation Time} - It is a computation time for a particular architecture and programming language, or it can represent computation complexity. For a computation $\mathcal{C}$, we refer to its computation time as $t_{\mathcal{C}}$. 
+{\bf Computation Time} - it is a computation time for a particular architecture and programming language, or computation complexity. For a computation $\mathcal{C}$, we refer to its computation time as $t_{\mathcal{C}}$. 
 
 
 Let's consider a literal $L = (\mathbb{E}, \mathcal{C}, t_\mathcal{C})$. $\mathbb{E}$ is a polynomial in $\mathcal{P}^{n \times m}$. $\mathcal{C}$ is a computation of this polynomial starting with a input matrices. Result of computation is a real matrix
@@ -160,11 +168,12 @@ in $\mathbb{R}^{n \times m}$, which is computed in time $t_\mathcal{C}$. This ti
 
 \section{Admissible computation as a grammars}\label{sec:grammars}
 
-The final goal is to find a fast way of expressing target expression.
+The final goal is to find a fast way to compute target expression in language and architecture of our choice.
 We will achieve it by developing literals in grammar (up to degree of target expression). Next, we
 will look for the linear combination of obtained expressions to find how to express target expression.
 We know how to compute every obtained expression, as the literal which consists of it, has also computation field.
-Moreover, if there multiple literals with the same expression, we choose one with the shortest computation time.
+Moreover, if there multiple literals with the same expression (up to multiplicative real constant), we 
+choose one with the shortest computation time.
 
 
 Let's ground our approach in an example. We assume that we are interest in
@@ -212,15 +221,13 @@ is a Matlab.  We consider following set of operations on matrices :
 \label{rules}
 \end{figure}
 
-% XXX : Speak somewhere about mutliplicative constant.
 
 To find any (or cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows : 
 \begin{itemize}
-\item develop grammar to obtain all possible literals up to degree $k$. It gives rise to finite number of literals.
-\item if there are multiple way of computing the same expression, choose one with shortest time
-\item find linear combination of expressions which is equal the target expression $\mathbb{T}$ (this relation is a symbolic relation, which is valid for any assignment of symbols). While solving this linear set of systems, choose solution with
-smallest sum of computation times.
-\item apply optimization like subexpression elimination, and exploit distributive property of multiplication in order to decrees final computational time of $\mathbb{T}$. This step is optional, and it won't decrease computational complexity.
+\item develop grammar to obtain all possible literals up to degree $k$. It gives rise to finite number of literals. 
+\item if there are multiple way of computing the same expression up to multiplicative constant, choose one with shortest time.
+\item find linear combination of expressions which is equal the target expression $\mathbb{T}$ (this relation is a symbolic relation, which is valid for any assignment of symbols). While solving this linear set of systems, choose solution with smallest sum of computation times.
+\item apply optimization like subexpression elimination, and exploit distributive property of multiplication in order to decrees final computational time of $\mathbb{T}$. This step is optional, and it won't decrease computational complexity, but it can improve performance.
 \end{itemize}
 
 Aforementioned algorithm can be expressed with a psedocode \ref{pseudocode}.
@@ -243,25 +250,18 @@ Aforementioned algorithm can be expressed with a psedocode \ref{pseudocode}.
 \IF {$L'.expr \not\in \mathbb{S}$ \textbf{or} $L'.time < S[L'].time$}
   \STATE Add $L'$ to $\mathbb{S}$
 \ENDIF
-%\IF {$L'.expression \in \mathbb{S}$ }
-%	\IF {$L'.computation\_time$ faster than for previous expression in $\mathbb{S}$} 
-%		\STATE Add $L'$ to $\mathbb{S}$
-%	\ENDIF
-%\ELSE[$L'$ contains a new, unseen expression]
-%	\STATE Add $L'$ to $\mathbb{S}$
-%\ENDIF
 \ENDFOR
 \ENDFOR
 \ENDWHILE
 \STATE Find linear combination of expressions from literals stored in $\mathbb{S}$ to express $\mathbb{T}$
-\STATE Run optimizer
+\STATE Run optimizer (optional)
 \end{algorithmic}
 \label{pseudocode}
 \end{algorithm}
 
 
 \subsection{Linear combination}
-We look for linear combination of generated expressions in our literals, which is equal to the
+We look for a linear combination of generated expressions in our literals, which is equal to the
 target expression. There is few possible scenarios. There might be \emph{no solution} at all. 
 Then our linear solver will indicate it, which means that target expression
 is out of scope for computation defined by our grammar. There might be \emph{multiple solutions} (case
@@ -269,7 +269,14 @@ with a \emph{single solution} is very uncommon). Then we should look for linear 
 with the smallest cost (computational time). 
 This is essentially integer programing problem, or knapsack problem, which 
 are NP-complete. However, it is enough for us to get approximated solution, which can be easily
-obtained with linear solver.
+obtained with linear solver. 
+
+It is worth to note that it is easy to find best solution in terms of complexity, however it 
+is NP-complete to find the best solution in terms of performance. In order to find best solution in terms
+of complexity, one has to run linear solver multiple times. Every time, it should include broader number
+of literals. Starting with set of literals having the smallest complexity, and adding new literals with
+higher, and higher higher complexity. If algorithm, find solution at some point, than this solution is optimal
+in terms of complexity.
 
 
 Experiments suggest to minimize number of coefficients as well. It helps to rule out
