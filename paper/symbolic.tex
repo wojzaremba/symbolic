@@ -51,12 +51,13 @@
 \vskip 0.3in
 
 
-\begin{abstract} 
-We present method based on attributive grammars of automatic discovery relations between polynomial expressions.
-Surprisingly, we found new fast way of approximating partition function, as well as common matrix operations
-like $\sum AB$ (where $A$, $B$ are matrices). Moreover, our method can be consider as a formal system in which
-we encourage to apply machine learning based reasoning methods like probabilistic programming.
-
+\begin{abstract} We present method based on attributive grammars of automatic
+  discovery relations between polynomial expressions.  Surprisingly, we found
+  new fast way of approximating partition function, as well as computing exact
+  values of common matrix operations like $\sum AB$ (where $A$, $B$ are
+  matrices). Moreover, our method can be consider
+  as a formal system in which we encourage to apply machine learning based
+  reasoning methods like probabilistic programming.
 \end{abstract} 
 
 \section{Introduction} \label{introduction} 
@@ -656,13 +657,16 @@ $O(2^{\frac{Ce}{\epsilon}}n^3)$.
 \section{Discussion and future work}
 We have presented automatic method of polynomial formulas discovery. Method itself is novel, as well 
 as derived results of partition function approximation are unexpected.
-There are two major directions of future research. First, concerns with computation of partition function,
+There are three major directions of future research. First, concerns with computation of partition function,
 its derivatives, using approximation for learning, 
 approximations of deep Bolzmann machine, optimization of derived formulas, and 
 understanding mathematical principles behind formulas derived by our programs. Second, is in 
 learning how to generalize computation, and replace current brute force process with something more
 intelligent. E.g. We could generalize computation of $g(x \rightarrow x^k, W)$ for $k = 1, \dots, 5$ to
-$k > 5$. 
+$k > 5$. Finally, the third direction are real-world applictions of this framework on large code
+databases. We could automatically detect parts of code with expressions that have suboptimal time complexity
+and replace them. 
+
 
 
 \nocite{*}
