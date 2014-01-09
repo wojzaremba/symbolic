@@ -6,16 +6,14 @@ approximations of partition function.
 
 There are given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m \times k}$. 
 Goal is to compute 
-\begin{align*}
-	\sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
-\end{align*}
+\begin{gather*}
+\sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
+\end{gather*}
 Naive algorithm would take $O(nmk)$ time. However, we have found with our framework 
 computation giving the same expression in time O(n(k + m)):
-
-\begin{verbatim}
-	sum(sum(A .* repmat(sum(B, 2), [1, m])'))
-\end{verbatim}
-
+\begin{lstlisting}
+sum(sum(A .* repmat(sum(B, 2), [1, m])'))
+\end{lstlisting}
 Empirical tests indicate that aforementioned computation is indeed faster (Figure \ref{ab}).
 
 \begin{figure}[h]
