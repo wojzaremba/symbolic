@@ -32,14 +32,15 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{corollary}[theorem]{Corollary}
 
-\usepackage[accepted]{icml2012}  % XXX : just set temporarly to print out authors corretly.
+%\usepackage[accepted]{icml2014}  % XXX : just set temporarly to print out authors corretly.
+\usepackage{icml2014}  % XXX : just set temporarly to print out authors corretly.
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \begin{document} 
 
-\icmltitle{Efficient Formulae Discovery for Polynomial Expressions}
+\icmltitle{Computation Discovery for Polynomial Expressions}
 
 \icmlauthor{Wojciech Zaremba}{zaremba@cs.nyu.edu}
 \icmlauthor{Karol Kurach}{kkurach@google.com}
@@ -48,20 +49,18 @@
 
 \icmlkeywords{machine learning, optimization, automatic theorem proving, RBM, NP, Boltzmann machine}
 
-\vskip 0.3in
-
 
 \begin{abstract} We present an approach based on attributive grammars
   for automatically discovering efficient ways to compute polynomial
   expressions. Our method scales to expressions with thousands of
-  terms, otherwise intractible
+  terms, otherwise intractable
   for humans. We use the approach to
   compute a Taylor series approximation for the partition function of
   a restricted Boltzmann machine (RBM). We show how to compute a 4th
   order approximation in polynomial time, compared to exponential time
   of the naive approach. More generally, our method can be regarded as
   a brute force search over proofs in formal system, defined by a 
-  set of axioms. It has the potentual to be combined with machine
+  set of axioms. It has the potential to be combined with machine
   learning techniques that can provide superior search strategies,
   enabling the learning of symbolic systems. 
 
@@ -107,7 +106,7 @@
 
 \nocite{*}
 \bibliography{bibliography}
-\bibliographystyle{icml2012}
+\bibliographystyle{icml2014}
 
 \end{document} 
 

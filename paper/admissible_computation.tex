@@ -8,7 +8,7 @@ constant), we choose one with the shortest computation time $t_\mathcal{C}$.
 
 Let's ground our approach in an example. We assume that we are interest in
 finding algorithm with smallest operation complexity, and computation platform
-is a Matlab.  We consider following set of operations on matrices : 
+is a Matlab.  We consider following set of operations on matrices: 
 
 \begin{figure}
 \begin{framed}
@@ -52,7 +52,7 @@ is a Matlab.  We consider following set of operations on matrices :
 \end{figure}
 
 
-To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows : 
+To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows: 
 \begin{itemize}
 \item develop grammar to obtain all possible literals up to degree $k$. It gives rise to finite number of literals. 
 \item if there are multiple way of computing the same expression up to multiplicative constant, choose one with shortest time.
@@ -125,18 +125,18 @@ in terms of complexity. Rob: not clear at all. Sounds like complexity is
 harder than performance. 
 
 
-
-\subsection{Optimization}
-Rob: English from here on not yet fixed
-
-The application of grammar rules gives rise to a tree. Moreover, last step of
-combining elements together can be also considered as adding a plus node to the
-tree. Optimization procedures (Rob: what kind?) are applied recursively to tree branches, and
-transform them to more efficient computationally equivalents. We used common in
-compiler literature optimization techniques like subexpression elimination.
-Further, we optimized our symbolic tree by exploiting (1) distributive, and (2)
-associative properties of multiplication, and addition (together with
-commutative property for addition).
+% This section is not necessary and it's confusing. 
+%\subsection{Optimization}
+%Rob: English from here on not yet fixed
+%
+%The application of grammar rules gives rise to a tree. Moreover, last step of
+%combining elements together can be also considered as adding a plus node to the
+%tree. Optimization procedures (Rob: what kind?) are applied recursively to tree branches, and
+%transform them to more efficient computationally equivalents. We used common in
+%compiler literature optimization techniques like subexpression elimination.
+%Further, we optimized our symbolic tree by exploiting (1) distributive, and (2)
+%associative properties of multiplication, and addition (together with
+%commutative property for addition).
 
 \subsection{Extension of Grammar}
 Presented attributive grammar is just a example of grammar which is finite
@@ -144,6 +144,10 @@ and seems to solve many problems. However, one could extend it with
 other operations like e.g. inverse of matrix. Moreover, one could exploit
 rules which could discover recurrences (to be able to discover discreet Fourier transform, or
 Strassen algorithm for fast matrix multiplication).
+
+\subsection{Computation derivation as the formal system}
+
+For Joan.
 
 \subsection{Representation of Expressions}
 

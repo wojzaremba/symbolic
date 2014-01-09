@@ -6,14 +6,12 @@ derive close form fast formula for it.
 
 Let's denote by $g(f, W)$ generalization of partition function. 
 $g$ is a functional, and it takes as argument a function $f : \mathbb{R} \rightarrow \mathbb{R}$,
-and weights $W$. It is defined as follow : 
-
+and weights $W$. It is defined as follow: 
 \begin{gather*}
 g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh) \\
 f : \mathbb{R} \rightarrow \mathbb{R}\\
 W \in \mathbb{R}^{n \times m}
 \end{gather*}
-
 We consider computation of $g(x \rightarrow x^k, W)$ for a given $k$ for any $W
 \in \mathbb{R}^{n \times m}$, for any $n, m$. Potentially, if we would be able
 to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, than partition
@@ -29,24 +27,22 @@ However, this can be done manually only for very small $k = 1, 2$.
 \subsubsection{$g(x \rightarrow x, W)$} Let's consider function $f(x) = x$. We
 will show that function $g(x \mapsto x, W)$ is computable in $O(nm)$ time
 (linear with respect to number of entries in $W$ matrix).
- 
 \begin{gather*}
 	g(x \mapsto x, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} v^TWh
 \end{gather*}
-
 Entry $w_{i,j}$ in above sum is counted only if $v_i = 1$ and $h_j = 1$. Other variables
 $v_1, \dots v_{i-1}, v_{i+1}, \dots v_n$ and $h_1, \dots h_{i-1}, h_{j+1}, \dots h_m$ can be 
 assigned arbitrary. Number of arbitrary assignments of remaining variables is $2^{n + m - 2}$. 
-This concludes that 
-
+This concludes that:
 \begin{gather*}
 	\sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} v^TWh = 2^{n + m - 2}\sum_{i = 1, \dots, n, j = 1, \dots, m} W_{i, j}
 \end{gather*}
-, which is the close form solution for sum over exponentially many elements.
+Above mathematical formula (or description of computation) is the close form solution for sum over exponentially many elements.
+Complexity of it is just linear in size of $W$, which is $O(n^2)$.
 
 \subsubsection{$g(x \rightarrow x^2, W)$}
 
-We are interest in computing following expression : 
+We are interest in computing following expression: 
 \begin{gather*}
 	g(x \mapsto x^2, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} (v^TWh)^2
 \end{gather*}
@@ -63,7 +59,7 @@ We encode above quantities in a vector, which indicate how many times particular
 appear. Vector expressing this relation for $g(x \mapsto x^2, W)$ is $(2^{n + m - 2}, 2^{n + m - 3}, 2^{n + m - 3}, 2^{n + m - 4})$
 
 
-Let us consider following expressions : 
+Let us consider following expressions: 
 \begin{itemize}
  \item $\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2$ encodes $(1, 0, 0, 0)$. 
  \item $(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2$ encodes $(1, 1, 1, 1)$.
@@ -71,7 +67,7 @@ Let us consider following expressions :
  \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes $(1, 1, 0, 0)$. 
 \end{itemize}
  
- By solving linear equation :
+ By solving linear equation:
  \begin{equation}
  \begin{pmatrix} 
   1 & 1 & 1 & 1 \\ 
@@ -90,9 +86,8 @@ One can find that
 \begin{align*}
 	&g(x \mapsto x^2, W) = 2^{n + m - 4} \\ 
  &\Big(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + (\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
- &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)\\
+ &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)
 \end{align*}
-
 Above derivation is still in scope of human skills. However, manual derivation
 of $g(x \mapsto x^k, W)$ for further $k > 2$  seems to be a feet. Our algorithm
 is able to find such complex computational patterns automatically. 
@@ -127,7 +122,7 @@ for expressions in $\mathcal{P}^{1 \times 1}_3$.
 \endgroup
 
 
-Expression $g(x \rightarrow x^3, W)$ can be computed exactly with :
+Expression $g(x \rightarrow x^3, W)$ can be computed exactly with:
 
 \begingroup
     \fontsize{8pt}{12pt}\selectfont
