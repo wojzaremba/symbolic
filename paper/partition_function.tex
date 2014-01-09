@@ -123,21 +123,16 @@ for expressions in $\mathcal{P}^{1 \times 1}_3$.
 
 
 Expression $g(x \rightarrow x^3, W)$ can be computed exactly with:
-
-\begingroup
-    \fontsize{8pt}{12pt}\selectfont
-\begin{verbatim}
-((((sum(sum(W, 2), 1) .* (sum(sum(W, 2), 1) ...
-.* sum(sum(W, 2), 1)))) + ((sum(sum(W, 2), 1) ...
-.* sum((sum(W, 2) .* sum(W, 2)), 1)) .* 3) ...
-+ ((sum(sum(W, 2), 1) ...
-.* sum(sum((W .* W), 2), 1)) .* 3) ...
-+ ((sum(sum(W, 2), 1) .* sum((sum(W, 1) ...
-.* sum(W, 1)), 2)) .* 3) + (sum((sum(W, 2) ...
-.* sum((W .* repmat(sum(W, 1), ...
-[n, 1])), 2)), 1) .* 6))) / 64;
-\end{verbatim}
-\endgroup
-
+\begin{lstlisting}
+A = sum(W, 2);
+B = sum(W, 1);
+C = sum(A, 1);
+D = repmat(sum(W, 1), [n, 1]);
+(C .^ 3 + 
+C .* sum(A.^2, 1) * 3 +
+C .* sum(sum(W .* W, 2), 1) * 3 +
+C .* sum(B.^2, 2) .* 3 + 
+sum(A .* sum(W .* D, 2), 1) * 6)) / 64;
+\end{lstlisting}
 
 
