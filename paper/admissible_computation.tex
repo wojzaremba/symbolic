@@ -1,10 +1,10 @@
-The final goal is to find a fast way to compute target expression in language and architecture of our choice.
-We will achieve it by developing literals in grammar (up to degree of target expression). Next, we
-will look for the linear combination of obtained expressions to find how to express target expression.
-We know how to compute every obtained expression, as the literal which consists of it, has also computation field.
-Moreover, if there multiple literals with the same expression (up to multiplicative real constant), we 
-choose one with the shortest computation time.
-
+Our goal is to find a fast way to compute the target expression in
+language and architecture of our choice.  We will achieve it by
+developing literals in a grammar, up to degree of target
+expression. Next, we will look for the linear combination of obtained
+expressions to find how to express target expression exactly. If there
+are multiple literals with the same expression (up to multiplicative real
+constant), we choose one with the shortest computation time $t_\mathcal{C}$.
 
 Let's ground our approach in an example. We assume that we are interest in
 finding algorithm with smallest operation complexity, and computation platform
@@ -52,15 +52,19 @@ is a Matlab.  We consider following set of operations on matrices :
 \end{figure}
 
 
-To find any (or cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows : 
+To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows : 
 \begin{itemize}
 \item develop grammar to obtain all possible literals up to degree $k$. It gives rise to finite number of literals. 
 \item if there are multiple way of computing the same expression up to multiplicative constant, choose one with shortest time.
-\item find linear combination of expressions which is equal the target expression $\mathbb{T}$ (this relation is a symbolic relation, which is valid for any assignment of symbols). While solving this linear set of systems, choose solution with smallest sum of computation times.
+\item find linear combination of expressions which is equal the target
+  expression $\mathbb{T}$ (this relation is a symbolic relation, which
+  is valid for any assignment of symbols). While solving this linear
+  set of systems, choose solution with smallest sum of computation
+  times. See \ref{sec:linear} for more details.
 \item apply optimization like subexpression elimination, and exploit distributive property of multiplication in order to decrees final computational time of $\mathbb{T}$. This step is optional, and it won't decrease computational complexity, but it can improve performance.
 \end{itemize}
 
-Aforementioned algorithm can be expressed with a psedocode \ref{pseudocode}.
+Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
 
 \begin{algorithm}
 \caption{Find computation for expression}
@@ -91,47 +95,57 @@ Aforementioned algorithm can be expressed with a psedocode \ref{pseudocode}.
 
 
 \subsection{Linear combination}
-We look for a linear combination of generated expressions in our literals, which is equal to the
-target expression. There is few possible scenarios. There might be \emph{no solution} at all. 
-Then our linear solver will indicate it, which means that target expression
-is out of scope for computation defined by our grammar. There might be \emph{multiple solutions} (case
-with a \emph{single solution} is very uncommon). Then we should look for linear combination
-with the smallest cost (computational time). 
-This is essentially integer programing problem, or knapsack problem, which 
-are NP-complete. However, it is enough for us to get approximated solution, which can be easily
-obtained with linear solver. 
+\label{sec:linear}
+We look for a linear combination of generated expressions in our
+literals, which is equal to the target expression. There are several
+possible scenarios. First, there might be a \emph{single solution}, in
+which case our linear solver will have a unique solution. In practice
+however, this is uncommon. Second, there may be \emph{no solution} at
+all.  In this case, our linear solver will indicate it, meaning that
+the target expression is out of scope for the computation defined by
+our grammar. Finally, there might be \emph{multiple solutions}. We
+then look for the linear combination with the smallest cost
+(computational time).  This is essentially an integer programing
+problem, or knapsack problem, which are NP-complete. However, we can
+relax this to a linear program, which will give a solution almost as
+efficient as the optimal one.  Experiments suggest that is good to
+also minimize number of coefficients, so avoiding uneccessary
+non-integer coefficient values, which can contribute numerical errors.
 
-It is worth to note that it is easy to find best solution in terms of complexity, however it 
+
+%it is enough for us to get approximated
+%solution (Rob: what kind of approximation), which can be easily obtained with linear solver.
+
+It is worth noting that while it is easy to find best solution in terms of complexity, it 
 is NP-complete to find the best solution in terms of performance. In order to find best solution in terms
 of complexity, one has to run linear solver multiple times. Every time, it should include broader number
 of literals. Starting with set of literals having the smallest complexity, and adding new literals with
 higher, and higher higher complexity. If algorithm, find solution at some point, than this solution is optimal
-in terms of complexity.
+in terms of complexity. Rob: not clear at all. Sounds like complexity is
+harder than performance. 
 
-
-Experiments suggest to minimize number of coefficients as well. It helps to rule out
-non-integer coefficient values, which might cause numerical errors. 
 
 
 \subsection{Optimization}
+Rob: English from here on not yet fixed
 
-Application of grammar rules gives rise to a tree. Moreover, last step of
-combining elements together can be also consider as adding plus node to the
-tree. Optimization procedures are applied recursively to tree branches, and
+The application of grammar rules gives rise to a tree. Moreover, last step of
+combining elements together can be also considered as adding a plus node to the
+tree. Optimization procedures (Rob: what kind?) are applied recursively to tree branches, and
 transform them to more efficient computationally equivalents. We used common in
 compiler literature optimization techniques like subexpression elimination.
 Further, we optimized our symbolic tree by exploiting (1) distributive, and (2)
 associative properties of multiplication, and addition (together with
 commutative property for addition).
 
-\subsection{Grammars}
+\subsection{Extension of Grammar}
 Presented attributive grammar is just a example of grammar which is finite
 and seems to solve many problems. However, one could extend it with 
 other operations like e.g. inverse of matrix. Moreover, one could exploit
 rules which could discover recurrences (to be able to discover discreet Fourier transform, or
 Strassen algorithm for fast matrix multiplication).
 
-\subsection{Representation of expressions}
+\subsection{Representation of Expressions}
 
 Expressions are defined as belonging to $\mathcal{P}^{n \times m}_\alpha$. There are various
 ways how they can be represented in software. This representation is crucial, and has consequences in
