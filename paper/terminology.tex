@@ -1,0 +1,25 @@
+Before delving into content of this work, we will establish vocabulary.
+
+
+{\bf Space of matrices of polynomials} - a matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_k$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
+
+
+{\bf Grammar} - a attributive grammar on tuples (expression, computation, computational time). We refer to this tuples as literals. 
+
+
+{\bf Production rules} - transformation on tuple (expressions, computation, computation time), or tuples to the new tuple. Equivalently, we refer to such tuples as literals. 
+
+
+{\bf Expression} - matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which rules can be 
+applied to literals containing such expressions. We denote them with capital characters (e.g. $\mathbb{E}$).
+
+
+{\bf Computation} - is a computation on particular architecture or programming language. It our examples we consider Matlab as underlaying computation language. We denote them with calligraphic, capital characters (e.g. $\mathcal{C}$).
+
+
+{\bf Computation Time} - it is a computation time for a particular architecture and programming language, or computation complexity. For a computation $\mathcal{C}$, we refer to its computation time as $t_{\mathcal{C}}$. 
+
+
+Let's consider a literal $L = (\mathbb{E}, \mathcal{C}, t_\mathcal{C})$. $\mathbb{E}$ is a polynomial in $\mathcal{P}^{n \times m}$. $\mathcal{C}$ is a computation of this polynomial starting with a input matrices. Result of computation is a real matrix
+in $\mathbb{R}^{n \times m}$, which is computed in time $t_\mathcal{C}$. This time is a time necessary to perform computation on instantiations of matrices (not computation during grammar derivation, which would involve expressions).
+
