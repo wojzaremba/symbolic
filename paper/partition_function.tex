@@ -70,7 +70,7 @@ Let us consider the following expressions:
  \item $(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2$ encodes $(1, 1, 1, 1)$.
  \item $\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2$ encodes $(1, 1, 0, 0)$. 
  \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes
-   $(1, 1, 0, 0)$. Rob: Wrong?
+   $(1, 0, 1, 0)$.
 \end{itemize}
  
  By solving the linear equations:
@@ -80,7 +80,7 @@ Let us consider the following expressions:
   0 & 1 & 1 & 0 \\ 
   0 & 1 & 0 & 1 \\ 
   0 & 1 & 0 & 0 \\     
-\end{pmatrix}t = 2^{n + m - 4}\begin{pmatrix} 
+\end{pmatrix}x = 2^{n + m - 4}\begin{pmatrix} 
   2^{2}\\ 
   2^{1}\\ 
   2^{1}\\ 
@@ -88,13 +88,13 @@ Let us consider the following expressions:
 \end{pmatrix} \\
  \end{equation}
 
-One can find that 
+The solution to this equation is $x=[1 1 1 1]^T$, thus 
 \begin{align*}
 	&g(x \rightarrow x^2, W) = 2^{n + m - 4} \\ 
  &\Big(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + (\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
  &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)
 \end{align*}
-Rob:need to define t? The above derivation is still within the scope of human skill. However, manual derivation
+The above derivation is still within the scope of human skill. However, manual derivation
 of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes intractible. Our algorithm
 is able to find such complex computational patterns automatically. 
 
