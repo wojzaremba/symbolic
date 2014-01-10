@@ -1,20 +1,20 @@
 We present various mathematical expressions, which can be computed more efficiently
-than initial formulation would suggest. This section is finalized with  
-approximations of partition function. 
+than initial formulation would suggest. 
 
-\subsection{Snippets}
+\subsection{Matrix Multiplication-Sum Identities}
 
-There are given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m \times k}$. 
-Goal is to compute 
+Given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m
+  \times k}$, we wish to compute:
 \begin{gather*}
 \sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
 \end{gather*}
-Naive algorithm would take $O(nmk)$ time. However, we have found with our framework 
-computation giving the same expression in time O(n(k + m)):
+A naive algorithm would take $O(nmk)$ time. However, we have found with our framework 
+computation giving the same expression in time $O(n(k + m))$:
 \begin{lstlisting}
 sum(sum(A .* repmat(sum(B, 2), [1, m])'))
 \end{lstlisting}
-Empirical tests indicate that aforementioned computation is indeed faster (Figure \ref{ab}).
+Empirical tests indicate that our expression is indeed faster to
+compute than the naive one (Figure \ref{ab}).
 
 \begin{figure}[h]
 \centering
@@ -23,31 +23,42 @@ Empirical tests indicate that aforementioned computation is indeed faster (Figur
 \label{ab}
 \end{figure}
 
-
-Similarly, we found quadratic time computation instead of cubic for similar expressions like: 
+Similarly, we found quadratic time computation, instead of cubic, for
+similar expressions such as: 
 \begin{align*}
 	\sum ABC\text{, }\sum ABCD\text{, }\sum AA^T\text{, }\sum AA^TA
 \end{align*}
 
-One could automatically analyze large code repositories to find other expressions, which are computed inefficiently. 
-Our optimization rules could be placed into compilers.
+As far we we are aware, these identities appear to be novel. Our
+system could automatically analyze large code repositories to find
+these and other expressions, which are currently computed
+inefficiently. Alternativeily, our optimization rules could be placed
+into compilers to generate efficient code.
 
-\subsection{Partition function approximation}
+\subsection{Partition Function Approximation}
 
-As we shown in Section \ref{partitionfunction}, we can manually find $O(n^2)$ computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2$ 
-instead of native exponential time computation. By use of
-our framework, we found rules for $k = 3, 4, 5$ (however for $k = 4, 5$ we found only computation in $O(n^3)$ time). 
-Finding computation for higher degree polynomials is expensive.
-Table \ref{grammars} shows time necessary to
-generate all the rules. It is worth to note, that grammar can be evaluated just once, and the resulting coefficients can 
-be stored. Process of partition function approximation involves step of computation discovery only once. However, due to limited computation power
-we analyzed only powers $k \leq 5$. As we noted in Section \ref{agenda}
-it is extremely important and interesting to find pattern how to generate $g(x \rightarrow x^k, W)$ for $k \geq 6$.
+As we showed in Section \ref{partitionfunction}, we can manually find
+$O(n^2)$ computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2$
+instead of native exponential time computation. By use of our
+framework, we found rules for $k = 3, 4, 5$. However for $k = 4, 5$
+these rules used computation with $O(n^3)$ time (i.e.~matrix
+multiplication).  Finding computational rules for higher degree
+polynomials is expensive: Table \ref{grammars} shows the time
+necessary to generate all the rules. It is worth noting that grammar
+can be evaluated just once, and the resulting coefficients can be
+stored. Furthermore, the process of discovering the computational rule
+for a given power only need to be performed once. However, due to limited computational
+power we analyzed only powers $k \leq 5$. As we note in Section
+\ref{agenda} a future direction would be to learn patterns for
+$k=2,3,4,5$ that allow us to generalize to $k>5$ without exhaustively
+searching all possible rules. 
 
-
-Table \ref{eval} shows number of terms necessary to derive $g(x \rightarrow x^k, W)$ for various $k$. Plot \ref{approximations} shows 
-how well partition function is approximated with finite Taylor expansion. Finally, plot \ref{time_approx} 
-compares computation time of derived rules to the computation time of naive exponential time algorithm.
+Table \ref{eval} shows number of terms necessary to derive $g(x
+\rightarrow x^k, W)$ for various $k$. Figure \ref{approximations} shows
+how well partition function is approximated with finite Taylor
+expansion. Finally, Figure \ref{time_approx} compares computation time
+of derived rules to the computation time of naive exponential time
+algorithm.
 
 \begin{table}
 \tiny
