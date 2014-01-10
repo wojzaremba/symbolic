@@ -128,11 +128,12 @@ sum(sum(W .* W .* W))
 Expression $g(x \rightarrow x^3, W)$ can be computed exactly with following Matlab code:
 \begin{lstlisting}
 (C .^ 3 + 
-C .* sum(A.^2) * 3 +
+C .* sum(A .^ 2) * 3 +
 C .* sum(sum(W .* W, 2)) * 3 +
-C .* sum(B.^2) * 3 + 
+C .* sum(B .^ 2) * 3 + 
 sum(A .* sum(W .* D, 2)) * 6)) / 64;
 \end{lstlisting}
 
 % XXX : After such rewriting verify in code !!!!
 % Change result as a vector by grammar multiplication.
+% check if one is subset of the other.
