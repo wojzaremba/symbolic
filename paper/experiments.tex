@@ -6,16 +6,14 @@ approximations of partition function.
 
 There are given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m \times k}$. 
 Goal is to compute 
-\begin{align*}
-	\sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
-\end{align*}
+\begin{gather*}
+\sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
+\end{gather*}
 Naive algorithm would take $O(nmk)$ time. However, we have found with our framework 
-computation giving the same expression in time O(n(k + m)) :
-
-\begin{verbatim}
-	sum(sum(A .* repmat(sum(B, 2), [1, n])'))
-\end{verbatim}
-
+computation giving the same expression in time O(n(k + m)):
+\begin{lstlisting}
+sum(sum(A .* repmat(sum(B, 2), [1, m])'))
+\end{lstlisting}
 Empirical tests indicate that aforementioned computation is indeed faster (Figure \ref{ab}).
 
 \begin{figure}[h]
@@ -26,12 +24,9 @@ Empirical tests indicate that aforementioned computation is indeed faster (Figur
 \end{figure}
 
 
-Similarly, we found quadratic time computation instead of cubic for similar expressions like : 
+Similarly, we found quadratic time computation instead of cubic for similar expressions like: 
 \begin{align*}
-	\sum ABC\\
-	\sum ABCD\\
-	\sum AA^T\\
-	\sum AA^TA\\
+	\sum ABC\text{, }\sum ABCD\text{, }\sum AA^T\text{, }\sum AA^TA
 \end{align*}
 
 One could automatically analyze large code repositories to find other expressions, which are computed inefficiently. 
@@ -57,10 +52,10 @@ compares computation time of derived rules to the computation time of naive expo
 \begin{table}
 \tiny
 \centering
-\begin{tabular}{|l||l|l|}
-\hline\hline
-Order & Size of grammar & Computation time (s) \\
-\hline\hline
+\begin{tabular}{rrr}
+\hline
+Order & Grammar size & Time (s) \\
+\hline
 2 & 5 & 17 \\
 3 & 15 & 188 \\
 4 & 48 & 2535\\
@@ -71,13 +66,15 @@ Order & Size of grammar & Computation time (s) \\
 \label{grammars}
 \end{table}
 
+% TODO(wojciech): \mathbf was on purpose below? it's not consistent.
+% TODO(karol): we need more columns in those tables, or we should consider merging them
 \begin{table}
 \tiny
 \centering
-\begin{tabular}{|l|l|l|}
-\hline\hline
-Order & Number of terms & Complexity \\
-\hline\hline
+\begin{tabular}{rrr}
+\hline
+Order & Num. terms & Complexity \\
+\hline
 2 & 4 & $O(n^2)$\\
 3 & 5 & $O(n^2)$\\
 4 & 21 & $\mathbf{O(n^3)}$\\
