@@ -109,7 +109,7 @@ then look for the linear combination with the smallest cost
 problem, or knapsack problem, which are NP-complete. However, we can
 relax this to a linear program, which will give a solution almost as
 efficient as the optimal one.  Experiments suggest that is good to
-also minimize number of coefficients, so avoiding uneccessary
+also minimize number of coefficients, so avoiding unnecessary
 non-integer coefficient values, which can contribute numerical errors.
 
 
@@ -126,31 +126,11 @@ $O(1)$), and adding new literals with higher and higher complexity
 ($O(n)$ and then $O(n^2)$ and so on). If algorithm, find solution at
 some point, than this solution is optimal in terms of
 complexity. However, discovery of the fastest performance (i.e.~lowest
-runtime) requires exporation of all possible combinations of literals,
+runtime) requires exploration of all possible combinations of literals,
 which is far more expensive.  
 
 
-% This section is not necessary and it's confusing. 
-%\subsection{Optimization}
-%Rob: English from here on not yet fixed
-%
-%The application of grammar rules gives rise to a tree. Moreover, last step of
-%combining elements together can be also considered as adding a plus node to the
-%tree. Optimization procedures (Rob: what kind?) are applied recursively to tree branches, and
-%transform them to more efficient computationally equivalents. We used common in
-%compiler literature optimization techniques like subexpression elimination.
-%Further, we optimized our symbolic tree by exploiting (1) distributive, and (2)
-%associative properties of multiplication, and addition (together with
-%commutative property for addition).
-
 \subsection{Extension of Grammar}
-%<<<<<<< HEAD
-%The presented attributive grammar is an example of a grammar which is finite
-%and can solve a class of problems involving polymonials. However, one could extend it with 
-%other operations such as matrix inverse, or subvision of the matrcies.
-%The latter would allow the discovery of recurrences (e.g.~ discreet Fourier transform, or
-%Strassen algorithm for fast matrix multiplication).
-%=======
 The presented framework has some limitations, but also can be easily extended. First,
 we operate on polynomials instead of general functions. It is quite easy to verify
 equality of polynomials, because it is enough to check equality of coefficients or
@@ -161,7 +141,6 @@ framework would have to be aware of many additional identities,
 e.g. $\sin^2{x} + \cos^2{x} = 1$, or $2\sin x \cos x = \sin
 2x$. Although challenging, we believe it is possible to extend our
 framework to handle such cases. 
-%However, we believe that it can be overcome. 
 
 It is straight forward to extend our framework to matrices of fractional
 polynomials instead of matrices of polynomials.  We could
@@ -179,12 +158,16 @@ and crucial in computation.
 For Joan.
 
 \subsection{Representation of Expressions}
-Rob: I did not understand this entire section.
-Expressions are defined as belonging to $\mathcal{P}^{n \times m}_\alpha$. There are various
-ways how matrices of polynomials can be represented in software. Such representation is crucial, and has consequences in
+%Rob: I did not understand this entire section.
+Expressions are defined formal to belong to $\mathcal{P}^{n \times m}_\alpha$. There are various
+ways how matrices of polynomials can be represented in the code software. Such representation is crucial, and has consequences in
  correctness of solution (due to numerical errors), and computation speed.
-Rob: sometimes subscript is $k$ sometimes $\alpha$, fix to be
-consistent. 
+
+We will demonstrate different representations by considering two matrices of polynomials:
+\begin{align*}
+\mathbb{A} &= \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix}\\
+\mathbb{B} &= \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
+\end{align*}
 
 
 \subsubsection{Symbolic representation}
@@ -201,6 +184,13 @@ We have implemented expressions in such representation, and it allowed us
 to find patterns for polynomials up to degree $4$ (above degree $4$ it was consuming too much time).
 
 This solution guarantees correctness, and it is easiest to debug.
+
+Entry $(0, 0)$ of matrix $\mathbb{A}$ would be repressed as list of coefficients $[1, 2, 1]$, and list
+of powers $\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$. Entry $(0, 0)$ of matrix $\mathbb{B}$ would
+be represented as list of coefficients $[1, 1]$, and list of powers 
+$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$. Result of element-wise multiplication of such expression,
+would result in expression having in entry $(0, 0)$ value with list of coefficients $[1, 3, 3, 1]$, and
+list of powers $\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$. 
 
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
@@ -223,6 +213,17 @@ correspond just to the same operations in our representation (of same computatio
 For element-wise multiplication of matrices of expressions, we
 have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
 
+Let's assume that we evaluate polynomials in points $a = 0.5, b = 1.5$, and $a = 2.5, b = 3.5$
+Then $\mathbb{A}, \mathbb{B}$ have the following evaluation:
+\begin{align*}
+\mathbb{A} &= \begin{pmatrix} 4 & 0.25\\ 2.25 & 0.75 \end{pmatrix}, \begin{pmatrix} 36 & 6.25\\ 12.25 & 8.75 \end{pmatrix} \\
+\mathbb{B} &= \begin{pmatrix} 2 & 0.5\\ 1.5 & 4 \end{pmatrix}, \begin{pmatrix} 6 & 2.5\\ 3.5 & 12 \end{pmatrix}
+\end{align*}
+Element-wise multiplication of expressions $\mathbb{A}$, and $\mathbb{B}$ is just element-wise multiplication of evaluations
+in the same points:
+\begin{align*}
+\begin{pmatrix} 8 & 0.125\\ 3.375 & 4 \end{pmatrix}, \begin{pmatrix} 216 & 15.625\\ 42.875 & 105 \end{pmatrix}
+\end{align*}
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
 We use similar strategy as in case of looking into evaluations of polynomials in $\mathbb{R}$. However, in order
@@ -236,4 +237,17 @@ This way all final coefficients are in the range $[-\frac{p}{2}, \frac{p}{2}]$. 
 
 This solution is fastest, and most reliable. However, it is difficult to debug. With such representation, we were able to
 develop completely grammars up to degree $5$.
+
+
+Let's assume that we evaluate polynomials in points $a = 1, b = 2$, and $a = 3, b = 4$, and we work in $Z_{11}$.
+Then $\mathbb{A}, \mathbb{B}$ have the following evaluation:
+\begin{align*}
+\mathbb{A} &= \begin{pmatrix} 9 & 1\\ 4 & 2 \end{pmatrix}, \begin{pmatrix} 5 & 9\\ 5 & 1 \end{pmatrix} \\
+\mathbb{B} &= \begin{pmatrix} 3 & 1\\ 2 & 6 \end{pmatrix}, \begin{pmatrix} 7 & 3\\ 4 & 3 \end{pmatrix}
+\end{align*}
+Element-wise multiplication of expressions $\mathbb{A}$, and $\mathbb{B}$ is just element-wise multiplication of evaluations
+in the same points modulo $11$:
+\begin{align*}
+\begin{pmatrix} 5 & 1\\ 8 & 1 \end{pmatrix}, \begin{pmatrix} 2 & 5\\ 9 & 3 \end{pmatrix}
+\end{align*}
 

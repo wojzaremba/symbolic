@@ -1,7 +1,7 @@
 We define the following terms: %Before delving into content of this work, we will establish vocabulary.
 
 
-{\bf Space of matrices of polynomials} - a matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_k$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
+{\bf Space of matrices of polynomials} - a matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_{\alpha}$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
 
 {\bf Grammar} - a attributive grammar on tuples (expression, computation, computational time). We refer to these tuples as literals. Rob: symbols gone?
 
@@ -18,6 +18,6 @@ We define the following terms: %Before delving into content of this work, we wil
 {\bf Computation Time} - it is a computation time for a particular architecture and programming language, or computation complexity. For a computation $\mathcal{C}$, we refer to its computation time as $t_{\mathcal{C}}$. 
 
 
-Let's consider a literal $L = (\mathbb{E}, \mathcal{C}, t_\mathcal{C})$. $\mathbb{E}$ is a polynomial in $\mathcal{P}^{n \times m}_k$. $\mathcal{C}$ is a computation of this polynomial starting with a input matrices. Result of computation is a real matrix
+Let's consider a literal $L = (\mathbb{E}, \mathcal{C}, t_\mathcal{C})$. $\mathbb{E}$ is a polynomial in $\mathcal{P}^{n \times m}_{\alpha}$. $\mathcal{C}$ is a computation of this polynomial starting with a input matrices. Result of computation is a real matrix
 in $\mathbb{R}^{n \times m}_k$, which is computed in time $t_\mathcal{C}$. This time is a time necessary to perform computation on instantiations of matrices with actual values -- not computation during grammar derivation, which would involve expressions. For example, if $\mathcal{C}$ is an elementwise multiplication operation (see rules in \ref{rules}) then $t_\mathcal{C}$ would be $O(nm)$.
 
