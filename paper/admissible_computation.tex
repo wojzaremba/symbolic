@@ -116,13 +116,18 @@ non-integer coefficient values, which can contribute numerical errors.
 %it is enough for us to get approximated
 %solution (Rob: what kind of approximation), which can be easily obtained with linear solver.
 
-It is worth noting that while it is easy to find best solution in terms of complexity, it 
-is NP-complete to find the best solution in terms of performance. In order to find best solution in terms
-of complexity, one has to run linear solver multiple times. Every time, it should include broader number
-of literals. Starting with set of literals having the smallest complexity, and adding new literals with
-higher, and higher higher complexity. If algorithm, find solution at some point, than this solution is optimal
-in terms of complexity. Rob: not clear at all. Sounds like complexity is
-harder than performance. REWORD
+It is worth noting that while it is easy to find best solution in
+terms of {\em complexity}, it is NP-complete to find the best solution
+in terms of {\em performance}. In order to find best solution in terms
+of complexity, one has to run linear solver multiple times. Every
+time, it should include broader number of literals. Starting with set
+of literals having the smallest complexity (e.g.~those which are
+$O(1)$), and adding new literals with higher and higher complexity
+($O(n)$ and then $O(n^2)$ and so on). If algorithm, find solution at
+some point, than this solution is optimal in terms of
+complexity. However, discovery of the fastest performance (i.e.~lowest
+runtime) requires exporation of all possible combinations of literals,
+which is far more expensive.  
 
 
 % This section is not necessary and it's confusing. 
@@ -139,10 +144,10 @@ harder than performance. REWORD
 %commutative property for addition).
 
 \subsection{Extension of Grammar}
-Presented attributive grammar is just a example of grammar which is finite
-and seems to solve many problems. However, one could extend it with 
-other operations like e.g. inverse of matrix. Moreover, one could exploit
-rules which could discover recurrences (to be able to discover discreet Fourier transform, or
+The presented attributive grammar is an example of a grammar which is finite
+and can solve a class of problems involving polymonials. However, one could extend it with 
+other operations such as matrix inverse, or subvision of the matrcies.
+The latter would allow the discovery of recurrences (e.g.~ discreet Fourier transform, or
 Strassen algorithm for fast matrix multiplication).
 
 \subsection{Computation derivation as the formal system}
@@ -150,10 +155,12 @@ Strassen algorithm for fast matrix multiplication).
 For Joan.
 
 \subsection{Representation of Expressions}
-
+Rob: I did not understand this entire section.
 Expressions are defined as belonging to $\mathcal{P}^{n \times m}_\alpha$. There are various
 ways how they can be represented in software. This representation is crucial, and has consequences in
  correctness of solution (due to numerical errors), and computation speed.
+Rob: sometimes subscript is $k$ sometimes $\alpha$, fix to be
+consistent. 
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
 As expressions correspond to the matrices of polynomials, one could just record their values

@@ -1,23 +1,26 @@
-Algorithm presented in Section
-\ref{sec:grammars} allows to find concise formulas for polynomial expressions.
-However, many interesting functions are outside of this family.  Instead of it,
-we are going to consider Taylor expansion of desired function, and we will
-derive close form fast formula for it.
+The algorithm presented in Section
+\ref{sec:grammars} allows us to find concise formulas for polynomial expressions.
+However, many interesting functions are outside of this
+family. Thereefore we consider Taylor expansion of desired function
+and use our approach to derive a fast way of computing the expansion
+in closed form.
 
-Let's denote by $g(f, W)$ generalization of partition function. 
-$g$ is a functional, and it takes as argument a function $f : \mathbb{R} \rightarrow \mathbb{R}$,
-and weights $W$. It is defined as follow: 
+Let $g(f, W)$ be the generalization of partition function for a binary
+RBM \cite{originalRBMpaper}. 
+$g$ is a functional, and it takes the following arguments $f : \mathbb{R} \rightarrow \mathbb{R}$,
+and weights $W$. It is defined as follows: 
 \begin{gather*}
 g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh) \\
 f : \mathbb{R} \rightarrow \mathbb{R}\\
 W \in \mathbb{R}^{n \times m}
 \end{gather*}
-We consider computation of $g(x \rightarrow x^k, W)$ for a given $k$ for any $W
-\in \mathbb{R}^{n \times m}$, for any $n, m$. Potentially, if we would be able
+We consider computation of $g(x \rightarrow x^k, W)$ for a given power
+$k$, and for any $W
+\in \mathbb{R}^{n \times m}$ (and any size $n, m$). Potentially, if we would be able
 to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, than partition
 function for finite energy $v^TWh < C$ could be approximated arbitrarily well.
-This is consequence of expressing $e^{x}$ as finite sum approximation through
-Taylor expansion.
+This is consequence of expressing as a finite sum approximation through
+Taylor expansion: $e^{x}=1+x+x^2/2!+x^3/3!+\cdots$.
 
 \subsection{Low degree examples} In order to present how our algorithm works,
 we will manually derive fast computation procedure for $g(x \rightarrow k, W)$.
