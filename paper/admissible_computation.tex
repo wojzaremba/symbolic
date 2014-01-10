@@ -144,11 +144,35 @@ which is far more expensive.
 %commutative property for addition).
 
 \subsection{Extension of Grammar}
-The presented attributive grammar is an example of a grammar which is finite
-and can solve a class of problems involving polymonials. However, one could extend it with 
-other operations such as matrix inverse, or subvision of the matrcies.
-The latter would allow the discovery of recurrences (e.g.~ discreet Fourier transform, or
-Strassen algorithm for fast matrix multiplication).
+%<<<<<<< HEAD
+%The presented attributive grammar is an example of a grammar which is finite
+%and can solve a class of problems involving polymonials. However, one could extend it with 
+%other operations such as matrix inverse, or subvision of the matrcies.
+%The latter would allow the discovery of recurrences (e.g.~ discreet Fourier transform, or
+%Strassen algorithm for fast matrix multiplication).
+%=======
+The presented framework has some limitations, but also can be easily extended. First,
+we operate on polynomials instead of general functions. It is quite easy to verify
+equality of polynomials, because it is enough to check equality of coefficients or
+evaluations on sufficiently many points (more than degree of
+polynomial). However, for generic functions
+it is not as simple. For example, if our basis would to include trigonometric functions, then the
+framework would have to be aware of many additional identities,
+e.g. $\sin^2{x} + \cos^2{x} = 1$, or $2\sin x \cos x = \sin
+2x$. Although challenging, we believe it is possible to extend our
+framework to handle such cases. 
+%However, we believe that it can be overcome. 
+
+It is straight forward to extend our framework to matrices of fractional
+polynomials instead of matrices of polynomials.  We could
+then include productions like matrix inverse and element-wise inverse of
+a matrix.  Another direction would be to generlize matrices to arbitrary tensors
+for which it is even harder for humans to spot useful relations.
+
+Finally, we are interested in exploiting productions which could discover 
+recurrences. This would allow our system to discover the fast fourier ransform, or
+Strassen's algorithm for fast matrix multiplication. This family of problems is quite broad,
+and crucial in computation.
 
 \subsection{Computation derivation as the formal system}
 
@@ -157,31 +181,48 @@ For Joan.
 \subsection{Representation of Expressions}
 Rob: I did not understand this entire section.
 Expressions are defined as belonging to $\mathcal{P}^{n \times m}_\alpha$. There are various
-ways how they can be represented in software. This representation is crucial, and has consequences in
+ways how matrices of polynomials can be represented in software. Such representation is crucial, and has consequences in
  correctness of solution (due to numerical errors), and computation speed.
 Rob: sometimes subscript is $k$ sometimes $\alpha$, fix to be
 consistent. 
 
-\subsubsection{Evaluation of polynomials in $\mathbb{R}$}
-As expressions correspond to the matrices of polynomials, one could just record their values
-for many random numbers. If number of evaluations is large enough, then polynomials can be
-recovered based on such values. Or even one could keep this representation over entire 
-computation without recovering polynomials, but deriving final relation between polynomials (that's what we implemented).
-It turns out, that this methods is numerically unstable
-, and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
-
-Nice part about this representation is that operations like element-wise matrix multiplication, addition of matrices, etc.
-correspond just to the same operations in our representation (of same computational cost). i.e. For element-wise multiplication of matrices of expressions, we
-have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
 
 \subsubsection{Symbolic representation}
-Expressions can represented as matrices of polynomials. Every expression has list of coefficients and monomials, which it constitutes of.
-This representation is exact, and gives us guarantees on correctness. However,
-it might be quite slow. For instance, if two polynomials, which we want to multiply constitutes of 1000 coefficients, then
-it takes $\sim 1mln.$ operations. We have implemented expressions in such representation, and it allowed us
+Expressions are defined as matrices of polynomials. The most straight forward 
+representation is to store for every expression, its coefficients and powers of the every monomial.
+This representation is exact, and corresponds one-to-one with our description of operations
+defined by grammar. However, it has computational drawback. 
+For instance, let's assume that we would like to multiply two polynomials, each having $1000$ monomials.
+Such multiplication would take roughly $10^6$ operations. While the same operation on instantiations of
+this polynomials would cost just a one multiplication.
+
+
+We have implemented expressions in such representation, and it allowed us
 to find patterns for polynomials up to degree $4$ (above degree $4$ it was consuming too much time).
 
 This solution guarantees correctness, and it is easiest to debug.
+
+
+\subsubsection{Evaluation of polynomials in $\mathbb{R}$}
+Polynomials can be encoded 
+by its evaluation at sufficiently many points (more than a degree of polynomial).
+This encoding simplifies operations on expressions, and multiplication of expressions
+in such representation is proportional to the number of evaluation points (for every evaluation
+point, we have to perform just a common multiplication).
+
+Actually, we need evaluate our polynomials in number of points which is larger 
+than final size of linear equations \ref{sec:linear}. We do not have to recover coefficients of polynomials,
+as we are just interest in finding proper linear combination of expressions.
+
+
+This methods is numerically unstable
+, and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
+
+Nice part about this representation is that operations like element-wise matrix multiplication, addition of matrices, etc.
+correspond just to the same operations in our representation (of same computational cost multiplied by number of evaluation points). i.e. 
+For element-wise multiplication of matrices of expressions, we
+have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
+
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
 We use similar strategy as in case of looking into evaluations of polynomials in $\mathbb{R}$. However, in order
@@ -193,5 +234,6 @@ accurate up to $p$ offset. This turns out also not to be an issue. For all coeff
 This way all final coefficients are in the range $[-\frac{p}{2}, \frac{p}{2}]$. We have verified that such solutions are correct
 (it can be considered as prior on magnitude of coefficients). 
 
-This solution is fastest, and most reliable. However, it is difficult to debug.
+This solution is fastest, and most reliable. However, it is difficult to debug. With such representation, we were able to
+develop completely grammars up to degree $5$.
 
