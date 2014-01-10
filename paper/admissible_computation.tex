@@ -139,11 +139,24 @@ harder than performance.
 %commutative property for addition).
 
 \subsection{Extension of Grammar}
-Presented attributive grammar is just a example of grammar which is finite
-and seems to solve many problems. However, one could extend it with 
-other operations like e.g. inverse of matrix. Moreover, one could exploit
-rules which could discover recurrences (to be able to discover discreet Fourier transform, or
-Strassen algorithm for fast matrix multiplication).
+Presented framework has some limitations, but also can be easily extended. First limitation,
+is that we operate on polynomials instead of general functions. It is quite easy to verify
+equality of polynomials, because it is enough to check equality of coefficients or
+evaluations on sufficiently many points (more than degree of polynomial). While for generic functions
+it is not as simple. If our basis would be trigonometric functions, then 
+framework would have to be aware of many identities, e.g. $\sin^2{x} + \cos^2{x} = 1$, or $2\sin x \cos x = \sin 2x$.
+However, we believe that it can be overcome. 
+
+It is straight forward to extend our framework to matrices on fraction of polynomials instead of matrices of polynomials.
+We could productions like inverse of matrix, and element-wise inverse of matrix. 
+Moreover, we could replace matrices with arbitrary tensors for which 
+it is even harder for human to spot relations.
+
+
+Finally, we are interest in exploiting productions, which could discover 
+recurrences (to be able to discover discreet Fourier transform, or
+Strassen algorithm for fast matrix multiplication). This family of problems is quite broad,
+and crucial in computation.
 
 \subsection{Computation derivation as the formal system}
 
