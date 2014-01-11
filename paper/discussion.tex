@@ -1,15 +1,86 @@
-We have presented an automatic method for docvery of polynomial
-formulas. The method itself is novel, as well as the derived
-approximations to the RBM partition function.  There are three
-major directions of future research. The first is concerned with computing
+\section{Discussion and Future Work}
+
+We have presented an automatic method for discovery of computations for
+ polynomial expressions. The method itself is novel, as well as the derived
+approximations to the RBM partition function.  There are four
+major directions of future research. 
+
+
+The first is focus on extension of our method
+to (i) reacher class of functions than polynomials, (ii) larger set of production
+rules, (iii) more complex objects than matrices (e.g. tensors).
+
+
+The second would be to use learning to
+generalize computation (Subsection \label{agenda)}, i.e.~replace current brute force process with
+something more intelligent. E.g. We could generalize computation of
+$g(x \rightarrow x^k, W)$ for $k = 1, \dots, 5$ to $k > 5$. 
+
+
+The third is concerned with computing
 the partition function and its derivatives, using approximations for
 learning, approximations for deep Bolzmann machines, optimization of
 the derived formulas, and understanding the mathematical principles behind
-formulas derived by our programs. The second would be to use learning to
-generalize computation, i.e.~replace current brute force process with
-something more intelligent. E.g. We could generalize computation of
-$g(x \rightarrow x^k, W)$ for $k = 1, \dots, 5$ to $k > 5$. Finally,
-the third direction are real-world applictions of this framework on
+formulas derived by our programs. 
+
+
+Finally,
+the forth direction are real-world applictions of this framework on
 large code databases. We could automatically detect parts of code with
 expressions that have suboptimal time complexity and replace them.
+
+
+We discuss in following subsections two first major directions of future research.
+
+
+\subsection{Extension of Grammar}
+The presented framework has some limitations, but also can be easily extended. First,
+we operate on polynomials instead of general functions. It is quite easy to verify
+equality of polynomials, because it is enough to check equality of coefficients or
+evaluations on sufficiently many points (more than degree of
+polynomial). However, for generic functions
+it is not as simple. For example, if our basis would to include trigonometric functions, then the
+framework would have to be aware of many additional identities,
+e.g. $\sin^2{x} + \cos^2{x} = 1$, or $2\sin x \cos x = \sin
+2x$. Although challenging, we believe it is possible to extend our
+framework to handle such cases. 
+
+It is straight forward to extend our framework to matrices of fractional
+polynomials instead of matrices of polynomials.  We could
+then include productions like matrix inverse and element-wise inverse of
+a matrix.  Another direction would be to generlize matrices to arbitrary tensors
+for which it is even harder for humans to spot useful relations.
+
+Finally, we are interested in exploiting productions which could discover 
+recurrences. This would allow the discovery the fast fourier ransform, or
+Strassen's algorithm for fast matrix multiplication. This family of problems is quite broad,
+and crucial in computation.
+
+
+\subsection{Computation Generalization}\label{agenda}
+
+This paper presents a brute force search over all possible computations, 
+to yield terms that could lead to the target result. Although it works
+well for polynomials of small degrees $k \leq 5$, for larger powers 
+brute force methods seems to fail. One of the contributions of this paper is to
+demonstrate how a small subset of mathematics may be explored with an automatic proving
+system. However, to broaden the range of math that we can address, we
+must move beyond brute force methods to more intelligent approaches
+which learn which rules are likely to be helpful, based on expressions
+for smaller powers. This would allow us move to polynomials of $k>5$,
+making accurate estimation of the partition function for many deep
+networks possible. More broadly, it would bring machine learning techniques
+to the area of automatic theorem proving, which is another domain of
+human intelligence distinct from perceptual tasks (where machine
+learning is already effective). 
+
+%  tackle a broader set of problems We look forward to extend this brute force methods to more intelligible approaches, which
+% could learn based on rules for smaller powers, how to solve problem for larger powers. This would
+% have two-fold implications in machine learning. Firstly, it would bring machine learning techniques
+% to the area of automatic theorem proving, which another domain of human intelligence after perception
+% of vision, or hearing. Secondly, solution to the problem of partition function approximation
+% could have consequences in unsupervised learning of RBMs, deep Bolzmann machines, and deep
+% belief networks. 
+
+
 

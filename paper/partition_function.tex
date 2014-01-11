@@ -1,3 +1,5 @@
+\section{Partition Function of RBM} \label{partitionfunction}
+
 The algorithm presented in Section
 \ref{sec:grammars} allows us to find concise formulas for polynomial expressions.
 However, many interesting functions are outside of this
@@ -54,10 +56,10 @@ Now we wish to compute the following expression:
 There are multiple second order monomials that emerge: 
 
 \begin{itemize}
-	\item $w_{i,j}^2$ -- present iff $v_i = 1, h_j = 1$. Appears $2^{n + m - 2}$ times.
-	\item $w_{i,j} w_{i, k}, j \neq k$ -- present iff $v_i = 1, h_j = 1, h_k = 1$. Appears $2^{n + m - 3}$ times.	
-	\item $w_{i,j} w_{k, j}, i \neq k$ -- present iff $v_i = 1, v_k = 1, h_j = 1$. Appears $2^{n + m - 3}$ times.
-	\item $w_{i,j} w_{k, l}, i \neq k, j \neq l$ -- present iff $v_i = 1, v_k = 1, h_j = 1, h_l = 1$. Appears $2^{n + m - 4}$ times.			
+	\item $w_{i,j}^2$ -- present iff $v_i = 1, h_j = 1$. Appears $2^{n + m - 2}$ times. We encode sum of all monomials like this as $(1, 0, 0, 0)$.
+	\item $w_{i,j} w_{i, k}, j \neq k$ -- present iff $v_i = 1, h_j = 1, h_k = 1$. Appears $2^{n + m - 3}$ times. We encode sum of all monomials like this as $(0, 1, 0, 0)$.	
+	\item $w_{i,j} w_{k, j}, i \neq k$ -- present iff $v_i = 1, v_k = 1, h_j = 1$. Appears $2^{n + m - 3}$ times. We encode sum of all monomials like this as $(0, 0, 1, 0)$.
+	\item $w_{i,j} w_{k, l}, i \neq k, j \neq l$ -- present iff $v_i = 1, v_k = 1, h_j = 1, h_l = 1$. Appears $2^{n + m - 4}$ times. We encode sum of all monomials like this as $(0, 0, 0, 1)$.
 \end{itemize}
 We encode above quantities in a vector, which indicate how many times
 each of the monomials 
@@ -67,10 +69,11 @@ Rob: too big a jump. Need transition sentance here.
 Let us consider the following expressions: 
 \begin{itemize}
  \item $\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2$ encodes $(1, 0, 0, 0)$. 
+This expression contains only type of second degree monomials. 
+It contains only monomials $w_{i, j}^2$, but not $w_{i, j} w_{i, k}$, or $w_{i, j} w_{k, j}$, or $w_{i, j} w_{k, l}$.
  \item $(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2$ encodes $(1, 1, 1, 1)$.
  \item $\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2$ encodes $(1, 1, 0, 0)$. 
- \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes
-   $(1, 0, 1, 0)$.
+ \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes $(1, 0, 1, 0)$.
 \end{itemize}
  
  By solving the linear equations:
@@ -88,17 +91,24 @@ Let us consider the following expressions:
 \end{pmatrix} \\
  \end{equation}
 
-The solution to this equation is $x=[1 1 1 1]^T$, thus 
+The solution to this equation is $x=[1, 1, 1, 1]^T$, thus 
 \begin{align*}
 	&g(x \rightarrow x^2, W) = 2^{n + m - 4} \\ 
  &\Big(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + (\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
- &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2 \Big)
+ &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W_{i, j})^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W_{i, j})^2 \Big)
 \end{align*}
+Our algorithm derived the following equivalent Matlab computation for it:
+\begin{lstlisting}
+(sum(sum(W)) .^ 2 + ...
+sum(sum(W, 2) .* sum(W, 2)) + ... 
+sum(sum(W, 1) .* sum(W, 1)) + ... 
+sum(sum(W .* W))) * 2 ^ (n + m - 4)
+\end{lstlisting}
 The above derivation is still within the scope of human skill. However, manual derivation
 of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes intractible. Our algorithm
 is able to find such complex computational patterns automatically. 
 
-\subsubsection{$g(x \rightarrow x^3, W)$}
+\subsubsection{{$\bf g(x \rightarrow x^3, W)$}}
 The manual derivation for $k = 3$ is challenging. We present here all derived computations in
 for expressions in $\mathcal{P}^{1 \times 1}_3$. We will use following symbols to keep our notation
 concise:

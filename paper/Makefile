@@ -1,4 +1,4 @@
-PARTS=symbolic.tex admissible_computation.tex conjecture.tex discussion.tex experiments.tex generalization.tex introduction.tex partition_function.tex related_work.tex terminology.tex
+PARTS=symbolic.tex admissible_computation.tex conjecture.tex discussion.tex experiments.tex introduction.tex partition_function.tex related_work.tex terminology.tex
 
 symbolic.pdf: $(PARTS) bibliography.bib 
 	pdflatex symbolic.tex

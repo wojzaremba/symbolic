@@ -1,3 +1,5 @@
+\section{Experiments}
+
 We present various mathematical expressions, which can be computed more efficiently
 than initial formulation would suggest. 
 
@@ -65,7 +67,7 @@ algorithm.
 \centering
 \begin{tabular}{rrr}
 \hline
-Order & Grammar size & Time (s) \\
+Degree & Grammar size & Time (s) \\
 \hline
 2 & 5 & 17 \\
 3 & 15 & 188 \\
@@ -73,7 +75,9 @@ Order & Grammar size & Time (s) \\
 5 & 139 & 31320 \\
 \hline
 \end{tabular}
-\caption{Table summarizes size and computational time for grammars of specific degree.}
+\caption{Table summarizes size and computational time for grammars of specific degree. 
+All computation here are performed on expressions, and have nothing to do with computation time on instantiations.
+This procedure has to be executed only once.}
 \label{grammars}
 \end{table}
 
@@ -84,7 +88,7 @@ Order & Grammar size & Time (s) \\
 \centering
 \begin{tabular}{rrr}
 \hline
-Order & Num. terms & Complexity \\
+Degree & Num. terms & Complexity \\
 \hline
 2 & 4 & $O(n^2)$\\
 3 & 5 & $O(n^2)$\\
@@ -92,7 +96,10 @@ Order & Num. terms & Complexity \\
 5 & 30 & $\mathbf{O(n^3)}$\\
 \hline
 \end{tabular}
-\caption{Table summarizes complexity of computation of $g(x \rightarrow x^k, W)$.} 
+\caption{Table summarizes complexity of computation of $g(x \rightarrow x^k, W)$. 
+Number of terms, and complexity of every term is important for the computation of the target expression.
+Potentially, we need to evaluate partition function multiple times, so the ``Complexity''
+is the complexity of our final system were we use such expressions.} 
 \label{eval}
 \end{table}
 

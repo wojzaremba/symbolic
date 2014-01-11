@@ -1,3 +1,5 @@
+\section{Admissible Computation as a Grammar}\label{sec:grammars}
+
 Our goal is to find a fast way to compute the target expression in
 language and architecture of our choice.  We will achieve it by
 developing literals in a grammar, up to degree of target
@@ -129,30 +131,6 @@ complexity. However, discovery of the fastest performance (i.e.~lowest
 runtime) requires exploration of all possible combinations of literals,
 which is far more expensive.  
 
-
-\subsection{Extension of Grammar}
-The presented framework has some limitations, but also can be easily extended. First,
-we operate on polynomials instead of general functions. It is quite easy to verify
-equality of polynomials, because it is enough to check equality of coefficients or
-evaluations on sufficiently many points (more than degree of
-polynomial). However, for generic functions
-it is not as simple. For example, if our basis would to include trigonometric functions, then the
-framework would have to be aware of many additional identities,
-e.g. $\sin^2{x} + \cos^2{x} = 1$, or $2\sin x \cos x = \sin
-2x$. Although challenging, we believe it is possible to extend our
-framework to handle such cases. 
-
-It is straight forward to extend our framework to matrices of fractional
-polynomials instead of matrices of polynomials.  We could
-then include productions like matrix inverse and element-wise inverse of
-a matrix.  Another direction would be to generlize matrices to arbitrary tensors
-for which it is even harder for humans to spot useful relations.
-
-Finally, we are interested in exploiting productions which could discover 
-recurrences. This would allow the discovery the fast fourier ransform, or
-Strassen's algorithm for fast matrix multiplication. This family of problems is quite broad,
-and crucial in computation.
-
 \subsection{Computation derivation as the formal system}
 
 For Joan.
@@ -165,8 +143,7 @@ ways how matrices of polynomials can be represented in the code software. Such r
 
 We will demonstrate different representations by considering two matrices of polynomials:
 \begin{align*}
-\mathbb{A} &= \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix}\\
-\mathbb{B} &= \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
+\mathbb{A} &= \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix}, \mathbb{B} &= \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
 \end{align*}
 
 
