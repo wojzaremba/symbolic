@@ -1,0 +1,107 @@
+\documentclass{article}
+
+\usepackage{graphicx} % more modern
+\usepackage{subfigure} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+
+% For citations
+\usepackage{natbib}
+
+% For algorithms
+\usepackage{comment}
+\usepackage{framed}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+%\usepackage{algorithmicx}
+%\usepackage{algpseudocode}
+
+\usepackage{hyperref}
+\usepackage[]{mcode}
+
+\allowdisplaybreaks
+
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\usepackage{icml2014}  
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\begin{document} 
+
+
+\icmltitle{Supplementary material: Efficient Computation Discovery for Polynomial Expressions}
+
+Derivation of $g(x \rightarrow x^k, W)$ for $k \geq 4$ becomes
+convolved. We present what our software generated.
+It is really hard to format it into human readable form, so we have decided
+to post it as it is.
+
+\subsection{{$\bf g(x \rightarrow x^4, W)$}}
+             ((((( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))  .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)))  .* 1)  
+              + ( sum(( ( sum(W, 1) .* sum(W, 1)) .* ( sum(W, 1) .* sum(W, 1))), 2) .* -2)  
+              + ( ( sum(( sum(W, 1) .* sum(W, 1)), 2) .* sum(( sum(W, 1) .* sum(W, 1)), 2)) .* 3)  
+              + ( sum(( ( sum(W, 1) .* sum(W, 1)) .* sum(( W .* W), 1)), 2) .* -12)  
+              + ( ( sum(( sum(W, 1) .* sum(W, 1)), 2) .* sum(sum(( W .* W), 2), 1)) .* 6)  
+              + (sum((repmat(sum(sum(W, 2), 1), [n, 1])  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2)), 1)  .* 24)  
+              + (( ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)) .* sum(( sum(W, 1) .* sum(W, 1)), 2))  .* 6)  
+              + ( sum(( ( sum(W, 2) .* sum(W, 2)) .* ( sum(W, 2) .* sum(W, 2))), 1) .* -2)  
+              + ( ( sum(( sum(W, 2) .* sum(W, 2)), 1) .* sum(( sum(W, 2) .* sum(W, 2)), 1)) .* 3)  
+              + ( ( (sum(W, 2)') * ( ( W * (W')) * sum(W, 2))) .* 12)  
+              + ( ( ( sum(W, 1) * (W')) * ( W * (sum(W, 1)'))) .* 12)  
+              + (( ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)) .* sum(( sum(W, 2) .* sum(W, 2)), 1))  .* 6)  
+              + ( sum(( ( sum(W, 2) .* sum(W, 2)) .* sum(( W .* W), 2)), 1) .* -12)  
+              + ( ( sum(( sum(W, 1) .* sum(W, 1)), 2) .* sum(( sum(W, 2) .* sum(W, 2)), 1)) .* 6)  
+              + ( sum(sum(( ( W .* W) .* ( W .* W)), 2), 1) .* 4)  
+              + ( ( ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)) .* sum(sum(( W .* W), 2), 1)) .* 6)  
+              + ( ( sum(( sum(W, 2) .* sum(W, 2)), 1) .* sum(sum(( W .* W), 2), 1)) .* 6)  
+              + ( ( sum(sum(( W .* W), 2), 1) .* sum(sum(( W .* W), 2), 1)) .* 3)  
+              + ( sum(( sum(( W .* W), 1) .* sum(( W .* W), 1)), 2) .* -6)  
+              + ( sum(( sum(( W .* W), 2) .* sum(( W .* W), 2)), 1) .* -6)   
+              + ( sum(sum(( ( W * (W')) .* ( W * (W'))), 1), 2) .* 6))) / 256;
+
+\subsection{{$\bf g(x \rightarrow x^5, W)$}}
+             (((sum(sum((repmat(( sum(W, 1) .* sum(W, 1)), [n, 1])  .* ( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W)), 2), 1)  .* -40)  
+              + (sum((( sum(W, 1) .* sum(W, 1))  .* sum((repmat(sum(W, 1), [n, 1])  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))), 1)), 2)  .* -10)  
+              + (( sum(sum(W, 2), 1) .* sum(( ( sum(W, 2) .* sum(W, 2)) .* sum(( W .* W), 2)), 1))  .* -60)  
+              + (sum((repmat(sum(sum(W, 2), 1), [n, 1])  .* (repmat(sum(sum(W, 2), 1), [n, 1])  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2))), 1)  .* 60)  
+              + (sum((sum(( W .* repmat(sum(W, 1), [n, 1])), 2)  .* sum((repmat(sum(W, 1), [n, 1])  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))), 2)), 1)  .* 60)  
+              + (sum(sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* ( W .* ( W .* W))), 2), 1)  .* 80)  
+              + (sum((sum(W, 2)  .* (sum(W, 2)  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2))), 1)  .* -40)  
+              + (sum((repmat(sum(( sum(W, 2) .* sum(W, 2)), 1), [n, 1])  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2)), 1)  .* 60)  
+              + ( ( ( sum(W, 1) * (W')) * ( ( W * (W')) * sum(W, 2))) .* 120)  
+              + (sum((( sum(W, 2) .* sum(W, 2))  .* sum((repmat(sum(W, 2), [1, m])  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))), 2)), 1)  .* -10)  
+              + (( sum(sum(W, 2), 1) .* sum(( ( sum(W, 1) .* sum(W, 1)) .* sum(( W .* W), 1)), 2))  .* -60)  
+              + (sum((sum(repmat(( sum(W, 2) .* sum(W, 2)), [1, m]), 1)  .* sum((repmat(sum(W, 2), [1, m])  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))), 1)), 2)  .* 15)  
+              + ( ( ( sum(sum(W, 2), 1) * (sum(W, 2)')) * ( ( W * (W')) * sum(W, 2))) .* 60)  
+              + ( ( ( sum(sum(W, 2), 1) * ( sum(W, 1) * (W'))) * ( W * (sum(W, 1)'))) .* 60)  
+              + ((sum(sum(W, 2), 1)  .* ( sum(( sum(W, 1) .* sum(W, 1)), 2) .* sum(( sum(W, 1) .* sum(W, 1)), 2)))  .* 15)  
+              + ((sum(sum(W, 2), 1)  .* (( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))  .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))))  .* 1)  
+              + ((sum(( sum(W, 1) .* sum(W, 1)), 2)  .* ( sum(sum(W, 2), 1) .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))))  .* 10)  
+              + (sum((sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2)  .* repmat(sum(sum(( W .* W), 2), 1), [n, 1])), 1)  .* 60)  
+              + ((sum(( sum(W, 2) .* sum(W, 2)), 1)  .* ( sum(sum(W, 2), 1) .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))))  .* 10)  
+              + ((sum(sum(( W .* W), 2), 1)  .* ( sum(sum(W, 2), 1) .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))))  .* 10)  
+              + (sum((sum(repmat(( sum(W, 1) .* sum(W, 1)), [n, 1]), 2)  .* sum((repmat(sum(W, 2), [1, m])  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))), 2)), 1)  .* 30)  
+              + (sum(sum((( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W)  .* repmat(sum(( W .* W), 1), [n, 1])), 2), 1)  .* -120)  
+              + ((sum(sum(W, 2), 1)  .* ( sum(( sum(W, 1) .* sum(W, 1)), 2) .* sum(sum(( W .* W), 2), 1)))  .* 30)  
+              + (sum(sum((( repmat(sum(W, 2), [1, m]) .* repmat(sum(( W .* W), 1), [n, 1]))  .* repmat(sum(( W .* W), 1), [n, 1])), 2), 1)  .* -30)  
+              + ((sum(sum(W, 2), 1)  .* ( sum(( sum(W, 2) .* sum(W, 2)), 1) .* sum(sum(( W .* W), 2), 1)))  .* 30)  
+              + (sum(( repmat(sum(sum(W, 2), 1), [n, 1]) .* ( sum(( W .* W), 2) .* sum(( W .* W), 2))), 1)  .* -30)  
+              + (sum(( repmat(sum(sum(W, 2), 1), [n, 1]) .* sum(( ( W .* W) .* ( W .* W)), 2)), 1)  .* 20)  
+              + (( sum(sum(W, 2), 1) .* ( sum(sum(( W .* W), 2), 1) .* sum(sum(( W .* W), 2), 1)))  .* 15)  
+              + (sum((sum(( W .* W), 2)  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2)), 1)  .* -120)  + ( sum(( ( ( W * (W')) .* ( W * (W'))) * repmat(sum(sum(W, 2), 1), [n, 1])), 1) .* 30))) / 1024; 
+
+
+\end{document} 
+
