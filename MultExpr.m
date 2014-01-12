@@ -16,8 +16,9 @@ classdef MultExpr < ExprMatrix
             end  
             W = ExprMatrix(W, Matrix('W', c.n, c.m));
             WT = transpose(W);
-%             obj.exprs = marginalize(marginalize(multiply(multiply(W, WT), W), 1), 2);
-            tmp = marginalize(marginalize(multiply(W, WT), 1), 2);
+            Q = multiply(W, WT);
+            tmp = marginalize(marginalize(multiply(Q, W), 1), 2);
+%             tmp = marginalize(marginalize(multiply(W, WT), 1), 2);
             obj.exprs = tmp.exprs(1);
         end
         
