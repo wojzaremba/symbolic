@@ -174,13 +174,12 @@ the list of powers $\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}
 
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
-Polynomials can be encoded 
-by its evaluation at various points, and all operations between 
+Polynomials can be encoded by its evaluation at various, random points.
 This encoding simplifies operations on expressions, and multiplication of expressions
 in such representation is proportional to the number of evaluation points (for every evaluation
 point, we have to perform just a common multiplication).
 
-Actually, we need evaluate our polynomials in number of points which is larger 
+We need evaluate our polynomials in number of points which is larger 
 than final size of linear equations \ref{sec:linear}. We do not have to recover coefficients of polynomials,
 as we are just interest in finding proper linear combination of expressions.
 
@@ -188,39 +187,33 @@ as we are just interest in finding proper linear combination of expressions.
 This methods is numerically unstable
 , and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
 
-Nice part about this representation is that operations like element-wise matrix multiplication, addition of matrices, etc.
-correspond just to the same operations in our representation (of same computational cost multiplied by number of evaluation points). i.e. 
-For element-wise multiplication of matrices of expressions, we
-have to perform element-wise multiplication of real numbers (on multiple instances of random values assignments).
 
-Let's assume that we evaluate polynomials in points $a = 0.5, b = 1.5$, and $a = 2.5, b = 3.5$
-Then $\mathbb{A}, \mathbb{B}$ have the following evaluation:
+Let us ground this examples. We consider 2 points were we evaluate our polynomials:
+$a = 0.5, b = 1.5$, and $a = 2.5, b = 3.5$.
+
+Then $\mathbb{A}, \mathbb{B}$ have the following representation:
 \begin{align*}
 \mathbb{A} &= \begin{pmatrix} 4 & 0.25\\ 2.25 & 0.75 \end{pmatrix}, \begin{pmatrix} 36 & 6.25\\ 12.25 & 8.75 \end{pmatrix} \\
 \mathbb{B} &= \begin{pmatrix} 2 & 0.5\\ 1.5 & 4 \end{pmatrix}, \begin{pmatrix} 6 & 2.5\\ 3.5 & 12 \end{pmatrix}
 \end{align*}
-Element-wise multiplication of expressions $\mathbb{A}$, and $\mathbb{B}$ is just element-wise multiplication of evaluations
+Element-wise multiplication of expressions in this representation $\mathbb{A}$, and $\mathbb{B}$ is just element-wise multiplication of evaluations
 in the same points:
 \begin{align*}
 \begin{pmatrix} 8 & 0.125\\ 3.375 & 4 \end{pmatrix}, \begin{pmatrix} 216 & 15.625\\ 42.875 & 105 \end{pmatrix}
 \end{align*}
+This representation is numerically unstable (we are getting a lot of round offs, and large values).
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
-We use similar strategy as in case of looking into evaluations of polynomials in $\mathbb{R}$. However, in order
-to avoid numerical errors, we replace real number computation with computation in $\mathbb{Z}_p$ group (for large prime number $p$). This
-guarantees that all the results of the computation are represented correctly (there is no round off errors on integers). Nonetheless, there are few potential
-issues. We could have two different expressions being represented the same way (conflict of representations). In the
-real setting, we haven't run into this problem. Moreover, all the final coefficients after applying linear solver are
-accurate up to $p$ offset. This turns out also not to be an issue. For all coefficients above $\frac{p}{2}$, we subtract $p$. 
-This way all final coefficients are in the range $[-\frac{p}{2}, \frac{p}{2}]$. We have verified that such solutions are correct
-(it can be considered as prior on magnitude of coefficients). 
+We use similar strategy as in case of evaluations of polynomials in $\mathbb{R}$. 
+We avoid numerical errors by replacing computation on real number with computation in $\mathbb{Z}_p$ group (for a large prime number $p$). This
+guarantees that all the results of the computation are exact (there is no round off errors on integers, and values are bounded by $p$). 
 
-This solution is fastest, and most reliable. However, it is difficult to debug. With such representation, we were able to
-develop completely grammars up to degree $5$.
+This representation is fastest, and has no problem with numerical errors. However, it is difficult to debug. With such representation, we were able to
+develop completely grammars up to the degree $5$.
 
 
 Let's assume that we evaluate polynomials in points $a = 1, b = 2$, and $a = 3, b = 4$, and we work in $Z_{11}$.
-Then $\mathbb{A}, \mathbb{B}$ have the following evaluation:
+Then $\mathbb{A}, \mathbb{B}$ have the following representation:
 \begin{align*}
 \mathbb{A} &= \begin{pmatrix} 9 & 1\\ 4 & 2 \end{pmatrix}, \begin{pmatrix} 5 & 9\\ 5 & 1 \end{pmatrix} \\
 \mathbb{B} &= \begin{pmatrix} 3 & 1\\ 2 & 6 \end{pmatrix}, \begin{pmatrix} 7 & 3\\ 4 & 3 \end{pmatrix}
