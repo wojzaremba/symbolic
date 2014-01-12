@@ -1,13 +1,13 @@
 Init(struct('expr_type', 'Zp', ...
             'complexity', 'O', ...
             'debug', 0, ...
-            'power', 6));
+            'power', 2));
 
 totaltime = tic;
 S = Scheduler();
 S.AddBasicRules();
 S.AddMultRules();
-S.SetTarget(RBM());
+S.SetTarget(MultExpr());
 S.Run();
 fprintf('total time = %f\n', toc(totaltime));
 
