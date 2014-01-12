@@ -137,42 +137,45 @@ For Joan.
 
 \subsection{Representation of Expressions}
 %Rob: I did not understand this entire section.
-Expressions are defined formal to belong to $\mathcal{P}^{n \times m}_\alpha$. There are various
-ways how matrices of polynomials can be represented in the code software. Such representation is crucial, and has consequences in
- correctness of solution (due to numerical errors), and computation speed.
+Expressions belong to $\mathcal{P}^{n \times m}_\alpha$. There are various
+ways how they can be represented in the software. Such representation is crucial, and has consequences in
+correctness of solution (due to numerical errors), and computation speed.
 
-We will demonstrate different representations by considering two matrices of polynomials:
+Let us consider two matrices of polynomials:
 \begin{align*}
 \mathbb{A} &= \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix}, \mathbb{B} &= \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
 \end{align*}
-We will consider operation of element-wise matrix multiplication of $\mathbb{A}$ and $\mathbb{B}$.
+We consider element-wise matrix multiplication of $\mathbb{A}$ and $\mathbb{B}$. We derive result for different representation of expressions.
+
+
 
 \subsubsection{Symbolic representation}
-Expressions are defined as matrices of polynomials. The most straight forward 
-representation is to store for every expression, its coefficients and powers of the every monomial.
+The most direct representation of expressions is to store its coefficients and powers of the every monomial.
 This representation is exact, and corresponds one-to-one with our description of operations
 defined by grammar. However, it has computational drawback. 
-For instance, let's assume that we would like to multiply two polynomials, each having $1000$ monomials.
+Let's assume that we would like to multiply two polynomials, each having $1000$ monomials.
 Such multiplication would take roughly $10^6$ operations. While the same operation on instantiations of
 this polynomials would cost just a one multiplication.
 
 
 We have implemented expressions in such representation, and it allowed us
-to find patterns for polynomials up to degree $4$ (above degree $4$ it was consuming too much time).
+to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. We haven't run computation for 
+higher degrees due to resource limitations. This representation guarantees correctness, and is easy to debug, however
+is quite slow (as the consequence of verboseness). 
 
-This solution guarantees correctness, and it is easiest to debug.
-
-Entry $(0, 0)$ of matrix $\mathbb{A}$ would be repressed as list of coefficients $[1, 2, 1]$, and list
-of powers $\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$. Entry $(0, 0)$ of matrix $\mathbb{B}$ would
-be represented as list of coefficients $[1, 1]$, and list of powers 
-$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$. Result of element-wise multiplication of such expression,
-would result in expression having in entry $(0, 0)$ value with list of coefficients $[1, 3, 3, 1]$, and
-list of powers $\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$. 
+Let's ground this representation in an example of element-wise matrix multiplication of $\mathbb{A}$, and $\mathbb{B}$.
+Result of such multiplication is a matrix. We present results for the entry $(0, 0)$.
+Entry $(0, 0)$ of the matrix $\mathbb{A}$ is the list of coefficients $[1, 2, 1]$, and the list
+of powers $\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$. Entry $(0, 0)$ of the matrix $\mathbb{B}$ is
+the list of coefficients $[1, 1]$, and the list of powers 
+$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$. Entry $(0, 0)$ of the element-wise multiplication of $\mathbb{A}$, and $\mathbb{B}$
+is the list of coefficients $[1, 3, 3, 1]$, and
+the list of powers $\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$. 
 
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
 Polynomials can be encoded 
-by its evaluation at sufficiently many points (more than a degree of polynomial).
+by its evaluation at various points, and all operations between 
 This encoding simplifies operations on expressions, and multiplication of expressions
 in such representation is proportional to the number of evaluation points (for every evaluation
 point, we have to perform just a common multiplication).
