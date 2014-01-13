@@ -3,7 +3,7 @@
 The algorithm presented in Section
 \ref{sec:grammars} allows us to find concise formulas for polynomial expressions.
 However, many interesting functions are outside of this
-family. Thereefore we consider Taylor expansion of desired function
+family. Therefore we consider Taylor expansion of desired function
 and use our approach to derive a fast way of computing the expansion
 in closed form.
 
@@ -65,7 +65,7 @@ We encode above quantities in a vector, which indicate how many times
 each of the monomials 
 appears. The vector expressing this relation for $g(x \mapsto x^2, W)$ is $(2^{n + m - 2}, 2^{n + m - 3}, 2^{n + m - 3}, 2^{n + m - 4})$
 
-Rob: too big a jump. Need transition sentance here.
+Rob: too big a jump. Need transition sentence here.
 Let us consider the following expressions: 
 \begin{itemize}
  \item $\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2$ encodes $(1, 0, 0, 0)$. 
@@ -105,7 +105,7 @@ sum(sum(W, 1) .* sum(W, 1)) + ...
 sum(sum(W .* W))) * 2 ^ (n + m - 4)
 \end{lstlisting}
 The above derivation is still within the scope of human skill. However, manual derivation
-of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes intractible. Our algorithm
+of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes intractable. Our algorithm
 is able to find such complex computational patterns automatically. 
 
 \subsubsection{{$\bf g(x \rightarrow x^3, W)$}}
