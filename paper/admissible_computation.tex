@@ -13,7 +13,7 @@ finding algorithm with smallest operation complexity, and computation platform
 is a Matlab.  We consider following set of operations on matrices: 
 
 
-\begin{figure}\label{rulestwo}
+\begin{figure}
 \begin{framed}
 \begin{align*}
 &\text{{\bf Element wise multiplication}}\\
@@ -32,10 +32,11 @@ is a Matlab.  We consider following set of operations on matrices:
 %&\forall_{\substack{i \in \{1, \dots, n\}\\ j \in \{1, \dots, m\} }}\text{ }\mathbb{C}.term[i][j] := \sum_{k = 1}^m \mathbb{A}.term[i][k] * \mathbb{B}.term[k][j];\\
 \end{align*}
 \caption{Grammar rules operating on two expressions}
+\label{fig:rules2}
 \end{framed}
 \end{figure}
 
-\begin{figure}\label{rules}
+\begin{figure}
 \begin{framed}
 \begin{align*}
 &\text{{\bf Columns marginalization}}\\
@@ -75,6 +76,7 @@ is a Matlab.  We consider following set of operations on matrices:
 &\forall_{\substack{i \leq n\\j \leq m}}\text{ } \mathbb{C}.term[i][j] := \mathbb{A}.term[j][i];
 \end{align*}
 \caption{Grammar rules operating on one expression}
+\label{fig:rules}
 %\caption{Set of rules for attributive grammar. There is always finite number of literals up to degree $\alpha$.}
 \end{framed}
 \end{figure}
