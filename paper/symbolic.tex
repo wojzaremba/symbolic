@@ -20,7 +20,24 @@
 %\usepackage{algpseudocode}
 
 \usepackage{hyperref}
+\usepackage{nameref}
 \usepackage[]{mcode}
+
+% For named refs (definitions)
+% taken from: https://tex.stackexchange.com/questions/1230/reference-name-of-description-list-item-in-latex
+\makeatletter
+\let\orgdescriptionlabel\descriptionlabel
+\renewcommand*{\descriptionlabel}[1]{%
+  \let\orglabel\label
+  \let\label\@gobble
+  \phantomsection
+  \edef\@currentlabel{#1}%
+  %\edef\@currentlabelname{#1}%
+  \let\label\orglabel
+  \orgdescriptionlabel{#1}%
+}
+\makeatother
+
 
 \allowdisplaybreaks
 

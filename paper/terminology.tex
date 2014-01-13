@@ -1,24 +1,29 @@
 \section{Terminology}
 We define the following vocabulary: 
 
+\begin{description}
+  \item[Space of matrices of polynomials\label{itm:spacematrices}] \hfill \\ A matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_{\alpha}$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
 
-{\bf Space of matrices of polynomials} - a matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_{\alpha}$. Upper index indicates size of matrix, and lower indicates degree. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
+\item[Grammar\label{itm:grammar}] \hfill \\ An attributive grammar, with \ref{itm:production} defined on \ref{itm:expression}s and semantic rules on \ref{itm:attribute}s. The attributes associated to every \ref{itm:expression}, are: \ref{itm:computation}, \ref{itm:time} and \ref{itm:term}.
 
-{\bf Grammar} - a attributive grammar on tuples (expression, computation, computational time). We refer to these tuples as literals. Rob: symbols gone?
+\item[Production rules\label{itm:production}] \hfill \\ Syntactic rules defined on \ref{itm:expression}s (transformation \ref{itm:expression} $\rightarrow$ \ref{itm:expression}), with associated semantic rules on \ref{itm:attribute}s. They are defined in figures \ref{rulestwo} and \ref{rules}. (TODO: why figure ref doesn't work?)
 
+\item[Expression\label{itm:expression}] \hfill \\ Matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which production rules can be applied. Every expression has associated \ref{itm:attribute}s
 
-{\bf Production rules} - transformation on tuple (expressions, computation, computation time), or tuples to the new tuple. Rob: ???? Equivalently, we refer to such tuples as literals. 
+\item[Attribute\label{itm:attribute}] \hfill \\
+  A value associated with \ref{itm:expression}. 
 
+\item[Computation\label{itm:computation}] \hfill \\ A piece of code to compute given \ref{itm:production} on particular architecture or programming language. In our rules we consider Matlab as
+  underlaying computation language. For example, in Matlab the transpose
+  operation on matrix $\mathbb{A}$ is denoted as $\mathbb{A}'$, so our computation
+  for transpose production is $\mathbb{A}'$. If we ever decide to implement our framework in R,
+  the Computation for transpose would be $t(\mathbb{A})$. Computation is an \ref{itm:attribute}.
 
-{\bf Expression} - matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which rules can be applied to literals containing such expressions (Rob: don't understand -- for rules to apply, we need expressions in same same?). We denote them with capital characters (e.g. $\mathbb{E}$). Rob: still confused. what is different between space and expression? Seem same thing.
+\item[Time\label{itm:time}] \hfill \\ A computation time for a particular architecture and programming language (seconds), or computation complexity (polynomial). It is an \ref{itm:attribute}.
 
+\item[Term\label{itm:term}] \hfill \\ An instance of \ref{itm:expression}. It is an \ref{itm:attribute}.
 
-{\bf Computation} - is a computation on particular architecture or programming language. It our examples we consider Matlab as underlaying computation language. We denote them with calligraphic, capital characters (e.g. $\mathcal{C}$).
+%Let's consider a literal $L = (\mathbb{E}, \mathcal{C}, t_\mathcal{C})$. $\mathbb{E}$ is a polynomial in $\mathcal{P}^{n \times m}_{\alpha}$. $\mathcal{C}$ is a computation of this polynomial starting with a input matrices. Result of computation is a real matrix
+%in $\mathbb{R}^{n \times m}_k$, which is computed in time $t_\mathcal{C}$. This time is a time necessary to perform computation on instantiations of matrices with actual values -- not computation during grammar derivation, which would involve expressions. For example, if $\mathcal{C}$ is an elementwise multiplication operation (see rules in \ref{rules}) then $t_\mathcal{C}$ would be $O(nm)$.
 
-
-{\bf Computation Time} - it is a computation time for a particular architecture and programming language, or computation complexity. For a computation $\mathcal{C}$, we refer to its computation time as $t_{\mathcal{C}}$. 
-
-
-Let's consider a literal $L = (\mathbb{E}, \mathcal{C}, t_\mathcal{C})$. $\mathbb{E}$ is a polynomial in $\mathcal{P}^{n \times m}_{\alpha}$. $\mathcal{C}$ is a computation of this polynomial starting with a input matrices. Result of computation is a real matrix
-in $\mathbb{R}^{n \times m}_k$, which is computed in time $t_\mathcal{C}$. This time is a time necessary to perform computation on instantiations of matrices with actual values -- not computation during grammar derivation, which would involve expressions. For example, if $\mathcal{C}$ is an elementwise multiplication operation (see rules in \ref{rules}) then $t_\mathcal{C}$ would be $O(nm)$.
-
+\end{description}
