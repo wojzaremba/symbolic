@@ -2,7 +2,7 @@
 
 Progress in some branches of
 mathematics might be restricted by size of symbolic derivations that human can
-handle.  Mathematicians can deal with expressions having dozens of
+handle. Mathematicians can deal with expressions having dozens of
 variables but would struggle to discover useful relations between hundreds or
 thousands of variables. We will show how the task of finding equivalent
 mathematical expressions can be automated. Our focus is on finding equivalent
@@ -16,11 +16,11 @@ We propose a deterministic, grammar based framework, which discovers
 relations between multi-variable polynomial expressions. First, we
 construct an attribute grammar -- a context-free grammar extended to
 contain set of attributes, introduced by Donald Knuth
-\cite{knuth1968semantics}. To define the search space we use a set
+\cite{knuth1968semantics}. To define the search space we use a set of
 context-free grammar rules representing admissible operations. By
 representing the cost of every operation as a synthesized attribute
 (i.e. computed bottom-up from child node attributes) we can search for
-formula with low time complexity.  Through a linear combination of
+formula with low time complexity. Through a linear combination of
 grammar elements, we can find a solution to the desired
 expressions. Finally, this computation solution can be further speed
 up by use of standard techniques of optimization in compiler
