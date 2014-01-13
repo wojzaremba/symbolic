@@ -17,15 +17,13 @@ for nidx = 1:size(times, 1)
     assert(abs(q - w) < 1e-4);
 end
 
-% XXX : This plot is scrued up ?????????????????????????
-
-plot(2.^(5:14), log(times(5:end, 1)), 'Color', 'red', 'LineStyle', '--', 'LineWidth', 2);
+plot(2.^(5:14), times(5:end, 1), 'Color', 'red', 'LineStyle', '--', 'LineWidth', 2);
 hold on
-plot(2.^(5:14), log(times(5:end, 2)), 'Color', 'blue', 'LineStyle', '-', 'LineWidth', 2);
+plot(2.^(5:14), times(5:end, 2), 'Color', 'blue', 'LineStyle', '-', 'LineWidth', 2);
 
 legend('Original computation', 'Our computation', 'Location', 'NorthWest');
 
 set(gca,'FontSize', 18);
 xlabel('Size of matrices');
 ylabel('time (s)');
-saveas(gcf, '/Users/wojto/symbolic/paper/img/ab.png');
+saveas(gcf, '/Users/wojto/symbolic/paper/img/ab.eps');

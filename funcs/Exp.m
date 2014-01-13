@@ -11,7 +11,7 @@ classdef Exp < PrototypeF
         assert(0);
       end
 
-      function y = f(x)
+      function y = f(obj, x)
         y = exp(x);
       end
     end
