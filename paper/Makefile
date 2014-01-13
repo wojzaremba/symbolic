@@ -3,11 +3,11 @@ PARTS=symbolic.tex admissible_computation.tex conjecture.tex discussion.tex expe
 all: clean symbolic.pdf supplementary.pdf
 
 symbolic.pdf: $(PARTS) bibliography.bib 
-	pdflatex symbolic.tex
+	pdflatex -shell-escape symbolic.tex
 	bibtex symbolic
-	pdflatex symbolic.tex
-	pdflatex symbolic.tex
-	pdflatex symbolic.tex
+	pdflatex -shell-escape symbolic.tex
+	pdflatex -shell-escape symbolic.tex
+	pdflatex -shell-escape symbolic.tex
 
 supplementary.pdf: supplementary.tex
 	pdflatex supplementary.tex
