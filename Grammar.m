@@ -76,6 +76,21 @@ classdef Grammar < handle
         end
     end
     
+    methods(Static)
+        function W = CreateVar(idx, maxvars)
+            global c
+            W = Expr_();
+            for i = 1:c.n
+                for j = 1:c.m
+                    expr = zeros(maxvars * c.n * c.m, 1);
+                    expr((i - 1) * c.m + j + idx * c.n * c.m, 1) = 1;
+                    W(i, j) = Expr_(1, expr);
+                end
+            end  
+            W = ExprMatrix(W, Matrix('A' + idx, c.n, c.m));                        
+        end
+    end
+    
     methods
         function obj = Grammar(n, m)
             global grammars
@@ -97,15 +112,11 @@ classdef Grammar < handle
             obj.hashmap = containers.Map('KeyType', obj.hashtype(), 'ValueType', 'any');
             W = [Expr_()];
             obj.expr_matrices = [];
-            if (n == c.n) && (m == c.m)               
-                for i = 1 : c.n
-                    for j = 1 : c.m
-                        expr = zeros(c.n * c.m, 1);
-                        expr((i - 1) * c.m + j, 1) = 1;
-                        W(i, j) = Expr_(1, expr);
-                    end
-                end  
-                obj.Add(ExprMatrix(W, Matrix('W', c.n, c.m)));
+            if (n == c.n) && (m == c.m)        
+                for i = 0:(c.vars - 1)
+                    W = Grammar.CreateVar(i, c.vars);
+                    obj.Add(W);
+                end
             end
             grammars(n, m) = obj;
         end

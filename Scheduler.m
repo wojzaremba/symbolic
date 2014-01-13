@@ -47,9 +47,9 @@ classdef Scheduler < handle
             end            
         end
         
-        function AddBasicRules(S)
-            global c         
-            fprintf('Registering basic grammar rules\n');
+        function AddO2Rules(S)
+            global c
+            fprintf('Registering O(n^2) rules\n');
             S.Add(@marginalize, {[c.n, c.m]}, {2});
             S.Add(@marginalize, {[c.n, c.m]}, {1});            
             S.Add(@marginalize, {[c.n, 1]}, {1});            
@@ -63,12 +63,8 @@ classdef Scheduler < handle
             S.Add(@repmat_expr, {[c.n, 1]}, {[1, c.m]});   
             S.Add(@repmat_expr, {[1, c.m]}, {[c.n, 1]});            
             S.Add(@repmat_expr, {[1, 1]}, {[c.n, 1]});
-            S.Add(@repmat_expr, {[1, 1]}, {[1, c.m]});
-        end
-        
-        function AddMultRules(S)
-            global c
-            fprintf('Registering multiplication and transpose grammar rules\n');
+            S.Add(@repmat_expr, {[1, 1]}, {[1, c.m]});  
+            
             S.Add(@marginalize, {[c.m, c.n]}, {2});    
             S.Add(@marginalize, {[c.m, c.m]}, {2});
             S.Add(@marginalize, {[c.n, c.n]}, {2});    
@@ -98,28 +94,23 @@ classdef Scheduler < handle
             S.Add(@transpose, {[1, c.m]}, {});
             S.Add(@transpose, {[c.m, c.n]}, {});
             S.Add(@transpose, {[1, c.n]}, {});
-            S.Add(@transpose, {[c.m, 1]}, {});
-
-            S.Add(@multiply, {[c.n, c.m], [c.m, 1]}, {});
-            S.Add(@multiply, {[c.n, c.m], [c.m, c.n]}, {});
-            S.Add(@multiply, {[c.n, c.m], [c.m, c.m]}, {});
+            S.Add(@transpose, {[c.m, 1]}, {});            
+        end
+        
+        function AddO2MultRules(S)
+            global c
+            fprintf('Registering O(n^2) mult rules\n');            
+            S.Add(@multiply, {[c.n, c.m], [c.m, 1]}, {});   
             S.Add(@multiply, {[c.n, 1], [1, 1]}, {});
             S.Add(@multiply, {[c.n, 1], [1, c.n]}, {});
-            S.Add(@multiply, {[c.n, 1], [1, c.m]}, {});    
-            S.Add(@multiply, {[c.n, c.n], [c.n, 1]}, {});
-            S.Add(@multiply, {[c.n, c.n], [c.n, c.n]}, {});
-            S.Add(@multiply, {[c.n, c.n], [c.n, c.m]}, {});
-
-            S.Add(@multiply, {[c.m, c.m], [c.m, 1]}, {});
-            S.Add(@multiply, {[c.m, c.m], [c.m, c.n]}, {});
-            S.Add(@multiply, {[c.m, c.m], [c.m, c.m]}, {});
+            S.Add(@multiply, {[c.n, 1], [1, c.m]}, {});      
+            S.Add(@multiply, {[c.n, c.n], [c.n, 1]}, {});    
+            S.Add(@multiply, {[c.m, c.m], [c.m, 1]}, {});       
             S.Add(@multiply, {[c.m, 1], [1, 1]}, {});
             S.Add(@multiply, {[c.m, 1], [1, c.n]}, {});
             S.Add(@multiply, {[c.m, 1], [1, c.m]}, {});    
+            
             S.Add(@multiply, {[c.m, c.n], [c.n, 1]}, {});
-            S.Add(@multiply, {[c.m, c.n], [c.n, c.n]}, {});
-            S.Add(@multiply, {[c.m, c.n], [c.n, c.m]}, {});         
-
             S.Add(@multiply, {[1, c.m], [c.m, 1]}, {});
             S.Add(@multiply, {[1, c.m], [c.m, c.n]}, {});
             S.Add(@multiply, {[1, c.m], [c.m, c.m]}, {});
@@ -128,7 +119,22 @@ classdef Scheduler < handle
             S.Add(@multiply, {[1, 1], [1, c.m]}, {});    
             S.Add(@multiply, {[1, c.n], [c.n, 1]}, {});
             S.Add(@multiply, {[1, c.n], [c.n, c.n]}, {});
-            S.Add(@multiply, {[1, c.n], [c.n, c.m]}, {});      
+            S.Add(@multiply, {[1, c.n], [c.n, c.m]}, {});                  
+        end
+        
+        function AddO3Rules(S)
+            global c
+            fprintf('Registering O(n^3) rules\n');
+            S.Add(@multiply, {[c.n, c.m], [c.m, c.n]}, {});
+            S.Add(@multiply, {[c.n, c.m], [c.m, c.m]}, {});
+            S.Add(@multiply, {[c.n, c.n], [c.n, c.n]}, {});
+            S.Add(@multiply, {[c.n, c.n], [c.n, c.m]}, {});
+            
+            S.Add(@multiply, {[c.m, c.m], [c.m, c.n]}, {});
+            S.Add(@multiply, {[c.m, c.m], [c.m, c.m]}, {});  
+            S.Add(@multiply, {[c.m, c.n], [c.n, c.n]}, {});
+            S.Add(@multiply, {[c.m, c.n], [c.n, c.m]}, {});         
+
         end
         
         function Run(obj)
@@ -190,9 +196,10 @@ classdef Scheduler < handle
                 G11 = Grammar(1, 1);
                 assert(length(G11.expr_matrices) < 0.95 * ExprZp.len);
                 fprintf('single iter takes = %f, updates = %d\n', toc(single_iter_time), sum(u));
-            end
-            [grammar_solved, coeffs, ~] = ReexpresData(obj.target.exprs(1), G11);            
+            end            
             Grammar.FullStats();
+            G11.trim_size();
+            [grammar_solved, coeffs, ~] = ReexpresData(obj.target.exprs(1), G11);                        
             ShowResults(coeffs, obj.target.normalization(), grammar_solved);            
         end
     end

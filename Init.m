@@ -28,5 +28,5 @@ function Init(opt)
     else
         power = 2; 
     end           
-    Cache(power);    
+    Cache(power, opt.vars);    
 end

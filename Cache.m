@@ -9,14 +9,16 @@ classdef Cache < handle
         n % number of rows.
         m % number of columns.
         maxK % max power.
+        vars % Number of initial vars.
     end
     
     methods
-        function obj = Cache(maxK)
+        function obj = Cache(maxK, vars)
             fprintf('Setting maximum power to %d\n', maxK);
-            obj.maxK = maxK;                        
-            obj.n = max(maxK, 2);
-            obj.m = obj.n + 1;
+            obj.maxK = maxK;           
+            obj.vars = vars;
+            obj.n = 2;%max(maxK, 2);
+            obj.m = 3;%obj.n + 1;
             global c grammars
             c = obj;         
             grammars = [Grammar()];

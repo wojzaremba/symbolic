@@ -4,26 +4,20 @@ classdef MultExpr < ExprMatrix
     
     methods
         function obj = MultExpr()
-            global c
-            k = c.maxK;
-            W = Expr_();
-            for i = 1:c.n
-                for j = 1:c.m
-                    expr = zeros(c.n * c.m, 1);
-                    expr((i - 1) * c.m + j, 1) = 1;
-                    W(i, j) = Expr_(1, expr);
-                end
-            end  
-            W = ExprMatrix(W, Matrix('W', c.n, c.m));
-            WT = transpose(W);
-            Q = multiply(W, WT);
-            tmp = marginalize(marginalize(multiply(Q, W), 1), 2);
-%             tmp = marginalize(marginalize(multiply(W, WT), 1), 2);
+            A = Grammar.CreateVar(0, 4);
+            B = Grammar.CreateVar(1, 4);
+            C = Grammar.CreateVar(2, 4);
+            D = Grammar.CreateVar(3, 4);
+            
+            BT = transpose(B);
+            DT = transpose(D);
+            Q = multiply(A, BT);
+            W = multiply(Q, C);
+            tmp = marginalize(marginalize(multiply(W, DT), 1), 2);
             obj.exprs = tmp.exprs(1);
         end
         
         function ret = normalization(obj)
-            global c
             ret = 1;
         end
     end
