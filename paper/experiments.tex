@@ -28,7 +28,7 @@ compute than the naive one (Figure \ref{ab}).
 Similarly, we found quadratic time computation, instead of cubic, for
 similar expressions such as: 
 \begin{align*}
-	\sum ABC\text{, }\sum ABCD\text{, }\sum AA^T\text{, }\sum AA^TA
+	\sum ABC\text{, }\sum AA^T\text{, }\sum AA^TA
 \end{align*}
 
 As far we we are aware, these identities appear to be novel. Our
@@ -42,7 +42,7 @@ into compilers to generate efficient code.
 As we showed in Section \ref{partitionfunction}, we can manually find
 $O(n^2)$ computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2$
 instead of native exponential time computation. By use of our
-framework, we found rules for $k = 3, 4, 5$. However for $k = 4, 5$
+framework, we found rules for $k = 3, 4, 5, 6$. However for $k = 4, 5, 6$
 these rules used computation with $O(n^3)$ time (i.e.~matrix
 multiplication).  Finding computational rules for higher degree
 polynomials is expensive: Table \ref{grammars} shows the time
@@ -50,9 +50,9 @@ necessary to generate all the rules. It is worth noting that grammar
 can be evaluated just once, and the resulting coefficients can be
 stored. Furthermore, the process of discovering the computational rule
 for a given power only need to be performed once. However, due to limited computational
-power we analyzed only powers $k \leq 5$. As we note in Section
+power we analyzed only powers $k \leq 6$. As we note in Section
 \ref{agenda} a future direction would be to learn patterns for
-$k=2,3,4,5$ that allow us to generalize to $k>5$ without exhaustively
+$k=2, 3, 4, 5, 6$ that allow us to generalize to $k>6$ without exhaustively
 searching all possible rules. 
 
 Table \ref{eval} shows number of terms necessary to derive $g(x
@@ -73,6 +73,7 @@ Degree & Grammar size & Time (s) \\
 3 & 15 & 188 \\
 4 & 48 & 2535\\
 5 & 139 & 31320 \\
+6 & 437 & 434681 \\
 \hline
 \end{tabular}
 \caption{Table summarizes size and computational time for grammars of specific degree. 
@@ -94,6 +95,7 @@ Degree & Num. terms & Complexity \\
 3 & 5 & $O(n^2)$\\
 4 & 21 & $O(n^3)$\\
 5 & 30 & $O(n^3)$\\
+6 & 106 & $O(n^3)$\\
 \hline
 \end{tabular}
 \caption{Table summarizes complexity of computation of $g(x \rightarrow x^k, W)$. 

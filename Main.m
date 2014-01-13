@@ -1,15 +1,15 @@
 Init(struct('expr_type', 'Zp', ...
             'complexity', 'O', ...
             'debug', 0, ...
-            'power', 4, ...
-            'vars', 4));
+            'power', 2, ...
+            'vars', 1));
 
 totaltime = tic;
 S = Scheduler();
 S.AddO2Rules();
-% S.AddO2MultRules();
-% S.AddO3Rules();
-S.SetTarget(MultExpr());
+S.AddO2MultRules();
+S.AddO3Rules();
+S.SetTarget(RBM());
 S.Run();
 fprintf('total time = %f\n', toc(totaltime));
 
@@ -19,5 +19,5 @@ fprintf('total time = %f\n', toc(totaltime));
 % mod p to tak jak w Zp.
 
 
-% XXX :add constaint that all the pices have to be from different vars. !!!!!
-% XXX : change back c.n and c.m to maxk
+% XXX : In case of repmat in computation provide dim, and size !!! There is
+% a bug (for power >= 6)

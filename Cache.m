@@ -17,8 +17,8 @@ classdef Cache < handle
             fprintf('Setting maximum power to %d\n', maxK);
             obj.maxK = maxK;           
             obj.vars = vars;
-            obj.n = 2;%max(maxK, 2);
-            obj.m = 3;%obj.n + 1;
+            obj.n = max(maxK, 2);
+            obj.m = obj.n + 1;
             global c grammars
             c = obj;         
             grammars = [Grammar()];
