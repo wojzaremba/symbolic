@@ -57,7 +57,7 @@ sum(A, 1) * (B * sum(C, 2))
 sum(sum(A .* repmat(sum(A, 2), [1, m])'))
 
 \subsection{{$\bf \sum AA^TA$}}
-sum(sum(((repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2), 1) 
+sum(sum(((repmat(sum(A, 2), [1, m]) .* repmat(sum(A, 1), [n, 1])) .* A), 2), 1) 
 
 \subsection{{$\bf g(x \rightarrow x^4, W)$}}
              ((((( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))  .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)))  .* 1)  
