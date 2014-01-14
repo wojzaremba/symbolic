@@ -8,7 +8,7 @@ expressions to find how to express target expression exactly. If there
 are multiple literals with the same expression (up to multiplicative real
 constant), we choose one with the shortest computation time $t_\mathcal{C}$.
 
-Let's ground our approach in an example. We assume that we are interest in
+Let's ground our approach in an example. We assume that we are interested in
 finding algorithm with smallest operation complexity, and computation platform
 is a Matlab. We consider following set of operations on matrices: 
 
@@ -130,22 +130,42 @@ Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
 
 \subsection{Linear combination}
 \label{sec:linear}
+
 We look for a linear combination of generated expressions in our
 literals, which is equal to the target expression. There are several
-possible scenarios. First, there might be a \emph{single solution}, in
-which case our linear solver will have a unique solution. In practice
-however, this is uncommon. Second, there may be \emph{no solution} at
-all. In this case, our linear solver will indicate it, meaning that
-the target expression is out of scope for the computation defined by
-our grammar. Finally, there might be \emph{multiple solutions}. We
-then look for the linear combination with the smallest cost
-(computational time). This is essentially an integer programing
+possible scenarios:
+\begin{itemize}
+  \item \emph{single solution} - linear solver will have a unique solution (in practice
+ this is uncommon)
+ \item \emph{no solution} - target expression is out of scope for the computation defined by
+our grammar. 
+ \item  \emph{multiple solutions} - we look for the linear combination with the smallest cost
+(computational time). 
+\end{itemize}
+
+Multiple solutions case is essentially an integer programing
 problem, or knapsack problem, which are NP-complete. However, we can
 relax this to a linear program, which will give a solution almost as
 efficient as the optimal one. Experiments suggest that is good to
 also minimize number of coefficients, so avoiding unnecessary
 non-integer coefficient values, which can contribute numerical errors.
 
+%We look for a linear combination of generated expressions in our
+%literals, which is equal to the target expression. There are several
+%possible scenarios. First, there might be a \emph{single solution}, in
+%which case our linear solver will have a unique solution. In practice
+%however, this is uncommon. Second, there may be \emph{no solution} at
+%all. In this case, our linear solver will indicate it, meaning that
+%the target expression is out of scope for the computation defined by
+%our grammar. Finally, there might be \emph{multiple solutions}. We
+%then look for the linear combination with the smallest cost
+%(computational time). This is essentially an integer programing
+%problem, or knapsack problem, which are NP-complete. However, we can
+%relax this to a linear program, which will give a solution almost as
+%efficient as the optimal one. Experiments suggest that is good to
+%also minimize number of coefficients, so avoiding unnecessary
+%non-integer coefficient values, which can contribute numerical errors.
+%
 
 %it is enough for us to get approximated
 %solution (Rob: what kind of approximation), which can be easily obtained with linear solver.
@@ -215,10 +235,8 @@ We need evaluate our polynomials in number of points which is larger
 than final size of linear equations \ref{sec:linear}. We do not have to recover coefficients of polynomials,
 as we are just interest in finding proper linear combination of expressions.
 
-
-This methods is numerically unstable
-, and for polynomials of degree $k \geq 3$, it is not able to produce solutions, even if there are some.
-
+This methods is numerically unstable, and for polynomials of degree $k \geq 3$, 
+it is not able to produce solutions, even if there are some.
 
 Let us ground this examples. We consider 2 points were we evaluate our polynomials:
 $a = 0.5, b = 1.5$, and $a = 2.5, b = 3.5$.
