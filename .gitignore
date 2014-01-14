@@ -3,7 +3,6 @@
 *.log
 *.aux
 *.out
-*.pdf
 *.*~
 *.swp
 .DS_Store
