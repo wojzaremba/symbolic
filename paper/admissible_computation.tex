@@ -156,25 +156,6 @@ efficient as the optimal one. Experiments suggest that is good to
 also minimize number of coefficients, so avoiding unnecessary
 non-integer coefficient values, which can contribute numerical errors.
 
-%We look for a linear combination of generated expressions in our
-%literals, which is equal to the target expression. There are several
-%possible scenarios. First, there might be a \emph{single solution}, in
-%which case our linear solver will have a unique solution. In practice
-%however, this is uncommon. Second, there may be \emph{no solution} at
-%all. In this case, our linear solver will indicate it, meaning that
-%the target expression is out of scope for the computation defined by
-%our grammar. Finally, there might be \emph{multiple solutions}. We
-%then look for the linear combination with the smallest cost
-%(computational time). This is essentially an integer programing
-%problem, or knapsack problem, which are NP-complete. However, we can
-%relax this to a linear program, which will give a solution almost as
-%efficient as the optimal one. Experiments suggest that is good to
-%also minimize number of coefficients, so avoiding unnecessary
-%non-integer coefficient values, which can contribute numerical errors.
-%
-
-%it is enough for us to get approximated
-%solution (Rob: what kind of approximation), which can be easily obtained with linear solver.
 
 It is worth noting that while it is easy to find best solution in
 terms of {\em complexity}, it is NP-complete to find the best solution
@@ -189,9 +170,27 @@ complexity. However, discovery of the fastest performance (i.e.~lowest
 run-time) requires exploration of all possible combinations of literals,
 which is far more expensive.  
 
-\subsection{Computation derivation as the formal system}
+\subsection{Computation derivation as the algebra}
+The space of matrices of polynomials forms an algebra $\mathcal{A}$.
+A \emph{grammar} $\mathcal{G}=\{g_1,\dots,g_{K};\, h_1,\dots, h_{K'}\}$ defined on this algebra is a set of functions
+$$g_i : \mathcal{A} \longrightarrow \mathcal{A}~,~(i \leq K)~,$$
+$$h_{i} : \mathcal{A} \times \mathcal{A} \longrightarrow \mathcal{A}~, ~i \leq K'~,$$
+which might eventually only defined for certain sub-algebras of $\mathcal{A}$ 
+(eg matrix multiplication requires inner dimensions to agree). 
 
-For Joan.
+Given an initial element $w \in \mathcal{A}$ and a target element $t \in \mathcal{A}$, 
+the question is whether $t$ can be written as a finite sequence of operations involving 
+only $w$ and $g,h \in \mathcal{G}$.
+If the algebra is defined over a discrete field, then the problem can be  
+cast as a shortest path problem on a sparse directed graph. 
+We define a ``sink" node which contains all polynomials (or matrices of polynomials) with degree $\geq D_{\max}$ 
+($D_{\max} > \mbox{deg}(t)$ ), and a node for each of the other elements of $\mathcal{A}$. 
+Two nodes $x_1,\,x_2$ have a connection $x_1 \rightarrow x_2$ if there exists $g \in \mathcal{G}$ such that
+$x_2 = g(x_1)$. The edge is assigned a cost which depends on the complexity of performing the operation.   
+Similarly, we can define a 3-cycle to $(x_1,x_2,x_3)$ if there exists $h \in \mathcal{G}$ such that $x_3 = h(x_1,x_2)$.
+
+The brute force algorithm constructs the graph by advancing sequentially from smallest to largest degree. 
+
 
 \subsection{Representation of Expressions}
 %Rob: I did not understand this entire section.
