@@ -84,14 +84,20 @@ is a Matlab. We consider following set of operations on matrices:
 
 To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows: 
 \begin{itemize}
-\item develop grammar to obtain all possible literals up to degree $k$. It gives rise to finite number of literals. 
-\item if there are multiple way of computing the same expression up to multiplicative constant, choose one with shortest time.
-\item find linear combination of expressions which is equal the target
+\item Develop the grammar to obtain all possible literals up to degree
+  $k$. It gives rise to a finite number of literals. 
+\item If there are multiple ways of computing the same expression up
+  to a multiplicative constant, choose one with shortest time.
+\item Find a linear combination of expressions which equals the target
   expression $\mathbb{T}$ (this relation is a symbolic relation, which
   is valid for any assignment of symbols). While solving this linear
-  set of systems, choose solution with smallest sum of computation
+  set of systems, choose the solution with the smallest sum of computation
   times. See \ref{sec:linear} for more details.
-\item apply optimization like sub-expression elimination, and exploit distributive property of multiplication in order to decrees final computational time of $\mathbb{T}$. This step is optional, and it won't decrease computational complexity, but it can improve performance.
+\item Apply optimization like sub-expression elimination, and exploit
+  the distributive property of multiplication in order to decrease the
+  final computational time of $\mathbb{T}$. This step is optional, and
+  won't decrease computational complexity, but can improve
+  performance.
 \end{itemize}
 
 Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
