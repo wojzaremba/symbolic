@@ -91,8 +91,8 @@ To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of
 \item Find a linear combination of expressions which equals the target
   expression $\mathbb{T}$ (this relation is a symbolic relation, which
   is valid for any assignment of symbols). While solving this linear
-  set of systems, choose the solution with the smallest sum of computation
-  times. See \ref{sec:linear} for more details.
+  system, choose the solution with the smallest total computation
+  time. See \ref{sec:linear} for more details.
 \item Apply optimization like sub-expression elimination, and exploit
   the distributive property of multiplication in order to decrease the
   final computational time of $\mathbb{T}$. This step is optional, and
@@ -103,7 +103,7 @@ To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of
 Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
 
 \begin{algorithm}[t]
-\caption{Find computation for expression}
+\caption{Find computation for expression $\mathbb{T}$}
 \begin{algorithmic} 
 \REQUIRE Target expression $\mathbb{T}$, initial expression $W$, $Rules$ = \{$R_1, \dots, R_n$\}, maximum degree of polynomials $k$
 \ENSURE Computation $\mathcal{C}$ of expression $\mathbb{T}$.
@@ -127,8 +127,8 @@ Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
 \ENDFOR
 \ENDFOR
 \ENDWHILE
-\STATE Find linear combination of expressions from literals stored in $\mathbb{S}$ to express $\mathbb{T}$
-\STATE Run optimizer (optional)
+\STATE Find $\mathcal{C}$, the linear combination of expressions from literals stored in $\mathbb{S}$ to express $\mathbb{T}$
+\STATE Run optimizer on $\mathcal{C}$ (optional)
 \end{algorithmic}
 \label{pseudocode}
 \end{algorithm}
