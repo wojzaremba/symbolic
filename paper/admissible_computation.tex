@@ -4,7 +4,7 @@ Our goal is to find a fast way to compute the target expression in
 language and architecture of our choice. We will achieve it by
 developing expressions in a grammar, up to degree of target
 expression. Next, we will look for the linear combination of obtained
-expressions to find how to express target expression exactly. If an expression
+expressions to represent target expression exactly. If the target expression
 can be obtained in many ways, we choose the one with the shortest computation time.
 
 Let's ground our approach in an example. We assume that we are interested in
@@ -99,7 +99,7 @@ To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of
   performance.
 \end{itemize}
 
-Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
+Pseudo code is shown in Algorithm \ref{pseudocode}.
 
 \begin{algorithm}[t]
 \caption{Find computation for expression $\mathbb{T}$}
@@ -207,16 +207,10 @@ We consider element-wise matrix multiplication of $\mathbb{A}$ and $\mathbb{B}$.
 \subsubsection{Symbolic representation}
 The most direct representation of expressions is to store its coefficients and powers of the every monomial.
 This representation is exact, and corresponds one-to-one with our description of operations
-defined by grammar. However, it has computational drawback. 
-Let's assume that we would like to multiply two polynomials, each having $1000$ monomials.
-Such multiplication would take roughly $10^6$ operations. While the same operation on instantiations of
-this polynomials would cost just a one multiplication.
-
-
+defined by grammar. It guarantees correctness and is easy to debug. 
+However, it has computational drawback: multiplying two polynomials, each having $N$ monomials is $O(N^2)$ compared to the same operation on instantiations of this polynomials, which is $O(1)$.
 We have implemented expressions in such representation, and it allowed us
-to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. We haven't run computation for 
-higher degrees due to resource limitations. This representation guarantees correctness, and is easy to debug, however
-is quite slow (as the consequence of verboseness). 
+to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. 
 
 Let's ground this representation in an example of element-wise matrix multiplication of $\mathbb{A}$, and $\mathbb{B}$.
 Result of such multiplication is a matrix. We present results for the entry $(0, 0)$.

@@ -8,14 +8,12 @@ and use our approach to derive a fast way of computing the expansion
 in closed form.
 
 Let $g(f, W)$ be the generalization of partition function for a binary
-RBM \cite{hinton2002training}. 
-$g$ is a functional, and it takes the following arguments $f : \mathbb{R} \rightarrow \mathbb{R}$,
-and weights $W$. It is defined as follows: 
+RBM \cite{hinton2002training}. Let $f : \mathbb{R} \rightarrow \mathbb{R}$ and $W \in \mathbb{R}^{n \times m}$,
+we define a functional $g$ as follows: \\
 \begin{gather*}
-g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh) \\
-f : \mathbb{R} \rightarrow \mathbb{R}\\
-W \in \mathbb{R}^{n \times m}
+g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh)
 \end{gather*}
+
 We consider the computation of $g(x \rightarrow x^k, W)$ for a given power
 $k$, and for any $W
 \in \mathbb{R}^{n \times m}$ (and any size $n, m$). Potentially, if we would be able
@@ -109,29 +107,20 @@ of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes intractable. Our algori
 is able to find such complex computational patterns automatically. 
 
 \subsubsection{{$\bf g(x \rightarrow x^3, W)$}}
-The manual derivation for $k = 3$ is challenging. We present here all derived computations in
-for expressions in $\mathcal{P}^{1 \times 1}_3$. We will use following symbols to keep our notation
-concise:
+The manual derivation for $k = 3$ is challenging. We present all generated expressions up to degree 
+$3$ (for notation clearity, we first define variables $A$-$E$).
+\vspace{-0.4cm}
+%We present here all derived computations in for expressions in $\mathcal{P}^{1 \times 1}_3$. 
 \begin{lstlisting}
-A = sum(W, 2);
-B = sum(W, 1);
-C = sum(sum(W));
-D = repmat(sum(W, 1), [n, 1]);
-E = repmat(sum(W, 2), [1, m]);
-\end{lstlisting}
+A := sum(W, 2);
+B := sum(W, 1);
+C := sum(sum(W));
+D := repmat(sum(W, 1), [n, 1]);
+E := repmat(sum(W, 2), [1, m]);
 
-All possible expressions up to degree $3$ generated with our grammar
-are the following : 
-\begin{lstlisting}
-C
-C .^ 2
-sum(B .^ 2) 
-sum(sum(B .*  E .* W))) 
-sum(B .^ 3)
-sum(A .^ 2)
-sum(A .^ 3)
-sum(sum((W .* W)))
-C .^ 3
+C, C .^ 2, C .^ 3, sum(B .^ 2), 
+sum(B .^ 3), sum(A .^ 2), sum(A .^ 3)
+sum(sum(B .*  E .* W))), sum(sum((W .* W)))
 sum(sum(D .^ 2 .* E))
 sum(B .* sum(W .* W, 1)))
 C .* sum(sum((W .* W), 2))
@@ -140,9 +129,28 @@ sum(A .* sum((W .* W), 2))
 sum(sum(W .* W .* W))
 \end{lstlisting}
 
+%\begin{lstlisting}
+%C
+%C .^ 2
+%sum(B .^ 2) 
+%sum(sum(B .*  E .* W))) 
+%sum(B .^ 3)
+%sum(A .^ 2)
+%sum(A .^ 3)
+%sum(sum((W .* W)))
+%C .^ 3
+%sum(sum(D .^ 2 .* E))
+%sum(B .* sum(W .* W, 1)))
+%C .* sum(sum((W .* W), 2))
+%sum(sum((E .^ 2 .* D)))) 
+%sum(A .* sum((W .* W), 2))
+%sum(sum(W .* W .* W))
+%\end{lstlisting}
+%
 Forming a linear system of these expressions and solving, we obtain
 the following expression for $g(x \rightarrow x^3, W)$, which is
 exactly equivalent to the original:
+\vspace{-0.3cm}
 \begin{lstlisting}
 (C .^ 3 + 
 C .* sum(A .^ 2) * 3 +
