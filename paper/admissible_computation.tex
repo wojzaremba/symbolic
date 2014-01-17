@@ -2,11 +2,10 @@
 
 Our goal is to find a fast way to compute the target expression in
 language and architecture of our choice. We will achieve it by
-developing literals in a grammar, up to degree of target
+developing expressions in a grammar, up to degree of target
 expression. Next, we will look for the linear combination of obtained
-expressions to find how to express target expression exactly. If there
-are multiple literals with the same expression (up to multiplicative real
-constant), we choose one with the shortest computation time $t_\mathcal{C}$.
+expressions to represent target expression exactly. If the target expression
+can be obtained in many ways, we choose the one with the shortest computation time.
 
 Let's ground our approach in an example. We assume that we are interested in
 finding algorithm with smallest operation complexity, and computation platform
@@ -84,8 +83,8 @@ is a Matlab. We consider following set of operations on matrices:
 
 To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows: 
 \begin{itemize}
-\item Develop the grammar to obtain all possible literals up to degree
-  $k$. It gives rise to a finite number of literals. 
+\item Develop the grammar to obtain all possible expressions up to degree
+  $k$. It gives rise to a finite number of expressions. 
 \item If there are multiple ways of computing the same expression up
   to a multiplicative constant, choose one with shortest time.
 \item Find a linear combination of expressions which equals the target
@@ -100,34 +99,34 @@ To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of
   performance.
 \end{itemize}
 
-Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
+Pseudo code is shown in Algorithm \ref{pseudocode}.
 
 \begin{algorithm}[t]
 \caption{Find computation for expression $\mathbb{T}$}
 \begin{algorithmic} 
 \REQUIRE Target expression $\mathbb{T}$, initial expression $W$, $Rules$ = \{$R_1, \dots, R_n$\}, maximum degree of polynomials $k$
 \ENSURE Computation $\mathcal{C}$ of expression $\mathbb{T}$.
-\STATE Initialize set $\mathbb{S}$ of all admissible literals with $(W, \mathcal{W}, t_W)$
+\STATE Initialize set $\mathbb{S}$ of all admissible expressions with $W$
 \WHILE{$\mathbb{S}$ grows}
 \FORALL{rule $R \in Rules$}
 \STATE $\mathbb{S}^2 = \{ (x, y) : x \in \mathbb{S} \land y \in \mathbb{S}\}$ 
-\FORALL{literal $L \in \mathbb{S}\cup\mathbb{S}^2$}
-\IF {can't apply $R$ to $L$}
+\FORALL{Expression $E \in \mathbb{S}\cup\mathbb{S}^2$}
+\IF {can't apply $R$ to $E$}
 \STATE \textbf{continue}
 \ENDIF
-\STATE $L' \gets$ Apply rule $R$ to $L$
-\IF {degree($L'$) $>$ $k$}
+\STATE $E' \gets$ Apply rule $R$ to $E$
+\IF {degree($E'$) $>$ $k$}
   \STATE \textbf{continue}
 \ENDIF
 \STATE \emph{// If expression not yet in $\mathbb{S}$ or it can be}
 \STATE \emph{// computed faster, then add it.}
-\IF {$L'.expr \not\in \mathbb{S}$ \textbf{or} $L'.time < S[L'].time$}
-  \STATE Add $L'$ to $\mathbb{S}$
+\IF {$E'.expr \not\in \mathbb{S}$ \textbf{or} $E'.time < S[E'].time$}
+  \STATE Add $E'$ to $\mathbb{S}$
 \ENDIF
 \ENDFOR
 \ENDFOR
 \ENDWHILE
-\STATE Find $\mathcal{C}$, the linear combination of expressions from literals stored in $\mathbb{S}$ to express $\mathbb{T}$
+\STATE Find $\mathcal{C}$, the linear combination of expressions stored in $\mathbb{S}$ to express $\mathbb{T}$
 \STATE Run optimizer on $\mathcal{C}$ (optional)
 \end{algorithmic}
 \label{pseudocode}
@@ -137,9 +136,8 @@ Pseudo code for the algorithm is shown in Algorithm \ref{pseudocode}.
 \subsection{Linear combination}
 \label{sec:linear}
 
-We look for a linear combination of generated expressions in our
-literals, which is equal to the target expression. There are several
-possible scenarios:
+We search for a linear combination of generated expressions, which is equal to the target expression. 
+There are several possible scenarios:
 \begin{itemize}
   \item \emph{single solution} - linear solver will have a unique solution (in practice
  this is uncommon)
@@ -161,13 +159,13 @@ It is worth noting that while it is easy to find best solution in
 terms of {\em complexity}, it is NP-complete to find the best solution
 in terms of {\em performance}. In order to find best solution in terms
 of complexity, one has to run linear solver multiple times. Every
-time, it should include broader number of literals. Starting with set
-of literals having the smallest complexity (e.g.~those which are
-$O(1)$), and adding new literals with higher and higher complexity
-($O(n)$ and then $O(n^2)$ and so on). If algorithm, find solution at
-some point, than this solution is optimal in terms of
-complexity. However, discovery of the fastest performance (i.e.~lowest
-run-time) requires exploration of all possible combinations of literals,
+time, it should include broader number of expressions. Starting with set
+of expressions having the smallest complexity (e.g.~those which are
+$O(1)$), and adding new expressions with higher and higher complexity
+($O(n)$ and then $O(n^2)$ and so on). If algorithm finds a solution at
+some point, then it is optimal in terms of complexity. 
+However, discovery of the fastest performance (i.e.~lowest
+run-time) requires exploration of all possible combinations of expressions,
 which is far more expensive.  
 
 \subsection{Computation derivation as the algebra}
@@ -209,16 +207,10 @@ We consider element-wise matrix multiplication of $\mathbb{A}$ and $\mathbb{B}$.
 \subsubsection{Symbolic representation}
 The most direct representation of expressions is to store its coefficients and powers of the every monomial.
 This representation is exact, and corresponds one-to-one with our description of operations
-defined by grammar. However, it has computational drawback. 
-Let's assume that we would like to multiply two polynomials, each having $1000$ monomials.
-Such multiplication would take roughly $10^6$ operations. While the same operation on instantiations of
-this polynomials would cost just a one multiplication.
-
-
+defined by grammar. It guarantees correctness and is easy to debug. 
+However, it has computational drawback: multiplying two polynomials, each having $N$ monomials is $O(N^2)$ compared to the same operation on instantiations of this polynomials, which is $O(1)$.
 We have implemented expressions in such representation, and it allowed us
-to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. We haven't run computation for 
-higher degrees due to resource limitations. This representation guarantees correctness, and is easy to debug, however
-is quite slow (as the consequence of verboseness). 
+to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. 
 
 Let's ground this representation in an example of element-wise matrix multiplication of $\mathbb{A}$, and $\mathbb{B}$.
 Result of such multiplication is a matrix. We present results for the entry $(0, 0)$.
