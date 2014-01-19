@@ -190,16 +190,21 @@ Similarly, we can define a 3-cycle to $(x_1,x_2,x_3)$ if there exists $h \in \ma
 The brute force algorithm constructs the graph by advancing sequentially from smallest to largest degree. 
 
 
-\subsection{Representation of Expressions}
+\subsection{Representation of Expressions} \label{representation}
 %Rob: I did not understand this entire section.
 \ref{itm:expression}s belong to $\mathcal{P}^{n \times m}_\alpha$. There are various
 ways how they can be represented in the software. Such representation is crucial, and has consequences in
 correctness of solution (due to numerical errors), and computation speed.
 
 Let us consider two matrices of polynomials:
-\begin{align*}
-\mathbb{A} &= \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix}, \mathbb{B} &= \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
-\end{align*}
+\begin{equation}\label{eq:a_matrix}
+%\begin{align*}
+\mathbb{A} = \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix} 
+%\end{align*}
+\end{equation}
+\begin{equation}\label{eq:b_matrix}
+\mathbb{B} = \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
+\end{equation}
 We consider element-wise matrix multiplication of $\mathbb{A}$ and $\mathbb{B}$. We derive result for different representation of expressions.
 
 
@@ -211,16 +216,8 @@ defined by grammar. It guarantees correctness and is easy to debug.
 However, it has computational drawback: multiplying two polynomials, each having $N$ monomials is $O(N^2)$ compared to the same operation on instantiations of this polynomials, which is $O(1)$.
 We have implemented expressions in such representation, and it allowed us
 to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. 
-
-Let's ground this representation in an example of element-wise matrix multiplication of $\mathbb{A}$, and $\mathbb{B}$.
-Result of such multiplication is a matrix. We present results for the entry $(0, 0)$.
-Entry $(0, 0)$ of the matrix $\mathbb{A}$ is the list of coefficients $[1, 2, 1]$, and the list
-of powers $\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$. Entry $(0, 0)$ of the matrix $\mathbb{B}$ is
-the list of coefficients $[1, 1]$, and the list of powers 
-$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$. Entry $(0, 0)$ of the element-wise multiplication of $\mathbb{A}$, and $\mathbb{B}$
-is the list of coefficients $[1, 3, 3, 1]$, and
-the list of powers $\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$. 
-
+The example of this representations for matrices \ref{eq:a_matrix} and \ref{eq:b_matrix} can be found
+in table \ref{representation_examples}.
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
 Polynomials can be encoded by its evaluation at various, random points.
@@ -235,39 +232,31 @@ as we are just interest in finding proper linear combination of expressions.
 This methods is numerically unstable, and for polynomials of degree $k \geq 3$, 
 it is not able to produce solutions, even if there are some.
 
-Let us ground this examples. We consider 2 points were we evaluate our polynomials:
-$a = 0.5, b = 1.5$, and $a = 2.5, b = 3.5$.
-
-Then $\mathbb{A}, \mathbb{B}$ have the following representation:
-\begin{align*}
-\mathbb{A} &= \begin{pmatrix} 4 & 0.25\\ 2.25 & 0.75 \end{pmatrix}, \begin{pmatrix} 36 & 6.25\\ 12.25 & 8.75 \end{pmatrix} \\
-\mathbb{B} &= \begin{pmatrix} 2 & 0.5\\ 1.5 & 4 \end{pmatrix}, \begin{pmatrix} 6 & 2.5\\ 3.5 & 12 \end{pmatrix}
-\end{align*}
-Element-wise multiplication of expressions in this representation $\mathbb{A}$, and $\mathbb{B}$ is just element-wise multiplication of evaluations
-in the same points:
-\begin{align*}
-\begin{pmatrix} 8 & 0.125\\ 3.375 & 4 \end{pmatrix}, \begin{pmatrix} 216 & 15.625\\ 42.875 & 105 \end{pmatrix}
-\end{align*}
-This representation is numerically unstable (we are getting a lot of round offs, and large values).
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
 We use similar strategy as in case of evaluations of polynomials in $\mathbb{R}$. 
-We avoid numerical errors by replacing computation on real number with computation in $\mathbb{Z}_p$ group (for a large prime number $p$). This
-guarantees that all the results of the computation are exact (there is no round off errors on integers, and values are bounded by $p$). 
+We avoid numerical errors by replacing computation on real number with computation in $\mathbb{Z}_p$ group (for a large prime number $p$). This guarantees that all the results of the computation are exact (there is no round off errors on integers, and values are bounded by $p$). 
 
-This representation is fastest, and has no problem with numerical errors. However, it is difficult to debug. With such representation, we were able to
-develop completely grammars up to the degree $5$.
+This representation is fastest, and has no problem with numerical errors. However, it is difficult to debug. With such representation, we were able to develop completely grammars up to the degree $5$.
 
+Table \ref{representation_examples} shows the example for points $a = 1, b = 2$, and $p = 11$.
 
-Let's assume that we evaluate polynomials in points $a = 1, b = 2$, and $a = 3, b = 4$, and we work in $Z_{11}$.
-Then $\mathbb{A}, \mathbb{B}$ have the following representation:
-\begin{align*}
-\mathbb{A} &= \begin{pmatrix} 9 & 1\\ 4 & 2 \end{pmatrix}, \begin{pmatrix} 5 & 9\\ 5 & 1 \end{pmatrix} \\
-\mathbb{B} &= \begin{pmatrix} 3 & 1\\ 2 & 6 \end{pmatrix}, \begin{pmatrix} 7 & 3\\ 4 & 3 \end{pmatrix}
-\end{align*}
-Element-wise multiplication of expressions $\mathbb{A}$, and $\mathbb{B}$ is just element-wise multiplication of evaluations
-in the same points modulo $11$:
-\begin{align*}
-\begin{pmatrix} 5 & 1\\ 8 & 1 \end{pmatrix}, \begin{pmatrix} 2 & 5\\ 9 & 3 \end{pmatrix}
-\end{align*}
+\begin{table}
+\tiny
+\centering
+\begin{tabular}{llll}
+\hline
+Type & $\mathbb{A}$ & $\mathbb{B}$ & $\mathbb{A}$ .* $\mathbb{B}$ \\
+\hline
+symbolic & \specialcell{$\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$\\$\alpha = [1, 2, 1]$}  & \specialcell{$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$\\$\alpha = [1, 1]$} & \specialcell{$\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$\\$\alpha = [1, 3, 3, 1]$} \\[15pt]
+
+$\mathbb{R}$ & $\begin{pmatrix} 4 & 0.25\\ 2.25 & 0.75 \end{pmatrix}$ & $\begin{pmatrix} 2 & 0.5\\ 1.5 & 4 \end{pmatrix}$ & $\begin{pmatrix} 8 & 0.125\\ 3.375 & 4 \end{pmatrix}$ \\[15pt]
+
+$\mathbb{Z}_p$ & $\begin{pmatrix} 9 & 1\\ 4 & 2 \end{pmatrix}$ & $\begin{pmatrix} 3 & 1\\ 2 & 6 \end{pmatrix}$ & $\begin{pmatrix} 5 & 1\\ 8 & 1 \end{pmatrix}$ \\
+\hline
+\end{tabular}
+\caption{Comparision of representation types described in section \ref{representation}. The table contains matrices \ref{eq:a_matrix} and \ref{eq:b_matrix}, where $a=1, b=2$ for symbolic and $\mathbb{Z}_p = \mathbb{Z}_{11}$ representations
+and $a=0.5, b=1.5$ for $\mathbb{R}$ representation. For symbolic, the letter $\alpha$ denotes the vector of coefficients.} 
+\label{representation_examples}
+\end{table}
 
