@@ -136,17 +136,17 @@ Pseudo code is shown in Algorithm \ref{pseudocode}.
 \subsection{Linear combination}
 \label{sec:linear}
 
-We search for a linear combination of generated expressions, which is equal to the target expression. 
+We search for the linear combination of generated expressions which equal the target expression. 
 There are several possible scenarios:
 \begin{itemize}
   \item \emph{single solution} - linear solver will have a unique solution (in practice
- this is uncommon)
+ this is uncommon).
  \item \emph{no solution} - target expression is out of scope for the computation defined by
 our grammar. 
  \item  \emph{multiple solutions} - we look for the linear combination with the smallest cost
 (computational time). 
 \end{itemize}
-
+ROB: what about complexity?
 Multiple solutions case is essentially an integer programing
 problem, or knapsack problem, which are NP-complete. However, we can
 relax this to a linear program, which will give a solution almost as
