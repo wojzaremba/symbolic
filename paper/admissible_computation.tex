@@ -146,11 +146,10 @@ our grammar.
  \item  \emph{multiple solutions} - we look for the linear combination with the smallest cost
 (computational time). 
 \end{itemize}
-ROB: what about complexity?
-Multiple solutions case is essentially an integer programing
-problem, or knapsack problem, which are NP-complete. However, we can
+The multiple solutions case is essentially an integer programing
+problem, or knapsack problem, which is NP-complete. However, we can
 relax this to a linear program, which will give a solution almost as
-efficient as the optimal one. Experiments suggest that is good to
+efficient as the optimal one. Experiments suggest that it is good to
 also minimize number of coefficients, so avoiding unnecessary
 non-integer coefficient values, which can contribute numerical errors.
 
@@ -159,9 +158,8 @@ It is worth noting that while it is easy to find best solution in
 terms of {\em complexity}, it is NP-complete to find the best solution
 in terms of {\em performance}. In order to find best solution in terms
 of complexity, one has to run linear solver multiple times. Every
-time, it should include broader number of expressions. Starting with set
-of expressions having the smallest complexity (e.g.~those which are
-$O(1)$), and adding new expressions with higher and higher complexity
+time, it should include broader number of expressions, starting with set
+of expressions of $O(1)$ complexity and adding new expressions with higher and higher complexity
 ($O(n)$ and then $O(n^2)$ and so on). If algorithm finds a solution at
 some point, then it is optimal in terms of complexity. 
 However, discovery of the fastest performance (i.e.~lowest
@@ -171,10 +169,10 @@ which is far more expensive.
 \subsection{Computation derivation as the algebra}
 The space of matrices of polynomials forms an algebra $\mathcal{A}$.
 A \emph{grammar} $\mathcal{G}=\{g_1,\dots,g_{K};\, h_1,\dots, h_{K'}\}$ defined on this algebra is a set of functions
-$$g_i : \mathcal{A} \longrightarrow \mathcal{A}~,~(i \leq K)~,$$
+$$g_i : \mathcal{A} \longrightarrow \mathcal{A}~,~(i \leq K)~,\vspace{-3mm}$$
 $$h_{i} : \mathcal{A} \times \mathcal{A} \longrightarrow \mathcal{A}~, ~i \leq K'~,$$
 which might eventually only defined for certain sub-algebras of $\mathcal{A}$ 
-(eg matrix multiplication requires inner dimensions to agree). 
+(e.g.~matrix multiplication requires inner dimensions to agree). 
 
 Given an initial element $w \in \mathcal{A}$ and a target element $t \in \mathcal{A}$, 
 the question is whether $t$ can be written as a finite sequence of operations involving 
@@ -182,7 +180,7 @@ only $w$ and $g,h \in \mathcal{G}$.
 If the algebra is defined over a discrete field, then the problem can be  
 cast as a shortest path problem on a sparse directed graph. 
 We define a ``sink" node which contains all polynomials (or matrices of polynomials) with degree $\geq D_{\max}$ 
-($D_{\max} > \mbox{deg}(t)$ ), and a node for each of the other elements of $\mathcal{A}$. 
+where ($D_{\max} > \mbox{deg}(t)$), and a node for each of the other elements of $\mathcal{A}$. 
 Two nodes $x_1,\,x_2$ have a connection $x_1 \rightarrow x_2$ if there exists $g \in \mathcal{G}$ such that
 $x_2 = g(x_1)$. The edge is assigned a cost which depends on the complexity of performing the operation.   
 Similarly, we can define a 3-cycle to $(x_1,x_2,x_3)$ if there exists $h \in \mathcal{G}$ such that $x_3 = h(x_1,x_2)$.
@@ -193,19 +191,24 @@ The brute force algorithm constructs the graph by advancing sequentially from sm
 \subsection{Representation of Expressions} \label{representation}
 %Rob: I did not understand this entire section.
 \ref{itm:expression}s belong to $\mathcal{P}^{n \times m}_\alpha$. There are various
-ways how they can be represented in the software. Such representation is crucial, and has consequences in
-correctness of solution (due to numerical errors), and computation speed.
+ways how they can be represented in software and the choice is
+important as it has consequences in the correctness of the solution
+(due to numerical errors), as well as speed of computation.
 
 Let us consider two matrices of polynomials:
-\begin{equation}\label{eq:a_matrix}
+\begin{equation}
+\label{eq:a_matrix}
 %\begin{align*}
 \mathbb{A} = \begin{pmatrix} a^2 + 2ab + b^2 & a^2\\ b^2 & ab \end{pmatrix} 
 %\end{align*}
 \end{equation}
-\begin{equation}\label{eq:b_matrix}
+\begin{equation}
+\label{eq:b_matrix}
 \mathbb{B} = \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
 \end{equation}
-We consider element-wise matrix multiplication of $\mathbb{A}$ and $\mathbb{B}$. We derive result for different representation of expressions.
+We consider element-wise matrix multiplication of $\mathbb{A}$ and
+$\mathbb{B}$. We derive the result using three different ways of
+representating expressions.
 
 
 
@@ -214,45 +217,50 @@ The most direct representation of expressions is to store its coefficients and p
 This representation is exact, and corresponds one-to-one with our description of operations
 defined by grammar. It guarantees correctness and is easy to debug. 
 However, it has computational drawback: multiplying two polynomials, each having $N$ monomials is $O(N^2)$ compared to the same operation on instantiations of this polynomials, which is $O(1)$.
-We have implemented expressions in such representation, and it allowed us
+The symbolic representation allowed us
 to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. 
 The example of this representations for matrices \ref{eq:a_matrix} and \ref{eq:b_matrix} can be found
-in table \ref{representation_examples}.
+in Table \ref{representation_examples}.
 
 \subsubsection{Evaluation of polynomials in $\mathbb{R}$}
-Polynomials can be encoded by its evaluation at various, random points.
-This encoding simplifies operations on expressions, and multiplication of expressions
-in such representation is proportional to the number of evaluation points (for every evaluation
-point, we have to perform just a common multiplication).
+Polynomials can be encoded by their evaluation at various, random points.
+This encoding simplifies operations on expressions, and the time to multiply expressions
+is proportional to the number of evaluation points (for every evaluation
+point, we just have to perform floating point multiplication).
 
-We need evaluate our polynomials in number of points which is larger 
-than final size of linear equations \ref{sec:linear}. We do not have to recover coefficients of polynomials,
-as we are just interest in finding proper linear combination of expressions.
-
-This methods is numerically unstable, and for polynomials of degree $k \geq 3$, 
-it is not able to produce solutions, even if there are some.
-
+We need to evaluate our polynomials at a larger number of points than
+the final size of the linear system of equations (see Section
+\ref{sec:linear}). Note that we do not have to recover the
+coefficients of polynomials, as we are just interested in finding the
+proper linear combination of expressions.  Unfortunately, this method
+is numerically unstable, and for polynomials of degree $k \geq 3$ it
+is unable to discover solutions, even if they exist.
 
 \subsubsection{Evaluation of polynomials in $\mathbb{Z}_p$}
-We use similar strategy as in case of evaluations of polynomials in $\mathbb{R}$. 
-We avoid numerical errors by replacing computation on real number with computation in $\mathbb{Z}_p$ group (for a large prime number $p$). This guarantees that all the results of the computation are exact (there is no round off errors on integers, and values are bounded by $p$). 
+We can avoid numerical issues by evaluating polynomials in the
+$\mathbb{Z_p}$ group (for some large prime $p$), instead of
+$\mathbb{R}$. This guarantees all the results of the computation
+to be exact since there are no rounding errors on integers, and values are
+bounded by $p$.
 
-This representation is fastest, and has no problem with numerical errors. However, it is difficult to debug. With such representation, we were able to develop completely grammars up to the degree $5$.
-
-Table \ref{representation_examples} shows the example for points $a = 1, b = 2$, and $p = 11$.
+Although this representation is the fastest, and has no problems with
+numerical errors, it is difficult to implement and debug. Using this
+representation, we were able to completely develop grammars up to 
+degree $6$. Table \ref{representation_examples} shows the example
+of Eqns.~\ref{eq:a_matrix} \& \ref{eq:b_matrix} for $a = 1, b = 2$ and $p = 11$.
 
 \begin{table}
 \tiny
 \centering
 \begin{tabular}{llll}
 \hline
-Type & $\mathbb{A}$ & $\mathbb{B}$ & $\mathbb{A}$ .* $\mathbb{B}$ \\
+Representation & $\mathbb{A}$ & $\mathbb{B}$ & $\mathbb{A}$ .* $\mathbb{B}$ \\
 \hline
-symbolic & \specialcell{$\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$\\$\alpha = [1, 2, 1]$}  & \specialcell{$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$\\$\alpha = [1, 1]$} & \specialcell{$\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$\\$\alpha = [1, 3, 3, 1]$} \\[15pt]
+Symbolic & \specialcell{$\begin{pmatrix} 2 & 1 & 0\\ 0 & 1 & 2 \end{pmatrix}$\\$\alpha = [1, 2, 1]$}  & \specialcell{$\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$\\$\alpha = [1, 1]$} & \specialcell{$\begin{pmatrix} 3 & 2 & 1 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix}$\\$\alpha = [1, 3, 3, 1]$} \\[15pt]
 
 $\mathbb{R}$ & $\begin{pmatrix} 4 & 0.25\\ 2.25 & 0.75 \end{pmatrix}$ & $\begin{pmatrix} 2 & 0.5\\ 1.5 & 4 \end{pmatrix}$ & $\begin{pmatrix} 8 & 0.125\\ 3.375 & 4 \end{pmatrix}$ \\[15pt]
 
-$\mathbb{Z}_p$ ($\mathbb{Z}_{11}$) & $\begin{pmatrix} 9 & 1\\ 4 & 2 \end{pmatrix}$ & $\begin{pmatrix} 3 & 1\\ 2 & 6 \end{pmatrix}$ & $\begin{pmatrix} 5 & 1\\ 8 & 1 \end{pmatrix}$ \\
+$\mathbb{Z}_p$ ($p=11$) & $\begin{pmatrix} 9 & 1\\ 4 & 2 \end{pmatrix}$ & $\begin{pmatrix} 3 & 1\\ 2 & 6 \end{pmatrix}$ & $\begin{pmatrix} 5 & 1\\ 8 & 1 \end{pmatrix}$ \\
 \hline
 \end{tabular}
 \caption{Comparision of representation types described in section \ref{representation}. The table contains instantiation of matrices \ref{eq:a_matrix} and \ref{eq:b_matrix}, for $a=1, b=2$ (symbolic and $\mathbb{Z}_p$) or $a=0.5, b=1.5$ ($\mathbb{R}$) representations. For symbolic, the letter $\alpha$ denotes the vector of coefficients.} 

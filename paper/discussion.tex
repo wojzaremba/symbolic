@@ -1,34 +1,40 @@
 \section{Discussion and Future Work}
 
-We have presented an automatic method for discovery of computations for
- polynomial expressions. The method itself is novel, as well as the derived
+We have presented an automatic method for discovering efficient way to
+computate polynomial expressions. The method itself is novel, as well as the derived
 approximations to the RBM partition function. There are four
 major directions of future research: 
 
 \begin{enumerate}
-  \item Extend our method to (i) richer class of functions
-    than polynomials, (ii) larger set of production rules, (iii) more complex
-    objects than matrices (e.g. tensors).
+  \item Extend our method to (i) a richer class of functions
+    than polynomials, (ii) a larger set of production rules, (iii) more complex
+    objects than matrices (e.g.~tensors). We elaborate on this in
+    Section \ref{sec:extend}.
 
-
-  \item Use learning to generalize computation (Subsection \ref{subsec:agenda}), i.e.~replace 
-    current brute force process with something more sophisticated. E.g. We could generalize computation of
-$g(x \rightarrow x^k, W)$ for $k = 1, \dots, 6$ to $k > 6$. 
+  \item Use machine learning to generalize computation, i.e.~replace 
+    current brute force grammar search process with something more
+    sophisticated. This would allow, for example, computation of
+$g(x \rightarrow x^k, W)$ for $k > 6$. This is discussed further in
+Section \ref{subsec:agenda}.
 
 
 \item Compute the partition function and its derivatives using approximations for learning, 
   approximations for deep Boltzmann machines, optimization of the derived formulas, and understanding the
-mathematical principles behind formulas derived by our programs. 
+mathematical principles behind formulas derived by our programs. ROB:
+can't parse.
 
-\item Real-world applications of this framework on large code databases. 
-  We could automatically detect parts of code with expressions that have suboptimal 
-  time complexity and replace them.
+\item Explore real-world applications of this framework on large code databases. 
+  It could be used to automatically detect parts of code with expressions that have suboptimal 
+  time complexity and replace them with more efficient expressions.
 \end{enumerate}
 
-We discuss in following subsections two first major directions of future research.
+ROB: need something about effectiveness of Taylor series approx when
+$W_{ij} > 1$. 
+%We discuss in following subsections two first major directions of future research.
 
 
 \subsection{Extension of Grammar}
+\label{sec:extend}
 The presented framework has some limitations, but also can be easily extended. First,
 we operate on polynomials instead of general functions. It is quite easy to verify
 equality of polynomials, because it is enough to check equality of coefficients or
@@ -58,7 +64,7 @@ and crucial in computation.
 This paper presents a brute force search over all possible computations, 
 to yield terms that could lead to the target result. Although it works
 well for polynomials of small degrees $k \leq 6$, for larger powers 
-brute force methods seems to fail. One of the contributions of this paper is to
+brute force methods become prohibitive. One of the contributions of this paper is to
 demonstrate how a small subset of mathematics may be explored with an automatic proving
 system. However, to broaden the range of math that we can address, we
 must move beyond brute force solutions to more intelligent approaches

@@ -1,7 +1,7 @@
 \section{Experiments}
 
-We present various mathematical expressions, which can be computed more efficiently
-than initial formulation would suggest. 
+We present various mathematical expressions which can be computed more efficiently
+than the initial formulation would suggest. 
 
 \subsection{Matrix Multiplication-Sum Identities}
 
@@ -11,12 +11,12 @@ Given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m
 \sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
 \end{gather*}
 A naive algorithm would take $O(nmk)$ time. However, we have found with our framework 
-computation giving the same expression in time $O(n(k + m))$:
+computation giving the same expression in $O(n(k + m))$ time:
 \begin{lstlisting}
 sum(sum(A .* repmat(sum(B, 2), [1, m])'))
 \end{lstlisting}
 Empirical tests indicate that our expression is indeed faster to
-compute than the naive one (Figure \ref{ab}).
+compute than the naive one (see Figure \ref{ab}).
 
 Similarly, we found quadratic time computation, instead of cubic, for
 similar expressions such as: 
@@ -39,21 +39,22 @@ framework, we found rules for $k = 3, 4, 5, 6$. However for $k = 4, 5, 6$
 these rules used computation with $O(n^3)$ time (i.e.~matrix
 multiplication). Finding computational rules for higher degree
 polynomials is expensive: Table \ref{grammars} shows the time
-necessary to generate all the rules. It is worth noting that grammar
-can be evaluated just once, and the resulting coefficients can be
+necessary to generate all the rules. Note that the grammar
+need only be evaluated once, with the resulting coefficients being
 stored. Furthermore, the process of discovering the computational rule
-for a given power only need to be performed once. However, due to limited computational
-power we analyzed only powers $k \leq 6$. As we note in Section
-\ref{subsec:agenda} a future direction would be to learn patterns for
+for a given power also need only be performed once. However, due to limited computational
+power we were able to analyze powers $k \leq 6$. As we note in Section
+\ref{subsec:agenda}, a future direction would be to learn patterns for
 $k=2, 3, 4, 5, 6$ that allow us to generalize to $k>6$ without exhaustively
 searching all possible rules. 
 
 Table \ref{eval} shows number of terms necessary to derive $g(x
-\rightarrow x^k, W)$ for various $k$. Figure \ref{approximations} shows
-how well partition function is approximated with finite Taylor
-expansion. Finally, Figure \ref{time_approx} compares computation time
-of derived rules to the computation time of naive exponential time
-algorithm.
+\rightarrow x^k, W)$ for various $k$. Figure \ref{approximations}
+shows how well partition function is approximated with finite Taylor
+expansion. Figure \ref{error_approx} shows the approximation error of
+the Taylor series for $W$ with random small weights ($<1$). Finally,
+Figure \ref{time_approx} compares computation time of derived rules to
+the computation time of naive exponential time algorithm.
 
 \begin{table}
 \tiny
@@ -69,10 +70,12 @@ Degree & Grammar size & Time (s) \\
 6 & 437 & 434681 \\
 \hline
 \end{tabular}
-\caption{Table summarizes size and computational time for grammars of specific degree. 
-All computation here are performed on expressions, and have nothing to do with computation time on instantiations.
-This procedure has to be executed only once.}
+\caption{A summary of size and computational time for grammars of a specific degree. 
+  All computation here is performed on {\em expressions}, and has
+  nothing to do with computation time on their instantiations (this is
+  shown in Table \ref{eval}). Note that this procedure has to be executed only once.}
 \label{grammars}
+\vspace{-4mm}
 \end{table}
 
 % TODO(karol): we need more columns in those tables, or we should consider merging them. wojciech : instead I have
@@ -91,30 +94,42 @@ Degree & Num. terms & Complexity \\
 6 & 106 & $O(n^3)$\\
 \hline
 \end{tabular}
-\caption{Table summarizes complexity of computation of $g(x \rightarrow x^k, W)$. 
-Number of terms, and complexity of every term is important for the computation of the target expression.
-Potentially, we need to evaluate partition function multiple times, so the ``Complexity''
-is the complexity of our final system were we use such expressions.} 
+\caption{A summary complexity of computation for $g(x \rightarrow x^k, W)$. 
+  The number of terms, and the largest complexity among them, is important for the computation of the target expression.
+  Potentially, we need to evaluate partition function multiple times, so the ``Complexity''
+  is the complexity of our final system which exctly reproduces the
+  Taylor-series approximation, the naive computation of which would be
+  exponential $n$ (see \ref{time_approx}).} 
 \label{eval}
+\vspace{-4mm}
 \end{table}
 
 
 \begin{figure}[h]
+\vspace{-5mm}
 \centering
 \mbox{
-  \subfigure[Computation time for $\sum AB$ using standard algorithm vs using inferred optimal algorithm.]{
+  \subfigure[Computation time for $\sum AB$ using standard algorithm vs our inferred optimal algorithm.]{
       \includegraphics[width=0.55\linewidth]{img/ab.eps}
       \label{ab}
   }\quad
-\subfigure[Comparison of approximations with various number of Taylor terms.]{
-  \includegraphics[width=0.45\linewidth]{img/approximations.eps} 
+\subfigure[Approximations of $e^x$ using differing numbers of Taylor terms.]{
+  \includegraphics[width=0.35\linewidth]{img/approximations.eps} 
   \label{approximations}
   }
 }
+\subfigure[Relative approximation error of the partition function for different
+degrees of Taylor approximation. Max, mean and min errors are shown for 100
+different trials for $W$ of size $ 7 \times 7$, with $W_{ij} \sim \text{Laplacian}(0.05)$.]{
+  \includegraphics[scale=0.44]{img/partition_approx_rob.eps}
+  \label{error_approx}
+}
+
 \subfigure[Comparison of computation time for naive exponential time algorithm vs our optimized derivation.]{
   \includegraphics[scale=0.24]{img/time_approx.eps}
   \label{time_approx}
 }
-\caption{Experiment results}
+\vspace{-7mm}
+\caption{Experimental results.}
 \end{figure}
 

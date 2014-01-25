@@ -3,11 +3,11 @@
 The algorithm presented in Section
 \ref{sec:grammars} allows us to find concise formulas for polynomial expressions.
 However, many interesting functions are outside of this
-family. Therefore we consider Taylor expansion of desired function
-and use our approach to derive a fast way of computing the expansion
-in closed form.
+family. Therefore we consider a Taylor series approximation of the desired function
+and use our approach to derive a fast way of computing the polynomial
+terms of the expansion in closed form.
 
-Let $g(f, W)$ be the generalization of partition function for a binary
+Let $g(f, W)$ be the generalization of the partition function for a binary
 RBM \cite{hinton2002training}, for $f: \mathbb{R} \rightarrow \mathbb{R}$ and $W \in \mathbb{R}^{n \times m}$.
 We define a functional $g$ as follows: \\
 \begin{gather*}
@@ -17,14 +17,14 @@ g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh)
 We consider the computation of $g(x \rightarrow x^k, W)$ for a given power
 $k$, and for any $W
 \in \mathbb{R}^{n \times m}$ (and any size $n, m$). Potentially, if we would be able
-to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, than partition
+to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, then the partition
 function for finite energy $v^TWh < C$ could be approximated arbitrarily well.
 This is a consequence of expressing as a finite sum approximation through
 Taylor expansion: $e^{x}=1+x+x^2/2!+x^3/3!+\cdots$.
 
 \subsection{Low degree examples} In order to present how our algorithm works,
-we will manually derive a fast computation procedure for $g(x \rightarrow x^k, W)$.
-However, this can be done manually only for very small $k = 1, 2$. 
+we will manually derive a fast computation procedure for $g(x
+\rightarrow x^k, W)$, practical only for $k = 1, 2$. 
 
 
 \subsubsection{{$\bf g(x \rightarrow x, W)$}} Let's consider function $f(x) = x$. We
@@ -42,7 +42,9 @@ $2^{n + m - 2}$. Hence:
 \end{gather*}
 The above mathematical formula (or description of computation) is a
 closed form solution for the sum over exponentially many
-elements. Note that its complexity is linear in size of $W$, which is $O(n^2)$.
+elements. Note that its complexity is linear in size of $W$, which is
+$O(n^2)$, compared to the exponential complexity in $n$ of the
+original expression.
 
 \subsubsection{$\bf g(x \rightarrow x^2, W)$}
 
@@ -59,22 +61,25 @@ There are multiple second order monomials that emerge:
 	\item $w_{i,j} w_{k, j}, i \neq k$ -- present iff $v_i = 1, v_k = 1, h_j = 1$. Appears $2^{n + m - 3}$ times. We encode sum of all monomials like this as $(0, 0, 1, 0)$.
 	\item $w_{i,j} w_{k, l}, i \neq k, j \neq l$ -- present iff $v_i = 1, v_k = 1, h_j = 1, h_l = 1$. Appears $2^{n + m - 4}$ times. We encode sum of all monomials like this as $(0, 0, 0, 1)$.
 \end{itemize}
-We encode above quantities in a vector, which indicate how many times
+We encode the above quantities in a vector, which indicate how many times
 each of the monomials 
-appears. The vector expressing this relation for $g(x \mapsto x^2, W)$ is $(2^{n + m - 2}, 2^{n + m - 3}, 2^{n + m - 3}, 2^{n + m - 4})$
+appears. The vector expressing this relation for $g(x \mapsto x^2, W)$
+is $(2^{n + m - 2}, 2^{n + m - 3}, 2^{n + m - 3}, 2^{n + m - 4})$.
 
-Rob: too big a jump. Need transition sentence here.
-Let us consider the following expressions: 
+Now let us consider the following expressions: 
 \begin{itemize}
- \item $\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2$ encodes $(1, 0, 0, 0)$. 
-This expression contains only type of second degree monomials. 
-It contains only monomials $w_{i, j}^2$, but not $w_{i, j} w_{i, k}$, or $w_{i, j} w_{k, j}$, or $w_{i, j} w_{k, l}$.
- \item $(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2$ encodes $(1, 1, 1, 1)$.
- \item $\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2$ encodes $(1, 1, 0, 0)$. 
- \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes $(1, 0, 1, 0)$.
+ \item $\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2$. 
+This expression contains only monomials $w_{i, j}^2$, but not $w_{i,
+  j} w_{i, k}$, or $w_{i, j} w_{k, j}$, or $w_{i, j} w_{k, l}$. Hence it can be represented as $(1, 0, 0, 0)$.
+ \item Similarly, $(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i,
+     j})^2$ can be encoded as $(1, 1, 1, 1)$.
+ \item $\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W)^2$ encodes to
+   $(1, 1, 0, 0)$. 
+ \item $\sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W)^2$ encodes to
+   $(1, 0, 1, 0)$.
 \end{itemize}
  
- By solving the linear equations:
+Using our encodings, we form the following linear system of equations:
  \begin{equation}
  \begin{pmatrix} 
   1 & 1 & 1 & 1 \\ 
@@ -89,22 +94,26 @@ It contains only monomials $w_{i, j}^2$, but not $w_{i, j} w_{i, k}$, or $w_{i, 
 \end{pmatrix} \\
  \end{equation}
 
-The solution to this equation is $x=[1, 1, 1, 1]^T$, thus 
+This has the unique solution $x=[1, 1, 1, 1]^T$, meaning that the original expression can be
+rewritten as: 
 \begin{align*}
 	&g(x \rightarrow x^2, W) = 2^{n + m - 4} \\ 
  &\Big(\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j}^2 + (\sum_{i = 1, \dots, n, j = 1, \dots m} W_{i, j})^2 + \\
  &\sum_{i = 1, \dots, n}(\sum_{j = 1, \dots, m} W_{i, j})^2 + \sum_{j = 1, \dots, m}(\sum_{i = 1, \dots, n} W_{i, j})^2 \Big)
 \end{align*}
-Our algorithm derived the following equivalent Matlab computation for it:
+On this example, our algorithm derived the following equivalent Matlab
+computation which only requires $O(n^2)$ time (unlike the original
+which is exponential in $n$):
 \begin{lstlisting}
 (sum(sum(W)) .^ 2 + ...
 sum(sum(W, 2) .* sum(W, 2)) + ... 
 sum(sum(W, 1) .* sum(W, 1)) + ... 
 sum(sum(W .* W))) * 2 ^ (n + m - 4)
 \end{lstlisting}
-The above derivation is still within the scope of human skill. However, manual derivation
-of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes intractable. Our algorithm
-is able to find such complex computational patterns automatically. 
+Although this derivation is still within the scope of human abilities, manual derivation
+of $g(x \rightarrow x^k, W)$ for $k > 2$ quickly becomes
+intractable. However, our algorithm is able to find such complex
+computational patterns automatically, thus can be used for larger $k$. 
 
 \subsubsection{{$\bf g(x \rightarrow x^3, W)$}}
 The manual derivation for $k = 3$ is challenging. We present all generated expressions up to degree 
