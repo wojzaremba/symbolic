@@ -60,7 +60,7 @@ sum(sum(A .* repmat(sum(A, 2), [1, m])'))
 sum(sum(((repmat(sum(A, 2), [1, m]) .* repmat(sum(A, 1), [n, 1])) .* A), 2), 1) 
 
 \subsection{{$\bf g(x \rightarrow x^4, W)$}}
-             ((((( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))  .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)))  .* 1)  
+             $2^{(n+m)}$*((((( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1))  .* ( sum(sum(W, 2), 1) .* sum(sum(W, 2), 1)))  .* 1)  
               + ( sum(( ( sum(W, 1) .* sum(W, 1)) .* ( sum(W, 1) .* sum(W, 1))), 2) .* -2)  
               + ( ( sum(( sum(W, 1) .* sum(W, 1)), 2) .* sum(( sum(W, 1) .* sum(W, 1)), 2)) .* 3)  
               + ( sum(( ( sum(W, 1) .* sum(W, 1)) .* sum(( W .* W), 1)), 2) .* -12)  
@@ -83,7 +83,7 @@ sum(sum(((repmat(sum(A, 2), [1, m]) .* repmat(sum(A, 1), [n, 1])) .* A), 2), 1)
               + ( sum(sum(( ( W * (W')) .* ( W * (W'))), 1), 2) .* 6))) / 256;
 
 \subsection{{$\bf g(x \rightarrow x^5, W)$}}
-             (((sum(sum((repmat(( sum(W, 1) .* sum(W, 1)), [n, 1])  .* ( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W)), 2), 1)  .* -40)  
+            $2^{(n+m)}$* (((sum(sum((repmat(( sum(W, 1) .* sum(W, 1)), [n, 1])  .* ( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W)), 2), 1)  .* -40)  
               + (sum((( sum(W, 1) .* sum(W, 1))  .* sum((repmat(sum(W, 1), [n, 1])  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))), 1)), 2)  .* -10)  
               + (( sum(sum(W, 2), 1) .* sum(( ( sum(W, 2) .* sum(W, 2)) .* sum(( W .* W), 2)), 1))  .* -60)  
               + (sum((repmat(sum(sum(W, 2), 1), [n, 1])  .* (repmat(sum(sum(W, 2), 1), [n, 1])  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2))), 1)  .* 60)  
@@ -114,7 +114,7 @@ sum(sum(((repmat(sum(A, 2), [1, m]) .* repmat(sum(A, 1), [n, 1])) .* A), 2), 1)
               + (sum((sum(( W .* W), 2)  .* sum(( ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])) .* W), 2)), 1)  .* -120)  + ( sum(( ( ( W * (W')) .* ( W * (W'))) * repmat(sum(sum(W, 2), 1), [n, 1])), 1) .* 30))) / 1024; 
 
 \subsection{{$\bf g(x \rightarrow x^6, W)$}}
-(((sum(sum((( W .* W)  .* (( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])))), 2), 1)  .* 360) 
+$2^{(n+m)}$* (((sum(sum((( W .* W)  .* (( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1]))  .* ( repmat(sum(W, 2), [1, m]) .* repmat(sum(W, 1), [n, 1])))), 2), 1)  .* 360) 
   + (sum(sum((( W .* repmat(sum(W, 2), [1, m]))  .* ( ( W .* repmat(sum(W, 2), [1, m])) .* repmat(sum(( W .* W), 1), [n, 1]))), 2), 1)  .* 360) 
   + (sum((( sum(W, 1) .* sum(W, 1))  .* ( ( sum(W, 1) .* sum(W, 1)) .* ( sum(W, 1) .* sum(W, 1)))), 2)  .* 16) 
   + ((sum(( sum(W, 1) .* sum(W, 1)), 2)  .* sum(( ( sum(W, 1) .* sum(W, 1)) .* ( sum(W, 1) .* sum(W, 1))), 2))  .* -30) 
