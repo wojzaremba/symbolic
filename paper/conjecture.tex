@@ -30,21 +30,29 @@ For every $x < C$ there exists $u < x$, such that:
 \begin{align*}
 	e^x = 1 + \frac{x}{1!} + \frac{x^2}{2!} + \dots + \frac{x^{k - 1}}{(k - 1)!} + \frac{x^k}{k!}e^u
 \end{align*}
-This implies
+Using Moiver's formula ($k! \sim [const] * \frac{k^{k + 1/2}}{e^k}$) we get:
 \begin{align*}
 	|e^x - (1 + \frac{x}{1!} + \frac{x^2}{2!} + \dots + \frac{x^{k - 1}}{(k - 1)!}) | < \frac{C^k}{k!}e^C \\
 	\sim \exp(k\log{C} + C - k\log{k} + k) < \epsilon
 \end{align*}
 
-We require that: 
+To find the number of terms required to approximate with accuracy $\epsilon$, we look for 
+the smallest $k$ satisfying: 
 \begin{align*}
-	k (1 + \log{C} - \log{k}) < \log{\epsilon} - C \\ 
+	k (1 + \log{C} - \log{k}) < \log{\epsilon} - C\\ 
 	k (\log{Ce} - \log{k}) < \log{\epsilon} - C
 \end{align*}
 
-Let us assume that $\log{\epsilon} < -1$, and $1 - Ce < -C$. These assumptions are valid if $\epsilon$ is small
-enough, and $C$ is large enough.
-
+Let us assume that:
+\begin{equation}
+\label{eq:eps_ineq}
+\log{\epsilon} < -1
+\end{equation}
+\begin{equation}
+\label{eq:c_ineq}
+1 - Ce < -C
+\end{equation}
+These assumptions are valid if $\epsilon$ is small enough, and $C$ is large enough.
 
 For such $\epsilon$ and $C$, and $k > \frac{Ce}{\epsilon}$, the
 following inequalities are satisfied:
@@ -54,11 +62,16 @@ following inequalities are satisfied:
 	C < \log{\epsilon}(1 - \frac{Ce}{\epsilon})
 \end{align*}
 
-This implies that is the energy of the RBM is bounded by $C$, we can
-approximate it up to $\epsilon$ approximation of partition function
-(in log scale) by using $\frac{Ce}{\epsilon}$ terms of the Taylor
-approximation. This algorithm assumes Conjecture \ref{simple} has
-complexity $O(\lambda^{\frac{Ce}{\epsilon}}n^3)$.
+Using assumption \ref{eq:eps_ineq} we get:
+\begin{align*}
+  C < -1 * (1 - \frac{Ce}{\epsilon}) \Leftrightarrow 1 - \frac{Ce}{\epsilon} < -C
+\end{align*}
+Which is true, because of assumption \ref{eq:c_ineq} ($\epsilon < 1 \Rightarrow \frac{Ce}{\epsilon} > Ce$).
+
+This implies that if $max_{v,h}\text{ } v^TWh < C$, we can
+approximate the partition function up to $\epsilon$ (in log scale)
+by using $k = \frac{Ce}{\epsilon}$ terms of the Taylor series. 
+This algorithm assumes Conjecture \ref{simple} has complexity $O(\lambda^{\frac{Ce}{\epsilon}}n^3)$.
 
 \vspace{-5mm}
 \end{proof}
