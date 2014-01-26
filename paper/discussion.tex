@@ -34,14 +34,17 @@ Section \ref{subsec:agenda}.
 %We discuss in following subsections two first major directions of future research.
 
 
+\input{table_eval}
 \subsection{Extension of Grammar}
 \label{sec:extend}
 The presented framework has some limitations, but also can be easily extended. First,
-we operate on polynomials instead of general functions. It is quite easy to verify
-equality of polynomials, because it is enough to check equality of coefficients or
-evaluations on sufficiently many points (more than degree of
-the polynomial). However, for generic functions
-it is not as simple. For example, if our basis would to include trigonometric functions, then the
+we operate on polynomials instead of generic functions. 
+% KAROL-CUT
+%It is quite easy to verify equality of polynomials, because it is enough to check equality of coefficients or
+% evaluations on sufficiently many points (more than degree of the polynomial). However, for generic functions
+% it is not as simple.
+It is quite easy to verify equality of polynomials, but for generic functions it becomes more complex.
+For example, if our basis would to include trigonometric functions, then the
 framework would have to be aware of many additional identities,
 e.g. $\sin^2{x} + \cos^2{x} = 1$, or $2\sin x \cos x = \sin
 2x$. Although challenging, we believe it is possible to extend our

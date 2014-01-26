@@ -10,13 +10,16 @@ terms of the expansion in closed form.
 Let $g(f, W)$ be the generalization of the partition function for a binary
 RBM \cite{hinton2002training}, for $f: \mathbb{R} \rightarrow \mathbb{R}$ and $W \in \mathbb{R}^{n \times m}$.
 We define a functional $g$ as follows: \\
-\begin{gather*}
+\vspace{-0.3cm}
+\begin{align*}
+%\begin{gather*}
 g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh)
-\end{gather*}
+%\end{gather*}
+\end{align*}
+\vspace{-0.1cm}
 
 We consider the computation of $g(x \rightarrow x^k, W)$ for a given power
-$k$, and for any $W
-\in \mathbb{R}^{n \times m}$ (and any size $n, m$). Potentially, if we would be able
+$k$, and for any $W \in \mathbb{R}^{n \times m}$ (and any size $n, m$). Potentially, if we would be able
 to compute $g(x \rightarrow x^k, W)$ for $k = 1, \dots, K$, then the partition
 function for finite energy $v^TWh < C$ could be approximated arbitrarily well.
 This is a consequence of expressing as a finite sum approximation through

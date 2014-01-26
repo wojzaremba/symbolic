@@ -1,0 +1,25 @@
+\begin{table}[t]
+\tiny
+\centering
+\begin{tabular}{rrr}
+\hline
+Degree & Num. terms & Complexity \\
+\hline
+2 & 4 & $O(n^2)$\\
+3 & 5 & $O(n^2)$\\
+4 & 21 & $O(n^3)$\\
+5 & 30 & $O(n^3)$\\
+6 & 106 & $O(n^3)$\\
+\hline
+\end{tabular}
+\caption{A summary complexity of computation for $g(x \rightarrow x^k, W)$.
+% KAROL-CUT
+%  The number of terms, and the largest complexity among them, is important for the computation of the target expression.
+  Potentially, we need to evaluate partition function multiple times, so the ``Complexity''
+  is the complexity of our final system which exctly reproduces the
+  Taylor-series approximation, the naive computation of which would be
+  exponential $n$ (see Figure \ref{time_approx}).} 
+\label{eval}
+\vspace{-4mm}
+\end{table}
+
