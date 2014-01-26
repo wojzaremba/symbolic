@@ -47,12 +47,13 @@ power we were able to analyze powers $k \leq 6$. As we note in Section
 \ref{subsec:agenda}, a future direction would be to learn patterns for
 $k=2, 3, 4, 5, 6$ that allow us to generalize to $k>6$ without exhaustively
 searching all possible rules. 
-
 Table \ref{eval} shows number of terms necessary to derive $g(x
 \rightarrow x^k, W)$ for various $k$. Figure \ref{approximations}
 shows how well partition function is approximated with finite Taylor
 expansion. Figure \ref{error_approx} shows the approximation error of
-the Taylor series for $W$ with random small weights ($<1$). Finally,
+the Taylor series for $W$. When the weights are small so is the energy
+and our approximation is accurate. With larger weights (and hence
+energy) the accuracy is diminished and more Taylor terms are needed. Finally,
 Figure \ref{time_approx} compares computation time of derived rules to
 the computation time of naive exponential time algorithm.
 
@@ -99,14 +100,14 @@ Degree & Num. terms & Complexity \\
   Potentially, we need to evaluate partition function multiple times, so the ``Complexity''
   is the complexity of our final system which exctly reproduces the
   Taylor-series approximation, the naive computation of which would be
-  exponential $n$ (see \ref{time_approx}).} 
+  exponential $n$ (see Figure \ref{time_approx}).} 
 \label{eval}
 \vspace{-4mm}
 \end{table}
 
 
 \begin{figure}[h]
-\vspace{-5mm}
+\vspace{-6mm}
 \centering
 \mbox{
   \subfigure[Computation time for $\sum AB$ using standard algorithm vs our inferred optimal algorithm.]{
@@ -120,7 +121,8 @@ Degree & Num. terms & Complexity \\
 }
 \subfigure[Relative approximation error of the partition function for different
 degrees of Taylor approximation. Max, mean and min errors are shown for 100
-different trials for $W$ of size $ 7 \times 7$, with $W_{ij} \sim \text{Laplacian}(0.05)$.]{
+different trials for $W$ of size $ 7 \times 7$, with $W_{ij} \sim
+\text{Laplacian}(s)$ and $s=0.05$ (blue) and $s=0.3$ (red).]{
   \includegraphics[scale=0.44]{img/partition_approx_rob.eps}
   \label{error_approx}
 }
