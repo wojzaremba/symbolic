@@ -166,11 +166,19 @@ However, discovery of the fastest performance (i.e.~lowest
 run-time) requires exploration of all possible combinations of expressions,
 which is far more expensive.  
 
+\vspace{-2mm}
 \subsection{Computation derivation as the algebra}
 The space of matrices of polynomials forms an algebra $\mathcal{A}$.
-A \emph{grammar} $\mathcal{G}=\{g_1,\dots,g_{K};\, h_1,\dots, h_{K'}\}$ defined on this algebra is a set of functions
-$$g_i : \mathcal{A} \longrightarrow \mathcal{A}~,~(i \leq K)~,\vspace{-3mm}$$
-$$h_{i} : \mathcal{A} \times \mathcal{A} \longrightarrow \mathcal{A}~, ~i \leq K'~,$$
+A \emph{grammar} $\mathcal{G}=\{g_1,\dots,g_{K};\, h_1,\dots,
+h_{K'}\}$ defined on this algebra is a set of functions:
+\vspace{-1mm}
+\begin{eqnarray}
+g_i &:& \mathcal{A} \longrightarrow \mathcal{A}~,~(i \leq
+K)~,\nonumber \\
+h_{i} &:& \mathcal{A} \times \mathcal{A} \longrightarrow \mathcal{A}~,
+~i \leq K'~,\nonumber 
+ \vspace{-2mm} 
+\end{eqnarray}
 which might eventually only defined for certain sub-algebras of $\mathcal{A}$ 
 (e.g.~matrix multiplication requires inner dimensions to agree). 
 
@@ -183,9 +191,8 @@ We define a ``sink" node which contains all polynomials (or matrices of polynomi
 where ($D_{\max} > \mbox{deg}(t)$), and a node for each of the other elements of $\mathcal{A}$. 
 Two nodes $x_1,\,x_2$ have a connection $x_1 \rightarrow x_2$ if there exists $g \in \mathcal{G}$ such that
 $x_2 = g(x_1)$. The edge is assigned a cost which depends on the complexity of performing the operation.   
-Similarly, we can define a 3-cycle to $(x_1,x_2,x_3)$ if there exists $h \in \mathcal{G}$ such that $x_3 = h(x_1,x_2)$.
-
-The brute force algorithm constructs the graph by advancing sequentially from smallest to largest degree. 
+Similarly, we can define a 3-cycle to $(x_1,x_2,x_3)$ if there exists
+$h \in \mathcal{G}$ such that $x_3 = h(x_1,x_2)$. The brute force algorithm constructs the graph by advancing sequentially from smallest to largest degree. 
 
 
 \subsection{Representation of Expressions} \label{representation}
@@ -204,7 +211,8 @@ Let us consider two matrices of polynomials:
 \end{equation}
 \begin{equation}
 \label{eq:b_matrix}
-\mathbb{B} = \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix}
+\mathbb{B} = \begin{pmatrix} a + b & a\\ b & 2a + 2b \end{pmatrix} \vspace{-1mm}
+\vspace{-1mm}
 \end{equation}
 We consider element-wise matrix multiplication of $\mathbb{A}$ and
 $\mathbb{B}$. We derive the result using three different ways of

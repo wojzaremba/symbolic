@@ -1,21 +1,28 @@
+
+\vspace{-2mm}
 \section{Experiments}
+\vspace{-2mm}
 
 We present various mathematical expressions which can be computed more efficiently
 than the initial formulation would suggest. 
 
+\vspace{-2mm}
 \subsection{Matrix Multiplication-Sum Identities}
 
 Given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m
   \times k}$, we wish to compute:
+\vspace{-2mm}
 \begin{gather*}
 \sum AB = \sum_{i = 1}^n \sum_{k = 1}^m \sum_{j = 1}^k A_{i, k} B_{k, j} 
 \end{gather*}
 A naive algorithm would take $O(nmk)$ time. However, we have found with our framework 
 computation giving the same expression in $O(n(k + m))$ time:
+\vspace{-3mm}
 \begin{lstlisting}
 sum(sum(A .* repmat(sum(B, 2), [1, m])'))
 \end{lstlisting}
-Empirical tests indicate that our expression is indeed faster to
+\vspace{-2mm}
+ Empirical tests indicate that our expression is indeed faster to
 compute than the naive one (see Figure \ref{ab}).
 
 Similarly, we found quadratic time computation, instead of cubic, for
@@ -23,7 +30,7 @@ similar expressions such as:
 \begin{align*}
 	\sum ABC\text{, }\sum AA^T\text{, }\sum AA^TA
 \end{align*}
-
+%\vspace{-2mm}
 As far we we are aware, these identities appear to be novel. Our
 system could automatically analyze large code repositories to find
 these and other expressions, which are currently computed
