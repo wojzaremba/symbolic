@@ -5,7 +5,7 @@ classdef ExprZp < Expr
     end
     
     properties(Constant)             
-        len = int64(4000);
+        len = int64(50);
         Zp = int64(Cache.prime);
         mods = RandVals(ExprZp.len, 100, 10, ExprZp.Zp);
         field_inv = Inverse(ExprZp.Zp);
