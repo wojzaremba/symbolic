@@ -1,15 +1,15 @@
 \section{Admissible Computation as a Grammar}\label{sec:grammars}
 
 Our goal is to find a fast way to compute the target expression in
-language and architecture of our choice. We will achieve it by
+a language and architecture of our choice. We will achieve it by
 developing expressions in a grammar, up to degree of target
-expression. Next, we will look for the linear combination of obtained
-expressions to represent target expression exactly. If the target expression
-can be obtained in many ways, we choose the one with the shortest computation time.
+expression. Next, we will look for a linear combination of obtained
+expressions to represent the target expression exactly. If the target expression
+can be obtained in several ways, we choose the one with the shortest computation time.
 
 Let's ground our approach in an example. We assume that we are interested in
 finding algorithm with smallest operation complexity, and computation platform
-is a Matlab. We consider following set of operations on matrices: 
+is a Matlab. We consider following set of operations on matrices (Figures \ref{fig:rules2} and \ref{fig:rules}).
 
 
 \begin{figure}
@@ -76,7 +76,7 @@ is a Matlab. We consider following set of operations on matrices:
 \end{align*}
 \caption{Grammar rules operating on one expression.}
 \label{fig:rules}
-%\caption{Set of rules for attributive grammar. There is always finite number of literals up to degree $\alpha$.}
+%\caption{Set of rules for attribut grammar. There is always finite number of literals up to degree $\alpha$.}
 \end{framed}
 \end{figure}
 
@@ -94,8 +94,8 @@ To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of
   time. See \ref{sec:linear} for more details.
 \item Apply optimization like sub-expression elimination, and exploit
   the distributive property of multiplication in order to decrease the
-  final computational time of $\mathbb{T}$. This step is optional, and
-  won't decrease computational complexity, but can improve
+  final computational time of $\mathbb{T}$. This step is optional and
+  won't decrease the computational complexity, but can improve
   performance.
 \end{itemize}
 
@@ -226,7 +226,7 @@ This representation is exact, and corresponds one-to-one with our description of
 defined by grammar. It guarantees correctness and is easy to debug. 
 However, it has computational drawback: multiplying two polynomials, each having $N$ monomials is $O(N^2)$ compared to the same operation on instantiations of this polynomials, which is $O(1)$.
 The symbolic representation allowed us
-to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation. 
+to find patterns for polynomials up to degree $4$ in $\sim 8$ hours of computation on a standard laptop. 
 The example of this representations for matrices \ref{eq:a_matrix} and \ref{eq:b_matrix} can be found
 in Table \ref{representation_examples}.
 
