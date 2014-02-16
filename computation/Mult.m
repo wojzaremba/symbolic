@@ -30,10 +30,19 @@ classdef Mult < Computation
             obj.dim2 = 1;
           end  
           obj.params = [obj.ones_params(:); obj.rest_params(:)];
+          assert(length(obj.rest_params) <= 2);
         end
   
         function ret = O_complexity(obj)
-            ret = 3;
+            ret = 2;
+            if (length(obj.rest_params) == 2)
+                if (obj.rest_params{1}.dim1 > 1) && ...
+                   (obj.rest_params{1}.dim2 > 1) && ...
+                   (obj.rest_params{2}.dim1 > 1) && ...
+                   (obj.rest_params{2}.dim2 > 1)
+                    ret = 3;
+                end
+            end
             for i = 1 : length(obj.params)
                 ret = max(ret, obj.params{i}.complexity);
             end
