@@ -4,22 +4,16 @@ classdef ExprSymbolic < Expr
         hashes          
     end
     
-    properties(Constant)
-        dot_mult = InitDotMult();
-    end
-    
     methods(Static)
         function hash = CombineHash(exprs)
             global c
             hash = 0;            
             for j = 1:length(exprs(:))
-                hash = mod(c.prime * hash + exprs(j).hash(), c.prime);
+                hash = mod(Cache.prime * hash + exprs(j).hash(), Cache.prime);
             end            
             assert(~isnan(hash) && (hash ~= Inf));
         end
     end
-    
-    
     
     methods        
         function A = ExprSymbolic(quant, expr, hashes)
@@ -27,8 +21,11 @@ classdef ExprSymbolic < Expr
             if (~exist('quant', 'var'))
                 return;
             end
-            A.quant = quant;
-            A.expr = expr;            
+            % Quant in symbolic has to be modulo prime, otherwise we get
+            % value out of integers.
+            A.quant = mod(int64(quant), Cache.prime);            
+            A.quant(A.quant > Cache.prime / 2) = A.quant(A.quant > Cache.prime / 2) - Cache.prime;
+            A.expr = int64(expr);
             if (exist('hashes', 'var'))
                 A.hashes = hashes;
                 A.Validate();
@@ -40,7 +37,7 @@ classdef ExprSymbolic < Expr
             tmp = 1;
             for i = 1:size(expr, 2)
                 if (quant(i) ~= 0)
-                    A.hashes(tmp) = A.hash_expr(expr(:, i));
+                    A.hashes(tmp) = Cache.hash_expr(expr(:, i));
                     nonzero(tmp) = i;
                     tmp = tmp + 1;
                 end
@@ -173,8 +170,8 @@ classdef ExprSymbolic < Expr
                     copyi = floor(copyi / size(W.expr, 2));
                 end
                 idx = idx + 1;
-                term = zeros(size(W.expr, 1), 1);
-                quant = 1;
+                term = int64(zeros(size(W.expr, 1), 1));
+                quant = int64(1);
                 for a = 1:length(idx)
                     term = term + W.expr(:, idx(a));
                     quant = quant * W.quant(idx(a));
@@ -250,16 +247,17 @@ classdef ExprSymbolic < Expr
         end
         
         function ret = hash(obj)
-            global c
-            ret = mod(dot(ExprSymbolic.dot_mult(1:(2 * length(obj.quant))), [obj.quant(:) ; obj.hashes(:)]), c.prime);
-        end
-        
-        function [ ret ] = hash_expr(obj, expr)
-            global c
-            assert(size(expr, 2) == 1);
-            ret = mod(dot(obj.dot_mult(1:length(expr(:))), double(expr(:))), c.prime);
-            assert(~isnan(ret) && (ret ~= Inf));
-        end               
+            ret = 0;            
+            if (isempty(obj.quant)) || sum(obj.quant(:)) == 0
+                return;
+            end
+            for i = 1 : length(obj.quant)
+                ret = ret + mod(Cache.dot_mult(i) * mod(obj.quant(i) * obj.hashes(i), Cache.prime), Cache.prime);
+                ret = mod(ret, Cache.prime);                
+            end
+            inv = Cache.field_inv(mod(double(sum(mod(obj.quant(:), Cache.prime))), Cache.prime));
+            ret = mod(ret * inv, Cache.prime);
+        end       
         
         
         function [expr_matrices, coeffs] = ReexpresData(marginal, F)
@@ -267,7 +265,6 @@ classdef ExprSymbolic < Expr
           powers = [];
           maxK = c.maxK;
           for i = 1:length(F.expr_matrices(:))
-              assert(F.expr_matrices(i).power == maxK);
               for j = 1:length(F.expr_matrices(i).exprs(:))
                 powers = [powers, F.expr_matrices(i).exprs(j).expr];
               end
@@ -278,14 +275,14 @@ classdef ExprSymbolic < Expr
           powers = unique(powers', 'rows')';
           hashes = [];
           for i = 1:size(powers, 2)
-              hashes = [hashes, c.hash(powers(:, i))];        
+              hashes = [hashes, Cache.hash_expr(powers(:, i))];
           end    
           if (length(unique(hashes)) ~= length(hashes))
               assert(0);
           end
           hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
 
-          X = F.encode_in_hash(hash_map, maxK);  
+          X = F.encode_in_hash(hash_map);  
           Y = F.encode_in_hash_exprs(marginal, hash_map);  
           coeffs = [];
           invert = quadprog(eye(size(X, 2)), zeros(size(X, 2), 1), [], [], X, Y, [], [], [], optimset('Algorithm', 'active-set', 'Display','off'));    
@@ -310,15 +307,7 @@ classdef ExprSymbolic < Expr
     end
 end
 
-function dot_mult = InitDotMult()
-    global c
-    val = 1;
-    dot_mult = zeros(100000, 1);
-    for i = 1 : size(dot_mult, 1)
-      val = mod(val * 10000000001, c.prime);
-      dot_mult(i) = val;
-    end      
-end
+
 
 function [ res ] = compare_expr( A, a, B, b ) 
   res = sign(A.hashes(a) - B.hashes(b));

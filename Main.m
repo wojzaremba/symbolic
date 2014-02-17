@@ -1,7 +1,7 @@
 Init(struct('expr_type', 'Zp', ...
             'complexity', 'O', ...
             'debug', 0, ...
-            'power', 3, ...
+            'power', 2, ...
             'vars', 1));
 
 totaltime = tic;
@@ -9,15 +9,12 @@ S = Scheduler();
 S.AddO2Rules();
 S.AddO2MultRules();
 S.AddO3Rules();
-S.SetTarget(RBM());
 S.Run();
+
+G11 = Grammar(1, 1);
+target = RBM();
+Grammar.FullStats();
+[grammar_solved, coeffs] = ReexpresData(target.exprs(1), G11);                        
+ShowResults(coeffs, target.normalization(), grammar_solved); 
+
 fprintf('total time = %f\n', toc(totaltime));
-
-
-% Solve normalization issue for symbolic. Podziel przez najwiekszy wspolny
-% dzielnik, tak zeby pierwszy wspolrzedna byla dodatnia. Albo jak mam tam
-% mod p to tak jak w Zp.
-
-
-% XXX : In case of repmat in computation provide dim, and size !!! There is
-% a bug (for power >= 6)

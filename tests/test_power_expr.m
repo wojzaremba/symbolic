@@ -1,5 +1,5 @@
 function test_power_expr
-    Cache(Inf);
+    Cache(Inf, 1);
     A = ExprSymbolic([3, 2], [1,0,2,0; 1,2,3,0]');
     fprintf('A = %s\n', A.toString());
     B = A.power_expr(3);
@@ -9,7 +9,7 @@ function test_power_expr
     for i = 1:length(B)
         valid = false;
         for j = 1:length(quant)
-            if (B.quant(i) == quant{j}) && (norm(B.expr(:, i) - expr{j}') == 0)
+            if (B.quant(i) == int64(quant{j})) && (norm(double(B.expr(:, i) - int64(expr{j}'))) == 0)
                 valid = true;
             end
         end

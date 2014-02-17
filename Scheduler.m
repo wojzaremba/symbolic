@@ -4,7 +4,6 @@ classdef Scheduler < handle
         grammars % It takes as argument some literals.
         params % Parameters of grammar rules.
         tried % Array indicating which combination was tried before.
-        target
     end
     
     methods
@@ -12,10 +11,6 @@ classdef Scheduler < handle
             fprintf('Creating Scheduler\n');
             obj.rules = {};
             obj.params = {};
-        end
-        
-        function SetTarget(obj, marginal)
-            obj.target = marginal;
         end
         
         function Add(obj, f, grammars, params)
@@ -196,11 +191,7 @@ classdef Scheduler < handle
                 G11 = Grammar(1, 1);
                 assert(length(G11.expr_matrices) < 0.95 * ExprZp.len);
                 fprintf('single iter takes = %f, updates = %d\n', toc(single_iter_time), sum(u));
-            end            
-            Grammar.FullStats();
-            G11.trim_size();
-            [grammar_solved, coeffs, ~] = ReexpresData(obj.target.exprs(1), G11);                        
-            ShowResults(coeffs, obj.target.normalization(), grammar_solved);            
+            end                       
         end
     end
 end

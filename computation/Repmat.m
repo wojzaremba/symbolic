@@ -2,6 +2,7 @@ classdef Repmat < Computation
     properties
         item
         repdim
+        dim_val
     end
     
     methods
@@ -31,12 +32,26 @@ classdef Repmat < Computation
         end
         
         function str = matlab_toString(obj)
+            global c
             p = obj.item;
-            if (obj.repdim == 1)
-                str = sprintf('repmat(%s, [n, 1])', toString(p));
+            if (obj.repdim == 1)        
+                if (c.n == obj.dim1)
+                    dim_str = '[n, 1]';
+                elseif (c.m == obj.dim1)
+                    dim_str = '[m, 1]';
+                else       
+                    assert(0);
+                end
             else
-                str = sprintf('repmat(%s, [1, m])', toString(p));
+                if (c.n == obj.dim2)                
+                    dim_str = '[1, n]';
+                elseif (c.m == obj.dim2)
+                    dim_str = '[1, m]';
+                else
+                    assert(0);
+                end                
             end
+            str = sprintf('repmat(%s, %s)', toString(p), dim_str);                                
         end          
     end
     

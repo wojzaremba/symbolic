@@ -1,5 +1,5 @@
 function test_power_expr_simple
-    cache = Cache(Inf);
+    cache = Cache(Inf, 1);
     A = ExprSymbolic([1, 1], [1, 0; 0, 1]');
     B = A.power_expr(2);
     assert(size(B.expr, 2) == 3);
@@ -8,14 +8,14 @@ function test_power_expr_simple
     quant = {1, 2, 1};
     hashes = [];
     for i = 1:length(B.quant)
-        hashes = [hashes, ExprSymbolic().hash_expr(expr{i}')];
+        hashes = [hashes, Cache.hash_expr(expr{i}')];
     end
     [~, idx] = sort(hashes);
     expr = expr(idx);
     quant = quant(idx);
     for i = 1:length(B)
         assert(B.quant(i) == quant{i});
-        assert(norm(B.expr(:, i) - expr{i}') == 0);
+        assert(norm(double(B.expr(:, i) - int64(expr{i}'))) == 0);
     end
     
     A = ExprZp(A.quant, A.expr);

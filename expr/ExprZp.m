@@ -5,10 +5,8 @@ classdef ExprZp < Expr
     end
     
     properties(Constant)             
-        len = int64(50);
-        Zp = int64(Cache.prime);
-        mods = RandVals(ExprZp.len, 100, 10, ExprZp.Zp);
-        field_inv = Inverse(ExprZp.Zp);
+        len = int64(60);
+        mods = RandVals(ExprZp.len, 100, 12, Cache.prime);        
     end
     
     
@@ -35,11 +33,11 @@ classdef ExprZp < Expr
                     val = 1;
                     for i = 1 : size(expr, 1)                              
                         if (expr(i, j) > 0)
-                            val = mod(val * ExprZp.mods(k, i, expr(i, j)), ExprZp.Zp);
+                            val = mod(val * ExprZp.mods(k, i, expr(i, j)), Cache.prime);
                         end
                     end
-                    val = mod(val * quant(j), ExprZp.Zp);
-                    exprum = mod(exprum + val, ExprZp.Zp);
+                    val = mod(val * quant(j), Cache.prime);
+                    exprum = mod(exprum + val, Cache.prime);
                 end
                 obj.expr(k) = exprum;
             end
@@ -59,7 +57,7 @@ classdef ExprZp < Expr
 
         function [ C ] = add_expr(A, B)
             C = ExprZp();
-            C.expr = mod(A.expr + B.expr, ExprZp.Zp);
+            C.expr = mod(A.expr + B.expr, Cache.prime);
             assert(A.power == B.power);
             assert(A.power > 0);
             C.power = A.power;
@@ -67,9 +65,9 @@ classdef ExprZp < Expr
 
         function [ res ] = power_expr( W, p )
             res = ExprZp();
-            res.expr = mod(W.expr, ExprZp.Zp);            
+            res.expr = mod(W.expr, Cache.prime);            
             for i = 1 : (p - 1)
-                res.expr = mod(res.expr .* W.expr, ExprZp.Zp);
+                res.expr = mod(res.expr .* W.expr, Cache.prime);
             end
             assert(W.power > 0);
             res.power = W.power * p;
@@ -83,7 +81,7 @@ classdef ExprZp < Expr
                 if (isempty(exprs{i}))
                     continue
                 end
-                C.expr = mod(C.expr + exprs{i}.expr, ExprZp.Zp);
+                C.expr = mod(C.expr + exprs{i}.expr, Cache.prime);
                 if (C.power > 0)
                     assert((exprs{i}.power == C.power) || (exprs{i}.power * C.power == 0));
                 end
@@ -92,8 +90,9 @@ classdef ExprZp < Expr
         end
 
         function [ C ] = multiply_expressions( A, B )
+            global c
             C = ExprZp();
-            C.expr = mod(A.expr .* B.expr, ExprZp.Zp);
+            C.expr = mod(A.expr .* B.expr, Cache.prime);
             C.power = A.power + B.power;
         end
         
@@ -111,7 +110,7 @@ classdef ExprZp < Expr
                 else
                     % It multiplies expr by mean of them. So this value is
                     % invariant to multiplications of expr by constant.
-                    ret = sprintf('%d\n', mod(obj.expr * ExprZp.len * ExprZp.field_inv(mod(sum(obj.expr(:)), ExprZp.Zp)), ExprZp.Zp));
+                    ret = sprintf('%d\n', mod(obj.expr * ExprZp.len * Cache.field_inv(mod(sum(obj.expr(:)), Cache.prime)), Cache.prime));
                 end
                 obj.hash_ = ret;
             else
@@ -119,11 +118,10 @@ classdef ExprZp < Expr
             end
         end       
         
-        function [expr_matrices, coeffs, success] = ReexpresData(marginal, F)
+        function [expr_matrices, coeffs] = ReexpresData(marginal, F)
             X = [];
             expr_matrices = {};
             coeffs = [];
-            success = false;
             if (length(F.expr_matrices) < 4)
                 return;
             end
@@ -131,12 +129,12 @@ classdef ExprZp < Expr
                 X = [X, F.expr_matrices(i).exprs.expr];
             end
             Y = marginal.expr;
-            invert = modlinear(X, Y, ExprZp.Zp, ExprZp.field_inv);
+            invert = modlinear(X, Y, Cache.prime, Cache.field_inv);
             if (isempty(invert))               
                 return;
             end
             residual = int64(double(X) * double(invert) - double(Y));
-            error = norm(double(mod(residual, ExprZp.Zp)));
+            error = norm(double(mod(residual, Cache.prime)));
             fprintf('error : %f\n', error);  
             if (error > 1e-5)
                 fprintf('Couldnt find solution\n');
@@ -151,46 +149,11 @@ classdef ExprZp < Expr
                 coeffs = [coeffs; invert(i)];
             end   
             fprintf('nr coeffs = %d\n', length(coeffs));          
-            success = true;             
         end             
         
     end           
 end
 
-% Linear time algorithm to invert numbers modulo p. It searches for
-% generator (there are phi(p - 1) of them, so it gets it fast).
-function ret = Inverse(p)
-    try
-        load(sprintf('field_inverse_%d', p), 'ret');
-        return;
-    catch
-    end
-    ret = zeros(p - 1, 1); 
-    for i = 2 : (p - 1)
-        for invi = 1 : (p - 1)
-            if (mod(i * invi, p) == 1)
-                break;                
-            end
-        end
-        ret(:) = 0;
-        a = 1;   
-        b = 1;  
-        fail = false;
-        for k = 1 : (p - 1)
-            if (ret(a) ~= 0)
-                fail = true;
-                break;
-            end
-            ret(a) = b;
-            a = mod(a * i, p);
-            b = mod(b * invi, p);
-        end
-        if (~fail)
-            save(sprintf('field_inverse_%d', p), 'ret');
-            return;
-        end
-    end
-end
 
 function ret = RandVals(planes, rows, cols, Zp)
     rand('seed', 1);

@@ -1,10 +1,10 @@
 function test_multiply_expr
-    Cache(10);
+    Cache(10, 1);
     A = ExprSymbolic([3, 5, 4], [1,2,3,0; 0,2,3,5; 0,0,1,0]');
     B = ExprSymbolic([6, 7], [0,2,3,5; 0,1,0,0]');
     C = A.multiply_expressions(B);
     assert(size(C.expr, 2) == 6);
-    assert(norm(sort(C.quant) - sort([28, 21, 35, 24, 18, 30])) == 0);
+    assert(norm(double(sort(C.quant) - int64(sort([28, 21, 35, 24, 18, 30])))) == 0);
     
     A = ExprZp(A.quant, A.expr);
     B = ExprZp(B.quant, B.expr);

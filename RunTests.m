@@ -1,5 +1,7 @@
+clear all
 addpath(genpath('.'));
-test_normalization_ExprZp();
+power_split_test();
+test_normalization();
 test_repmat();
 test_add_expr();
 test_many_add_expr();

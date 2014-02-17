@@ -1,7 +1,7 @@
 function test_repmat
     global expr_type
     expr_type = 'Zp'; 
-    Cache(20);
+    Cache(20, 1);
     A = ExprZp([3, 5, 4], [1,2,3,0; 0,2,3,5; 0,0,1,0]');
     B = ExprZp([6, 7], [0,2,3,5; 0,1,0,0]');
     exprs = ExprZp();

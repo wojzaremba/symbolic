@@ -146,24 +146,19 @@ classdef Grammar < handle
             grammars(obj.n, obj.m) = obj;            
         end                            
 
-        function [ X ] = encode_in_hash( F, hash_map, k )
-          X = [];
-          for i = 1:length(F.expr_matrices)
-            if (F.expr_matrices(i).power == k)   
-              tmp = F.encode_in_hash_exprs( F.expr_matrices(i).exprs, hash_map );
-              X = [X, tmp];
-            else 
-              assert(0);
+        function [ X ] = encode_in_hash( F, hash_map)
+            X = [];
+            for i = 1:length(F.expr_matrices)
+                tmp = F.encode_in_hash_exprs( F.expr_matrices(i).exprs, hash_map );
+                X = [X, tmp];
             end
-          end
-          X = double(X);
+            X = double(X);
         end    
         
         function [ res ] = encode_in_hash_exprs(obj, matrix, hash_map)
-            global c
             res = zeros(length(hash_map), 1);
             for j = 1:size(matrix.expr, 2)
-                idx = hash_map(c.hash(matrix.expr(:, j)));
+                idx = hash_map(Cache.hash_expr(matrix.expr(:, j)));
                 if (strcmp(class(Expr_()), 'ExprZp') == 1)
                     quant = 1;
                 else
