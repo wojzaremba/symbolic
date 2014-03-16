@@ -1,4 +1,9 @@
-\documentclass{article}
+%\documentclass{article}
+
+\documentclass[]{article}
+\usepackage{proceed2e}
+
+\title{Efficient Computation Discovery for Polynomials}
 
 \usepackage{graphicx} % more modern
 \usepackage{subfigure} 
@@ -56,7 +61,8 @@
 \newtheorem{corollary}[theorem]{Corollary}
 
 %\usepackage[accepted]{icml2014}  % XXX : just set temporarly to print out authors corretly.
-\usepackage{icml2014}  
+%\usepackage{icml2014}  
+%\usepackage{proceed2e}  
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -67,16 +73,17 @@
 
 \begin{document} 
 
+\maketitle
 
-\icmltitle{Efficient Computation Discovery for Polynomials}
+%\icmltitle{Efficient Computation Discovery for Polynomials}
+
 
 %\icmlauthor{Wojciech Zaremba}{zaremba@cs.nyu.edu}
 %\icmlauthor{Karol Kurach}{kkurach@google.com}
 %\icmlauthor{Rob Fergus}{fergus@cs.nyu.edu}
 
 
-\icmlkeywords{machine learning, optimization, automatic theorem proving, RBM, NP, Boltzmann machine}
-
+%\icmlkeywords{machine learning, optimization, automatic theorem proving, RBM, NP, Boltzmann machine}
 
 \begin{abstract} We present an approach based on attribute grammars
   for automatically discovering efficient ways to compute polynomial
