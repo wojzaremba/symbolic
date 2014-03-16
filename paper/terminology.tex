@@ -2,20 +2,20 @@
 We define the following vocabulary: 
 \vspace{-2mm}
 \begin{description}
-  \item[Space of matrices of polynomials\label{itm:spacematrices}] \hfill \\ A matrix of homogeneous polynomials, which we denote by $\mathcal{P}^{n \times m}_{\alpha}$. The upper and lower indices indicate the matrix size and polynomial degree, respectively. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
+  \item[Space of matrices of polynomials\label{itm:spacematrices}] \hfill \\ A matrix of homogeneous polynomials, denoted by $\mathcal{P}^{n \times m}_{\alpha}$. The upper and lower indices indicate the matrix size and polynomial degree, respectively. For instance, $\begin{pmatrix} a^3 + b^3 & b^3 + bc^2 + c^3\\ cd^2 & d^3 \end{pmatrix} \in \mathcal{P}^{2 \times 2}_3$. 
 
-\item[Grammar\label{itm:grammar}] \hfill \\ An attributive grammar, with \ref{itm:production} defined on \ref{itm:expression}s and semantic rules on \ref{itm:attribute}s. The attributes associated to every \ref{itm:expression}, are: \ref{itm:computation}, \ref{itm:time} and \ref{itm:term}.
+\item[Grammar\label{itm:grammar}] \hfill \\ An attribute grammar, with \ref{itm:production} defined on \ref{itm:expression}s and semantic rules on \ref{itm:attribute}s. The attributes associated to every \ref{itm:expression}, are: \ref{itm:computation}, \ref{itm:time} and \ref{itm:term}.
 
 \item[Production rules\label{itm:production}] \hfill \\ Syntactic rules defined on \ref{itm:expression}s (transformation \ref{itm:expression} $\rightarrow$ \ref{itm:expression}), with associated semantic rules on \ref{itm:attribute}s. They are defined in Figures \ref{fig:rules2} and \ref{fig:rules}.
 
-\item[Expression\label{itm:expression}] \hfill \\ Matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and it restricts which production rules can be applied. Every expression has associated \ref{itm:attribute}s.
+\item[Expression\label{itm:expression}] \hfill \\ Matrices of polynomials having a homogeneous degree $\alpha$. They belong to the spaces $\mathcal{P}^{n \times m}_\alpha$. Different expressions might be in different spaces, and this restricts which production rules can be applied. Every expression has associated \ref{itm:attribute}s.
 
 \item[Attribute\label{itm:attribute}] \hfill \\
   A value associated with an \ref{itm:expression}. 
 
 \item[Computation\label{itm:computation}] \hfill \\ A piece of code to compute a given \ref{itm:production} on a particular architecture or programming language. In our rules we consider Matlab as
 the underlying computation language. For example, in Matlab the transpose
-  operation on matrix $\mathbb{A}$ is denoted as $\mathbb{A}'$, so our computation
+  operation on a matrix $\mathbb{A}$ is denoted as $\mathbb{A}'$, so our computation
   for transpose production is $\mathbb{A}'$. If we ever decide to implement our framework in R,
   the Computation for transpose would be $t(\mathbb{A})$. Computation is an \ref{itm:attribute}.
 
