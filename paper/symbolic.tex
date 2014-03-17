@@ -67,6 +67,10 @@
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 
+\newcommand{\rob}[1]{\textbf{\textcolor{green}{#1}}}
+\newcommand{\karol}[1]{\textbf{\textcolor{blue}{#1}}}
+\newcommand{\wojceich}[1]{\textbf{\textcolor{red}{#1}}}
+
 % From https://tex.stackexchange.com/questions/2441/how-to-add-a-forced-line-break-inside-a-table-cell
 \newcommand{\specialcell}[2][c]{%
     \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
@@ -84,6 +88,9 @@
 
 
 %\icmlkeywords{machine learning, optimization, automatic theorem proving, RBM, NP, Boltzmann machine}
+ 
+% \vspace{-30mm} % Rob: huge whitespace below title seems normal
+% (sample paper had it too), so leave there.
 
 \begin{abstract} We present an approach based on attribute grammars
   for automatically discovering efficient ways to compute polynomial
@@ -105,9 +112,10 @@ has the potential to be combined with machine
 \input{related_work}
 \input{terminology}
 \input{admissible_computation}
-\input{partition_function}
+%\input{partition_function} % Rob: merge into experiments section
 \input{experiments}
-\input{conjecture}
+%\input{conjecture} % Rob: I think we leave it out of the UAI
+%paper. We can put it in the RBM NIPS paper.
 \input{discussion}
 
 

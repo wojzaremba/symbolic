@@ -1,15 +1,11 @@
-\section{Admissible Computation as a Grammar}\label{sec:grammars}
 
-Our goal is to find a fast way to compute the target expression in
-a language and architecture of our choice. We will achieve it by
-developing expressions in a grammar, up to degree of target
-expression. Next, we will look for a linear combination of obtained
-expressions to represent the target expression exactly. If the target expression
-can be obtained in several ways, we choose the one with the shortest computation time.
-
-Let's ground our approach in an example. We assume that we are interested in
+\section{Grammar Definition}\label{sec:grammars}
+For the purposes of this paper, we assume that we are interested in
 finding algorithm with smallest operation complexity, and computation platform
-is a Matlab. We consider following set of operations on matrices (Figures \ref{fig:rules2} and \ref{fig:rules}).
+is a Matlab. We define the grammar rules shown in Figures
+\ref{fig:rules2} and \ref{fig:rules}, which consist of the 
+matrix operations: \{ \texttt{*},\texttt{.*}, \texttt{'},
+\texttt{sum}, \texttt{repmat} \}.
 
 
 \begin{figure}
@@ -24,7 +20,7 @@ is a Matlab. We consider following set of operations on matrices (Figures \ref{f
 & \\
 &\text{{\bf Matrix multiplication}}\\
 &\mathbb{A} \in \mathcal{P}^{n \times k}_\alpha, \mathbb{B} \in \mathcal{P}^{k \times m}_\beta \rightarrow \mathbb{C} \in \mathcal{P}^{n \times m}_{\alpha + \beta} \\
-&\mathbb{C}.time := O(\mathbb{A}.time + \mathbb{B}.time + \mathbb{A}.n * \mathbb{A}.m * \mathbb{B}.m);\\
+&\mathbb{C}.time := O(\mathbb{A}.time + \mathbb{B}.time + \mathbb{A}.n * \mathbb{A}.k * \mathbb{B}.m);\\
 &\mathbb{C}.computation := \mathbb{A}.computation * \mathbb{B}.computation;\\
 &\forall_{\substack{i \leq n\\j \leq m}}\mathbb{C}.term[i][j] := \sum_{k = 1}^m \mathbb{A}.term[i][k] * \mathbb{B}.term[k][j];
 %&\forall_{\substack{1 \leq i \leq n\\1 \leq j \leq m}}\mathbb{C}.term[i][j] := \sum_{k = 1}^m \mathbb{A}.term[i][k] * \mathbb{B}.term[k][j];\\
@@ -80,7 +76,17 @@ is a Matlab. We consider following set of operations on matrices (Figures \ref{f
 \end{framed}
 \end{figure}
 
+\section{Approach}\label{sec:admissible}
 
+Our goal is to find a fast way to compute the target expression in
+a language and architecture of our choice. We will achieve it by
+developing expressions in the grammar of Section \ref{sec:grammars}, up to the degree of the target
+expression. Next, we will look for a linear combination of obtained
+expressions to represent the target expression exactly. If the target expression
+can be obtained in several ways, we choose the one with the shortest
+computation time.
+
+%\subsection{Building the Grammar Tree} \label{sec:tree}
 To find any (or the cheapest) way of computing target expression $\mathbb{T}$ of degree $k$, we proceed as follows: 
 \begin{itemize}
 \item Develop the grammar to obtain all possible expressions up to degree
@@ -133,7 +139,7 @@ Pseudo code is shown in Algorithm \ref{pseudocode}.
 \end{algorithm}
 
 
-\subsection{Linear combination}
+\subsection{Solving for the Target Expression}
 \label{sec:linear}
 
 We search for the linear combination of generated expressions which equal the target expression. 
@@ -167,7 +173,10 @@ run-time) requires exploration of all possible combinations of expressions,
 which is far more expensive.  
 
 \vspace{-2mm}
+
 \subsection{Computation derivation as the algebra}
+\rob{When did this section get put in? What is it about? I do not
+  recall it at all.}
 The space of matrices of polynomials forms an algebra $\mathcal{A}$.
 A \emph{grammar} $\mathcal{G}=\{g_1,\dots,g_{K};\, h_1,\dots,
 h_{K'}\}$ defined on this algebra is a set of functions:
@@ -197,8 +206,10 @@ $h \in \mathcal{G}$ such that $x_3 = h(x_1,x_2)$. The brute force algorithm cons
 
 \subsection{Representation of Expressions} \label{representation}
 %Rob: I did not understand this entire section.
-\ref{itm:expression}s belong to $\mathcal{P}^{n \times m}_\alpha$. There are various
-ways how they can be represented in software and the choice is
+\ref{itm:expression}
+In the description above, we did not detail how the polynomial
+expressions $\mathcal{P}^{n \times m}_\alpha$ are represented in software. 
+There are several possibilties and the choice is
 important as it has consequences in the correctness of the solution
 (due to numerical errors), as well as speed of computation.
 
