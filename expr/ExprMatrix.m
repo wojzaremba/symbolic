@@ -8,8 +8,8 @@ classdef ExprMatrix < handle
     
     methods 
         function obj = ExprMatrix(exprs, computation)          
-            if (exist('exprs', 'var')) && (~isempty(exprs(:))) && (~is_empty(exprs(1)))
-                obj.power = sum(exprs(1).power());
+            if (exist('exprs', 'var')) && (~isempty(exprs(:)))
+                obj.power = exprs(1).power;
                 obj.exprs = exprs;
                 obj.computation = computation;
             else
@@ -49,7 +49,8 @@ classdef ExprMatrix < handle
             else
                 assert(0);
             end
-            W = ExprMatrix(exprs, Marginalize(A.computation, dim));                           
+            W = ExprMatrix(exprs, Marginalize(A.computation, dim));
+            W.power = A.power;
         end     
         
         function [ W ] = repmat_expr( A, dims )   
@@ -67,7 +68,8 @@ classdef ExprMatrix < handle
                     end
                 end
             end
-            W = ExprMatrix(exprs, Repmat(A.computation, dims));                           
+            W = ExprMatrix(exprs, Repmat(A.computation, dims));
+            W.power = A.power;
         end             
         
         function Validate(obj)
@@ -96,6 +98,7 @@ classdef ExprMatrix < handle
                 end
             end
             ret = ExprMatrix(exprs, computation);
+            ret.power = A.power + B.power;
         end        
         
         function ret = multiply(A, B)
@@ -119,6 +122,7 @@ classdef ExprMatrix < handle
                 end
             end
             ret = ExprMatrix(exprs, computation);
+            ret.power = A.power + B.power;
         end      
         
         function ret = transpose(A)
@@ -134,7 +138,25 @@ classdef ExprMatrix < handle
                 end                    
             end
             ret = ExprMatrix(exprs, computation);
+            ret.power = A.power;
         end            
+        
+        % This is exp multiplied by maxK! (so all coefficients stay integers).
+        function ret = exp_apply(A, power)
+            ret = ExprMatrix();
+            if (isempty(A.computation))
+                return;
+            end
+            computation = Exp(A.computation); 
+            exprs(size(A.exprs, 1), size(A.exprs, 2)) = Expr_();
+            for x = 1:size(A.exprs, 1)                
+                for y = 1:size(A.exprs, 2)
+                    exprs(x, y) = exp_apply(A.exprs(x, y), power);
+                end                    
+            end
+            ret = ExprMatrix(exprs, computation);
+            ret.power = A.power;
+        end                    
         
     end
 end

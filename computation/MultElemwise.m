@@ -20,15 +20,18 @@ classdef MultElemwise < Computation
                 end
             end
             for i = 1:(length(obj.rest_params) - 1)
-              assert(obj.rest_params{i}.dim1 == obj.rest_params{i + 1}.dim1);
-              assert(obj.rest_params{i}.dim2 == obj.rest_params{i + 1}.dim2);
+                assert(obj.rest_params{i}.dim1 == obj.rest_params{i + 1}.dim1);
+                assert(obj.rest_params{i}.dim2 == obj.rest_params{i + 1}.dim2);
+                assert(obj.rest_params{i}.domain == obj.rest_params{i + 1}.domain);
             end
             if (~isempty(obj.rest_params))
-              obj.dim1 = obj.rest_params{1}.dim1;
-              obj.dim2 = obj.rest_params{1}.dim2;
+                obj.dim1 = obj.rest_params{1}.dim1;
+                obj.dim2 = obj.rest_params{1}.dim2;
+                obj.domain = obj.rest_params{1}.domain;              
             else
-              obj.dim1 = 1;
-              obj.dim2 = 1;
+                obj.dim1 = 1;
+                obj.dim2 = 1;
+                obj.domain = 0;
             end  
             obj.params = [obj.ones_params(:); obj.rest_params(:)];
         end

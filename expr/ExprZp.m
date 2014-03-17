@@ -1,22 +1,11 @@
 classdef ExprZp < Expr
     properties
-        power
-        hash_
+        unnorm_hash_
     end
     
     properties(Constant)             
         len = int64(60);
         mods = RandVals(ExprZp.len, 100, 12, Cache.prime);        
-    end
-    
-    
-    methods(Static)
-        function hash = CombineHash(exprs)
-            hash = '';
-            for j = 1:length(exprs(:))
-                hash = [hash, ';' exprs(j).hash()];
-            end            
-        end
     end
     
     methods
@@ -103,20 +92,34 @@ classdef ExprZp < Expr
         % This hash returns the same value regardless of multiplicative
         % constant.
         function ret = hash(obj)
-            if (isempty(obj.hash_))
+            if (isempty(obj.hashes))
 %                 ret = char(obj.expr)';
                 if (((length(obj.expr(:)) == 1) && (obj.expr == 0)))
                     ret = 0;
                 else
                     % It multiplies expr by mean of them. So this value is
                     % invariant to multiplications of expr by constant.
-                    ret = sprintf('%d\n', mod(obj.expr * ExprZp.len * Cache.field_inv(mod(sum(obj.expr(:)), Cache.prime)), Cache.prime));
+                    ret = mod(obj.expr * mod(ExprZp.len * Cache.field_inv(mod(sum(obj.expr(:)), Cache.prime)), Cache.prime), Cache.prime);
                 end
-                obj.hash_ = ret;
+                obj.hashes = ret;
             else
-                ret = obj.hash_;
+                ret = obj.hashes;
             end
-        end       
+        end    
+        
+        function ret = unnorm_hash(obj)
+            if (isempty(obj.unnorm_hash_))
+%                 ret = char(obj.expr)';
+                if (((length(obj.expr(:)) == 1) && (obj.expr == 0)))
+                    ret = 0;
+                else
+                    ret = mod(obj.expr, Cache.prime);
+                end
+                obj.unnorm_hash_ = ret;
+            else
+                ret = obj.unnorm_hash_;
+            end
+        end          
         
         function [expr_matrices, coeffs] = ReexpresData(marginal, F)
             X = [];
@@ -159,7 +162,7 @@ function ret = RandVals(planes, rows, cols, Zp)
     rand('seed', 1);
     randn('seed', 1);
     ret = int64(zeros(planes, rows, cols));
-    ret(:, :, 1) = randi(min(Zp(:)) - 1, [planes, rows, 1]);
+    ret(:, :, 1) = randi(min(min(Zp) - 1, 2^50), [planes, rows, 1]);
     for k = 1:planes
         for i = 1:rows
             for j = 2:cols

@@ -1,16 +1,12 @@
 \section{Introduction} \label{introduction} 
 
-Progress in some branches of
-mathematics might be restricted by size of symbolic derivations that humans can
-handle. Mathematicians can deal with expressions having dozens of
-variables but would struggle to discover useful relations between hundreds or
-thousands of variables. We will show how the task of finding equivalent
+We show how the task of finding equivalent
 mathematical expressions can be automated. Our focus is on finding equivalent
 mathematical formulas (i.e.~which give an identical numerical result
-to the original expression),
-but are faster to compute. The definition
-of faster can be either (i) the number of operations or (ii) the computational time
-for a particular hardware.
+to the original expression) for marginalization over huge sets. 
+Problems of marginalization are prevalent in machine learning, and 
+exact marginalizations can be a replacement for sampling methods.
+
 
 We propose a deterministic, grammar-based framework which discovers
 relations between multi-variable polynomial expressions. First, we
@@ -22,18 +18,18 @@ representing the cost of every operation as a synthesized attribute
 (i.e. computed bottom-up from child node attributes) we can search for
 formula with low time complexity. Through a linear combination of
 grammar elements, we can find a solution to the desired
-expressions. Finally, this computation solution can be further speed
-up by use of standard techniques of optimization in compiler
-domain. 
+expressions. 
+
 
 Example 1 shows our framework applied to a simple matrix expression:
 \texttt{sum(sum(A*B))}, where \texttt{A} and \texttt{B} are matrices. Naively, this takes $O(n^3)$ to compute due to
 the matrix multiply operation. The example outlines how our framework
 can find an alternate way of computing {\em exactly} the same result,
-but in $O(n^2)$ time.  
+but in $O(n^2)$ time. We start with this simple (non-machine learning example) to
+explain how system works.
 
-We demonstrate the flexibility of our technique by applying it to two
-diverse problems in machine learning: 
+We demonstrate the flexibility of our technique by applying it to 
+various problems in machine learning: 
 \begin{enumerate}
 \vspace{-2mm}
 \item A Taylor-series approximation to the partition function of a
@@ -41,19 +37,28 @@ diverse problems in machine learning:
   computable in closed-form which takes $O(n^3)$ time (where $n$ is the
   number of visible \& hidden units). Naive evaluation of the Taylor-series
   approximation would require summing over the $2^N$ possible states.   
-\item Closed-form computation of DropOut. DropOut \cite{Hinton12}
+\item Closed-form computation of Dropout. Dropout \cite{hinton2012improving}
   involves the  stochastic deletion of outputs within a dense neural
   network layer at training time. For $n$ output units, the $2^n$
-  possible deletion patterns are sampled indpeendently for each
+  possible deletion patterns are sampled independently for each
   training sample. We use our framework to derive a closed-form
   expression that integrates out over all $2^n$ states.  
+\item Data augmentation is for object recognition purposes it consists
+  translations, rotations, contrast alternation and few others. We show
+  how to construct update rule to weights which integrates over all translation 
+  up to few pixels, and which integrates over all contrast alternations.
 \end{enumerate}
 \vspace{-2mm}
 
 The main contribution of the paper is the introduction of a general
-framework for discovering efficient closed-form expressions. Its
+framework for discovering efficient closed-form expressions. This are
+of the main use for marginalization problems (or sum over large number of
+expressions). Its
 flexibility means can be used on a wide range of problems encountered
-in math and AI, beyond those outlined above.
+in math and AI, beyond those outlined above. We dedicate follow up 
+papers to address properly each of aforementioned applications. This
+paper focuses mainly on framework description, and gives only brief description
+of applications.
 
 \framebox[3.27in][c]{\parbox{3.0in}{{\bf Example 1:}
 \vspace{2mm}
@@ -76,7 +81,7 @@ Our framework has four distinct stages:
 \item The {\em grammar tree} is built (see Algorithm 1). This contains
   an exhaustive set of all valid compositions of expressions from the
   grammar. While slow, this only needs to be performed once for a
-  given grammar, irrespecitve of the number of target expressions we
+  given grammar, irrespective of the number of target expressions we
   wish to compute. The figure below shows two branches of the grammar
   tree.
 \item Each leaf of this tree is checked to see if the result matches the

@@ -174,35 +174,6 @@ which is far more expensive.
 
 \vspace{-2mm}
 
-\subsection{Computation derivation as the algebra}
-\rob{When did this section get put in? What is it about? I do not
-  recall it at all.}
-The space of matrices of polynomials forms an algebra $\mathcal{A}$.
-A \emph{grammar} $\mathcal{G}=\{g_1,\dots,g_{K};\, h_1,\dots,
-h_{K'}\}$ defined on this algebra is a set of functions:
-\vspace{-1mm}
-\begin{eqnarray}
-g_i &:& \mathcal{A} \longrightarrow \mathcal{A}~,~(i \leq
-K)~,\nonumber \\
-h_{i} &:& \mathcal{A} \times \mathcal{A} \longrightarrow \mathcal{A}~,
-~i \leq K'~,\nonumber 
- \vspace{-2mm} 
-\end{eqnarray}
-which might eventually only defined for certain sub-algebras of $\mathcal{A}$ 
-(e.g.~matrix multiplication requires inner dimensions to agree). 
-
-Given an initial element $w \in \mathcal{A}$ and a target element $t \in \mathcal{A}$, 
-the question is whether $t$ can be written as a finite sequence of operations involving 
-only $w$ and $g,h \in \mathcal{G}$.
-If the algebra is defined over a discrete field, then the problem can be  
-cast as a shortest path problem on a sparse directed graph. 
-We define a ``sink" node which contains all polynomials (or matrices of polynomials) with degree $\geq D_{\max}$ 
-where ($D_{\max} > \mbox{deg}(t)$), and a node for each of the other elements of $\mathcal{A}$. 
-Two nodes $x_1,\,x_2$ have a connection $x_1 \rightarrow x_2$ if there exists $g \in \mathcal{G}$ such that
-$x_2 = g(x_1)$. The edge is assigned a cost which depends on the complexity of performing the operation.   
-Similarly, we can define a 3-cycle to $(x_1,x_2,x_3)$ if there exists
-$h \in \mathcal{G}$ such that $x_3 = h(x_1,x_2)$. The brute force algorithm constructs the graph by advancing sequentially from smallest to largest degree. 
-
 
 \subsection{Representation of Expressions} \label{representation}
 %Rob: I did not understand this entire section.

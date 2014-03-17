@@ -129,7 +129,25 @@ classdef Scheduler < handle
             S.Add(@multiply, {[c.m, c.m], [c.m, c.m]}, {});  
             S.Add(@multiply, {[c.m, c.n], [c.n, c.n]}, {});
             S.Add(@multiply, {[c.m, c.n], [c.n, c.m]}, {});         
-
+        end
+        
+        function AddExpRules(S)
+            global c expr_type
+            fprintf('Registering Exp(x) rules\n');
+            S.Add(@exp_apply, {[c.n, c.m]}, {});
+            S.Add(@exp_apply, {[c.n, c.m]}, {});            
+            S.Add(@exp_apply, {[c.n, 1]}, {});            
+            S.Add(@exp_apply, {[1, c.m]}, {});          
+            assert(strcmp(expr_type, 'symbolic') == 1);
+        end
+        
+        function AddOne(S)
+            global c
+            v = zeros(c.n * c.m, 1);       
+            G11 = Grammar(1, 1);
+            one = ExprMatrix(ExprSymbolic(1, v), Matrix('1', 1, 1));
+            one.computation.domain = 1;
+            G11.Add(one);            
         end
         
         function Run(obj)
@@ -138,7 +156,7 @@ classdef Scheduler < handle
             while (norm(u) > 0)
                 single_iter_time = tic;
                 u(:) = 0;
-                for i = 1 : length(obj.rules)
+                for i = 1 : length(obj.rules)                    
                     rule_time = tic;
                     grammars = obj.grammars{i};
                     params = obj.params{i};
@@ -154,7 +172,10 @@ classdef Scheduler < handle
                                     end
                                     A = g1.expr_matrices(x);
                                     B = g2.expr_matrices(y);
-                                    u(i) = u(i) | obj.rules{i}(g1, A, B, params{:});
+                                    if (A.computation.domain == B.computation.domain)
+                                        u(i) = u(i) | obj.rules{i}(g1, A, B, params{:});
+                                        Grammar.Validate();                                        
+                                    end
                                     obj.tried{i}(x, y) = 1;
                                 end
                             end
@@ -167,7 +188,11 @@ classdef Scheduler < handle
                                     continue;
                                 end
                                 A = g1.expr_matrices(x);
+                                if (A.hash == 0) && (A.exprs(1) == 2)
+                                    assert(0);
+                                end
                                 u(i) = u(i) | obj.rules{i}(g1, A, params{:});
+                                Grammar.Validate();                                
                                 obj.tried{i}(x) = 1;
                             end
                         end                        

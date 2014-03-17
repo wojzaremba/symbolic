@@ -1,19 +1,7 @@
 classdef ExprSymbolic < Expr
     properties
         quant
-        hashes          
-    end
-    
-    methods(Static)
-        function hash = CombineHash(exprs)
-            global c
-            hash = 0;            
-            for j = 1:length(exprs(:))
-                hash = mod(Cache.prime * hash + exprs(j).hash(), Cache.prime);
-            end            
-            assert(~isnan(hash) && (hash ~= Inf));
-        end
-    end
+    end   
     
     methods        
         function A = ExprSymbolic(quant, expr, hashes)
@@ -24,11 +12,12 @@ classdef ExprSymbolic < Expr
             % Quant in symbolic has to be modulo prime, otherwise we get
             % value out of integers.
             A.quant = mod(int64(quant), Cache.prime);            
-            A.quant(A.quant > Cache.prime / 2) = A.quant(A.quant > Cache.prime / 2) - Cache.prime;
+            A.quant(A.quant > (Cache.prime / 2)) = A.quant(A.quant > Cache.prime / 2) - Cache.prime;
             A.expr = int64(expr);
             if (exist('hashes', 'var'))
                 A.hashes = hashes;
-                A.Validate();
+                A.power = sum(A.expr(:, 1));
+                A.Validate();                
                 return;
             end
             
@@ -50,7 +39,10 @@ classdef ExprSymbolic < Expr
             [A.hashes, idx] = sort(A.hashes);
             A.expr = A.expr(:, idx);
             A.quant = A.quant(:, idx);
-            A.Validate();
+            A.power = sum(A.expr(:, 1));  
+            A.quant = mod(int64(A.quant), Cache.prime);                        
+            A.quant(A.quant > (Cache.prime / 2)) = A.quant(A.quant > Cache.prime / 2) - Cache.prime;                        
+            A.Validate();            
         end               
         
         function Validate(A)
@@ -70,15 +62,30 @@ classdef ExprSymbolic < Expr
                 str = sprintf('%s %d', str, A.quant(i));
                 for j = 1 : size(A.expr, 1)
                     if (A.expr(j, i) > 0)
-                        str = sprintf('%s%s', str, char('a') - 1 + j);
-                        if (A.expr(j, i) > 1)
-                            str = sprintf('%s^%d', str, A.expr(j, i));
+                        if (A.expr(j, i) == 0)
+                            str = sprintf('%s', str);
+                        else
+                            str = sprintf('%s%s', str, char('a') - 1 + j);
+                            if (A.expr(j, i) > 1)
+                                str = sprintf('%s^%d', str, A.expr(j, i));
+                            end
                         end
                     end
                 end
             end
         end        
         
+        function [ B ] = exp_apply(obj, power)
+            global c
+            B = ExprSymbolic();
+            for k = 0:power
+                xk = power_expr(obj, k);
+                xk.quant = xk.quant * factorial(c.maxK) / factorial(k);
+                B = B.add_expr(xk);
+                B.power = obj.power;
+            end
+        end
+
         function [ C ] = add_expr(A, B)
             if ((isempty(A)) || (isempty(A.quant)))
                 C = B;
@@ -200,11 +207,7 @@ classdef ExprSymbolic < Expr
               exprs_copy = {};
               for i = 1:ceil(length(exprs(:)) / 2)
                 if (i + ceil(length(exprs(:)) / 2) <= length(exprs(:)))
-                    try
                   exprs_copy{i} = exprs{i}.add_expr(exprs{i + ceil(length(exprs(:)) / 2)});
-                    catch
-                        0
-                    end
                 else
                   exprs_copy{i} = exprs{i};
                 end
@@ -217,7 +220,7 @@ classdef ExprSymbolic < Expr
               ret = ExprSymbolic();
             end
             ret.Validate();
-        end                
+        end                        
         
         function [ val ] = multiply_expressions( A, B )
             val = cell(size(A.expr, 2), size(B.expr, 2));
@@ -242,23 +245,27 @@ classdef ExprSymbolic < Expr
             ret = (sum(obj.expr(:) ~= 0) == 0);
         end        
         
-        function ret = power(obj)
-            ret = sum(obj.expr(:, 1));
-        end
-        
         function ret = hash(obj)
             ret = 0;            
             if (isempty(obj.quant)) || sum(obj.quant(:)) == 0
                 return;
             end
-            for i = 1 : length(obj.quant)
-                ret = ret + mod(Cache.dot_mult(i) * mod(obj.quant(i) * obj.hashes(i), Cache.prime), Cache.prime);
-                ret = mod(ret, Cache.prime);                
-            end
+            ret = unnorm_hash(obj);
             inv = Cache.field_inv(mod(double(sum(mod(obj.quant(:), Cache.prime))), Cache.prime));
             ret = mod(ret * inv, Cache.prime);
         end       
         
+        
+        function ret = unnorm_hash(obj)
+            ret = 0;            
+            if (isempty(obj.quant)) || sum(obj.quant(:)) == 0
+                return;
+            end
+            for i = 1 : length(obj.quant)
+                ret = ret + mod(obj.quant(i) * obj.hashes(i), Cache.prime);
+                ret = mod(ret, Cache.prime);                
+            end
+        end               
         
         function [expr_matrices, coeffs] = ReexpresData(marginal, F)
           global c
@@ -282,11 +289,15 @@ classdef ExprSymbolic < Expr
           end
           hash_map = containers.Map(num2cell(hashes), num2cell(1:length(hashes)));
 
-          X = F.encode_in_hash(hash_map);  
-          Y = F.encode_in_hash_exprs(marginal, hash_map);  
+          X = Hasher.encode_in_hash(F, hash_map);  
+          Y = Hasher.encode_in_hash_exprs(F, marginal, hash_map);  
           coeffs = [];
-          invert = quadprog(eye(size(X, 2)), zeros(size(X, 2), 1), [], [], X, Y, [], [], [], optimset('Algorithm', 'active-set', 'Display','off'));    
-          error = norm(X * invert - Y);
+          
+          X = mod(int64(X), Cache.prime);
+          Y = mod(int64(Y), Cache.prime);
+          invert = modlinear(X, Y, Cache.prime);
+          invert = double(invert);
+          error = norm(mod(double(X) * invert - double(Y), double(Cache.prime)));
           fprintf('error : %f\n', error);  
           if (error > 1e-5)
               fprintf('Couldnt find solution\n');

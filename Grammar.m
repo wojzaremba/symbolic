@@ -3,8 +3,8 @@ classdef Grammar < handle
         n
         m
         expr_matrices
-        hashmap
         inited
+        hasher
     end
     
     methods(Static)        
@@ -52,6 +52,11 @@ classdef Grammar < handle
             if (debug == 0)
                 return;
             end
+            
+                    if (~isempty(Grammar(1, 1).expr_matrices) && Grammar(1, 1).expr_matrices(1).exprs.quant > 1)
+                        assert(0);
+                    end            
+            
             for i = 1 : size(grammars, 1)
                 for j = 1 : size(grammars, 2)
                     G = grammars(i, j);
@@ -67,7 +72,7 @@ classdef Grammar < handle
                             assert(size(expr_matrix.exprs, 1) == i);
                             assert(size(expr_matrix.exprs, 2) == j);
                         catch
-                            fprintf('Grammar validation failed for Grammar(%d, %d)\n', i, j);
+                            fprintf('Grammar validation failed for Grammar(%d, %d), for matrix k = %d\n', i, j, k);
                             assert(0);
                         end
                     end
@@ -101,15 +106,20 @@ classdef Grammar < handle
                 obj = grammars(n, m);
                 if (~isempty(obj.inited));
                     return;
-                end
-                obj.inited = 1;                
+                end                
             catch
                 fprintf('Initializing grammar for n = %d, m = %d\n', n, m);
             end                       
-            global c
+            grammars(n, m) = obj;            
+            obj.hasher = Hasher(obj);      
             obj.n = n;
-            obj.m = m;
-            obj.hashmap = containers.Map('KeyType', obj.hashtype(), 'ValueType', 'any');
+            obj.m = m;            
+            obj.AddW(n, m);
+            obj.inited = 1;          
+        end
+        
+        function AddW(obj, n, m)
+            global c            
             W = [Expr_()];
             obj.expr_matrices = [];
             if (n == c.n) && (m == c.m)        
@@ -117,16 +127,7 @@ classdef Grammar < handle
                     W = Grammar.CreateVar(i, c.vars);
                     obj.Add(W);
                 end
-            end
-            grammars(n, m) = obj;
-        end
-        
-        function ret = hashtype(obj)
-            if (strcmp(class(Expr_()), 'ExprZp'))
-                ret = 'char';
-            else
-                ret = 'int64';
-            end            
+            end                        
         end
         
         function trim_size(obj)
@@ -138,64 +139,48 @@ classdef Grammar < handle
                     idx = [idx; i];
                 end
             end            
-            obj.expr_matrices = obj.expr_matrices(idx);
-            obj.hashmap = containers.Map('KeyType', obj.hashtype(), 'ValueType', 'any');
-            for i = 1:length(obj.expr_matrices)
-                obj.hashmap(obj.expr_matrices(i).hash) = i;
-            end
-            grammars(obj.n, obj.m) = obj;            
-        end                            
-
-        function [ X ] = encode_in_hash( F, hash_map)
-            X = [];
-            for i = 1:length(F.expr_matrices)
-                tmp = F.encode_in_hash_exprs( F.expr_matrices(i).exprs, hash_map );
-                X = [X, tmp];
-            end
-            X = double(X);
-        end    
+            obj.trim(idx);        
+        end   
         
-        function [ res ] = encode_in_hash_exprs(obj, matrix, hash_map)
-            res = zeros(length(hash_map), 1);
-            for j = 1:size(matrix.expr, 2)
-                idx = hash_map(Cache.hash_expr(matrix.expr(:, j)));
-                if (strcmp(class(Expr_()), 'ExprZp') == 1)
-                    quant = 1;
-                else
-                    quant = matrix.quant(j);
+        function trim_domain(obj)
+            global c grammars
+            idx = [];
+            for i = 1 : length(obj.expr_matrices(:))
+                if (obj.expr_matrices(i).computation.domain == 1)
+                    idx = [idx; i];
                 end
-                res(idx) = quant;
-            end
-        end        
+            end          
+            obj.trim(idx);
+        end          
+        
+        function trim(obj, idx)
+            fprintf('Trimming from %d to %d\n', length(obj.expr_matrices(:)), length(idx(:)));            
+            obj.expr_matrices = obj.expr_matrices(idx);
+            obj.hasher = Hasher(obj);
+            grammars(obj.n, obj.m) = obj;               
+        end
+      
         
         function ret = Add(obj, expr_matrix)
-            global grammars      
-            hash = expr_matrix.hash;
-            ret = false;            
-            if (isempty(expr_matrix.computation))
-                return;
+            ret = obj.hasher.Add(expr_matrix);
+            if (ret)
+                if (isempty(obj.expr_matrices))
+                    obj.expr_matrices = expr_matrix;                
+                else
+                    obj.expr_matrices(end + 1) = expr_matrix;
+                end                
+                global grammars
+                grammars(obj.n, obj.m) = obj;                
             end
-            if (obj.hashmap.isKey(hash))
-                idx = obj.hashmap(hash);
-                if (obj.expr_matrices(idx).computation.complexity <= expr_matrix.computation.complexity)
-                    return;
-                end
-                obj.expr_matrices(idx) = expr_matrix;
-                ret = true;
-                return;
-            end
-            if (isempty(obj.expr_matrices))
-                obj.expr_matrices = expr_matrix;                
-            else
-                obj.expr_matrices(end + 1) = expr_matrix;
-            end
-            obj.hashmap(hash) = length(obj.expr_matrices);
-            ret = true;            
-            grammars(obj.n, obj.m) = obj;
+            Grammar.Validate();            
         end       
         
         function updated = marginalize(obj, A, dim)            
             expr_matrix = A.marginalize(dim);
+if (A.hash == 0) &&  A.exprs(1).quant(1) == 2
+    0
+end            
+            
             if (dim == 1)
                 res = Grammar(1, obj.m);
             elseif (dim == 2)
@@ -238,7 +223,19 @@ classdef Grammar < handle
             end
             res = Grammar(size(A.exprs, 1), size(B.exprs, 2));
             updated = updated | res.Add(top_level);                    
-        end             
+        end           
+        
+        function updated = exp_apply(obj, A)
+            global c
+            if (A.computation.domain ~= 0)
+                updated = false;
+                return;
+            end
+            Grammar.Validate();
+            expr_matrix = exp_apply(A, c.maxK);
+            res = Grammar(obj.n, obj.m);
+            updated = res.Add(expr_matrix);             
+        end                    
         
     end
         

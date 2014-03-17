@@ -3,9 +3,8 @@ classdef RBM < ExprMatrix
     end
     
     methods
-        function obj = RBM()
+        function obj = RBM(power)
             global c
-            k = c.maxK;
             W = Expr_();
             for i = 1:c.n
                 for j = 1:c.m
@@ -32,7 +31,11 @@ classdef RBM < ExprMatrix
                         E{a, b} = W(posv(a), posh(b));
                       end
                     end
-                    marginal_val{v + 1, h + 1} = power_expr(add_many_expr(Expr_(), E), k);
+		    if (power ~= -1)
+                    	marginal_val{v + 1, h + 1} = power_expr(add_many_expr(Expr_(), E), power);
+		    else
+                    	marginal_val{v + 1, h + 1} = exp_apply(add_many_expr(Expr_(), E), c.maxK);
+		    end
                end
             end           
             obj.exprs = add_many_expr(Expr_(), marginal_val);

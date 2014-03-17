@@ -9,7 +9,8 @@ classdef Matrix < Computation
           obj.name = 'Matrix';
           obj.val = val;
           obj.dim1 = dim1;
-          obj.dim2 = dim2;            
+          obj.dim2 = dim2;        
+          obj.domain = 0;
         end
         
         function ret = O_complexity(obj)

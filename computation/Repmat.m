@@ -21,6 +21,7 @@ classdef Repmat < Computation
             assert((item.dim1 == 1) || (item.dim2 == 1));
             assert((dims(1) == 1) || (dims(2) == 1));
             assert((item.dim1 ~= obj.dim1) || (item.dim2 ~= obj.dim2));
+            obj.domain = item.domain;
         end       
         
         function ret = O_complexity(obj)

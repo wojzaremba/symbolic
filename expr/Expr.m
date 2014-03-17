@@ -1,7 +1,20 @@
 classdef Expr < handle
     properties
         expr
+        power
+        hashes        
     end
+    
+    methods(Static)
+        function hash = CombineHash(exprs)
+            global c
+            hash = 0;            
+            for j = 1:length(exprs(:))
+                hash = mod(Cache.prime * hash + exprs(j).hash(), Cache.prime);
+            end            
+            assert(~isnan(sum(hash)) && (sum(hash) ~= Inf));
+        end
+    end    
     
     methods
         function obj = Expr()

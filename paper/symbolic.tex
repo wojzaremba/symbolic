@@ -29,6 +29,7 @@
 %\usepackage{algorithmicx}
 %\usepackage{algpseudocode}
 
+\DeclareMathOperator*{\argmin}{arg\,min}
 \usepackage{hyperref}
 \usepackage{nameref}
 \usepackage[]{mcode}
@@ -60,10 +61,6 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{corollary}[theorem]{Corollary}
 
-%\usepackage[accepted]{icml2014}  % XXX : just set temporarly to print out authors corretly.
-%\usepackage{icml2014}  
-%\usepackage{proceed2e}  
-
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 
@@ -94,34 +91,28 @@
 
 \begin{abstract} We present an approach based on attribute grammars
   for automatically discovering efficient ways to compute polynomial
-  expressions. Our method scales to expressions with thousands of
-  terms, otherwise intractable
-  for humans. We use the approach to
-  compute a Taylor series approximation for the partition function of
-  a restricted Boltzmann machine (RBM). We show how to compute a 6th
-  order approximation in polynomial time, compared to exponential time
-  of the naive approach. More generally, our method can be regarded as
-  a brute force graph search algorithm in the space of computations. It 
-has the potential to be combined with machine
-  learning techniques that can provide superior search strategies,
-  enabling the learning of symbolic systems. 
-
+  expressions. We show how this technique can be used to marginalize
+  over huge sets. For instance, how to marginalize dropout over
+  all possible masks, or how to marginalize process of data augmentation.   
+  Moreover, we show how to compute exactly partition function for RBM like
+  expressions in polynomial time. More generally, our method can be regarded as
+  a graph search algorithm in the space of computations. It can be used
+  to find close form for marginalization of any symmetric enough expression, 
+  which can be expressed as polynomial.
 \end{abstract} 
 
 \input{introduction}
 \input{related_work}
 \input{terminology}
 \input{admissible_computation}
-%\input{partition_function} % Rob: merge into experiments section
 \input{experiments}
-%\input{conjecture} % Rob: I think we leave it out of the UAI
-%paper. We can put it in the RBM NIPS paper.
+\input{other_applications}
 \input{discussion}
 
 
 \nocite{*}
 \bibliography{bibliography}
-\bibliographystyle{icml2014}
+\bibliographystyle{abbrvnat}
 
 \end{document} 
 

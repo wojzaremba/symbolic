@@ -44,9 +44,7 @@ RBM \cite{hinton2002training}, for $f: \mathbb{R} \rightarrow \mathbb{R}$ and $W
 We define a functional $g$ as follows: \\
 \vspace{-0.3cm}
 \begin{align*}
-%\begin{gather*}
 g(f, W) = \sum_{v \in \{0, 1\}^n, h \in \{0, 1\}^m} f(v^TWh)
-%\end{gather*}
 \end{align*}
 \vspace{-0.1cm}
 
@@ -62,7 +60,7 @@ fast computation procedure for low order terms in the series, i.e.~ $g(x
 \rightarrow x^k, W)$, for $k = 1, 2$. 
 
 
-\subsubsection{{$\bf g(x \rightarrow x, W)$}} Let's consider function $f(x) = x$. We
+\subsubsection{{$\bf g(x \rightarrow x, W)$}} \label{subsubsec:gx} Let's consider function $f(x) = x$. We
 will show that function $g(x \mapsto x, W)$ is computable in $O(nm)$ time
 (i.e.~linear with respect to number of entries in $W$ matrix).
 \begin{gather*}
@@ -156,17 +154,10 @@ for $k=3,4,5,6$.
 \subsubsection{RBM Experiments}
 
 As we showed above, we can manually find
-$O(n^2)$ computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2$
+polynomial time computation of $g(x \rightarrow x^k, W)$ for $k = 1, 2$
 instead of native exponential time computation. Then, using our
 framework, we found rules for $k = 3, 4, 5, 6$.  
 
-However for $k = 4, 5, 6$
-these rules used computation with $O(n^3)$ time (i.e.~matrix
-multiplication). \rob{Maybe put something in about comparable
-  complexity to 2nd order optimization: ``Although the expressions will be expensive to
-evaluate for large models, this is the same complexity as 2nd order
-optimization methods''. Problem is that it opens a whole can of worms
-about alternate methods.} 
 
 Finding computational rules for higher degree
 polynomials is expensive: Table \ref{grammars} shows the time

@@ -9,6 +9,7 @@ classdef Transpose < Computation
           obj.item = item;
           obj.dim1 = item.dim2;
           obj.dim2 = item.dim1;
+          obj.domain = item.domain;
         end
   
         function ret = O_complexity(obj)

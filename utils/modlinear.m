@@ -1,4 +1,4 @@
-function [x, vld] = modlinear(a, b, p, field_inv)
+function [x, vld] = modlinear(a, b, p)
 %Modified GFLINEQ 
 % Find a particular solution of Ax = b over a prime Galois field.
 %   X = GFLINEQ(A, B) outputs a particular solution of the linear
@@ -26,7 +26,7 @@ error(nargchk(2, 4, nargin,'struct'));
 % Error checking - P.
 if nargin < 3
     p = 2;
-elseif ( isempty(p) || numel(p)~=1 || abs(p)~=p || floor(p)~=p || ~isprime(p) )
+elseif ( isempty(p) || numel(p)~=1 || abs(p)~=p || floor(p)~=p )
     error(message('comm:gflineq:InvalidP'));
 end;
 
@@ -107,7 +107,7 @@ while (row_idx <= m_aa) && (column_idx < n_aa)
 
         % If the major element is not already one, set it to one.
         if (aa(row_idx,column_idx) ~= 1)
-           aa(row_idx,:) = mod( field_inv( aa(row_idx,column_idx) ) * aa(row_idx,:), p );
+           aa(row_idx,:) = mod( Cache.field_inv( aa(row_idx,column_idx) ) * aa(row_idx,:), p );
         end;
 
         % Find the other elements in the column that must be cleared,

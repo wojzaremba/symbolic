@@ -1,0 +1,57 @@
+\section{Dropout marginalization}
+In this section we will perform analogous analisys to the one from Subsection \ref{subsubsec:gx} 
+for a single layer network with $L_2$ loss. 
+First, we derive update rules for weights for a single layer neural networks without any regularization. Then
+we will confront it with dropout network. We will compute marginalization over
+all posible dropout masks (i.e. marginalization over all masks).
+We will describe how it can be discovered for
+more complex networks with our framework. 
+
+
+Single layer neural network with $L_2$ loss minimizes following objective:
+\begin{equation*}
+  \min_W ||WX - Y||^2, X \in \mathbb{R}^{f \times b}, Y \in \mathbb{R}^{g \times b}, W \in \mathbb{R}^{g \times f}
+\end{equation*}
+By differentiating above equation one gets gradient descent update rule
+on $W$ (sign $\sim$ indicates that we drop multiplicative constants)
+\begin{equation*}
+ \partial W = 2(WX - Y)X^T \sim WXX^T - YX^T
+\end{equation*}
+We note for further derivation that $C = XX^T$ is the covariance matrix of
+$X$, and that $C_{i,j} = \sum_k X_{i, k}X_{j, k}$.
+
+
+Dropout minimizes following objective:
+\begin{equation*}
+  \argmin_W \mathbb{E}_M ||W(X .* M) - Y||^2, M \in \{0, 1\}^{f \times b}
+\end{equation*}
+Expectation is over all possible mask assignments, and $.*$ is 
+element-wise multiplication. For simplification
+let's assume that we drop neurons with probability $0.5$. Expectation
+can be replaced with sum over all possible masks. Let's compute
+derivative with respect to weights $W$. 
+\begin{align*}
+  \partial W \sim \sum_M (W(X .* M) - Y)(X .* M)^T = \\
+  \sum_M W(X .* M)(X .* M)^T - Y(X .* M)^T = \\
+  W\sum_M [(X .* M)(X .* M)^T] - 2^{fb - 1}YX^T= \\
+\end{align*}
+Let's denote $D = \sum_M (X .* M)(X .* M)^T$. 
+\begin{align*}
+  D_{i,j} = \sum_M \sum_k X_{i, k} X_{j, k} M_{i, k} M_{j, k} \\
+  D_{i,j} \text{ for } i \neq j = 2^{fg - 2} \sum_k X_{i, k} X_{j, k} = 2^{fg - 2}C_{i, j} \\
+  D_{i,j} \text{ for } i = j = 2^{fg - 1} \sum_k X_{i, k} X_{j, k} = 2^{fg - 1}C_{i, j} \\
+  D = 2^{fg - 2}(XX^T + XX^T .* I) \text { $I$ is identity matrix } \\
+  \partial W \sim \frac{1}{2}W (XX^T + XX^T .* I) - YX^T
+\end{align*}
+
+Above derivation of dropout marginalization can be discovered by our framework, and can be generalized
+to multiple layer network with rational (quotient of two polynomials) activation functions. 
+More formally, it means that framework is able to discover how to update weights $W$ for the following
+objective:
+\begin{equation*}
+  \argmin_{W_1, W_2} \mathbb{E}_{M_1, M_2} ||W_2(f(W_1(X .* M_1)) .* M_2) - Y||^2
+\end{equation*}
+$f$ in this equation is a rational function.
+
+
+\section{Data augmentation marginalization}

@@ -3,9 +3,13 @@ classdef Computation < handle
         name
         dim1
         dim2
+        domain % 0 for natural, 1 for exp.
     end
     
     methods
+        function obj = Computation()
+            ret.domain = 0;            
+        end                
         
         function ret = complexity(obj)
             global complexity

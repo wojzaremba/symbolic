@@ -11,6 +11,7 @@ classdef Quant < Computation
           obj.dim1 = 1;
           obj.dim2 = 1;            
           obj.complexity = 1;
+          obj.domain = 0;
         end
         
         function ret = O_complexity(obj)
