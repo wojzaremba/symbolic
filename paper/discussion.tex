@@ -1,47 +1,28 @@
 \section{Discussion and Future Work}
 
 We have presented an automatic method for discovering efficient way to
-computate polynomial expressions. The method itself is novel, as well as the derived
-approximations to the RBM partition function. There are three
+compute polynomial expressions. The method itself is novel, and
+has broad applications in marginalization of dropout, data augmentation, and
+deriving new approximations for RBM partition function. There are three
 major directions of future research: 
 
 \begin{enumerate}
+  \item Well study properties of approximations for various tasks. Use them to
+        train large neural networks.
   \item Extend our method to (i) a richer class of functions
     than polynomials, (ii) a larger set of production rules, (iii) more complex
     objects than matrices (e.g.~tensors). We elaborate on this in
     Section \ref{sec:extend}.
-
-  \item Use machine learning to generalize computation, i.e.~replace 
-    current brute force grammar search process with something more
-    sophisticated. This would allow, for example, computation of
-$g(x \rightarrow x^k, W)$ for $k > 6$ which is needed for accurate
-approximation of the partition function for large energies. This is discussed further in
-Section \ref{subsec:agenda}.
-
-
-%\item Compute the partition function and its derivatives using approximations for learning, 
-%  approximations for deep Boltzmann machines, optimization of the derived formulas, and understanding the
-%mathematical principles behind formulas derived by our programs. ROB:
-%can't parse. APPLY PRINCIPLES TO other things, i.e. DBM. 
-
 \item Explore real-world applications of this framework on large code databases. 
   It could be used to automatically detect parts of code with expressions that have suboptimal 
   time complexity and replace them with more efficient expressions.
 \end{enumerate}
-
-%ROB: need something about effectiveness of Taylor series approx when
-%$W_{ij} > 1$. 
-%We discuss in following subsections two first major directions of future research.
 
 
 \subsection{Extension of Grammar}
 \label{sec:extend}
 The presented framework has some limitations, but also can be easily extended. First,
 we operate on polynomials instead of generic functions. 
-% KAROL-CUT
-%It is quite easy to verify equality of polynomials, because it is enough to check equality of coefficients or
-% evaluations on sufficiently many points (more than degree of the polynomial). However, for generic functions
-% it is not as simple.
 It is quite easy to verify equality of polynomials, but for generic functions it becomes more complex.
 For example, if our basis would to include trigonometric functions, then the
 framework would have to be aware of many additional identities,
@@ -59,33 +40,5 @@ Finally, we are interested in exploiting productions which could discover
 recurrences. This would allow the discovery the fast Fourier transform, or
 Strassen's algorithm for fast matrix multiplication. This family of problems is quite broad,
 and crucial in computation.
-
-
-\subsection{Computation Generalization}
-\label{subsec:agenda}
-
-This paper presents a brute force search over all possible computations, 
-to yield terms that could lead to the target result. Although it works
-well for polynomials of small degrees $k \leq 6$, for larger powers 
-brute force methods become prohibitive. One of the contributions of this paper is to
-demonstrate how a small subset of mathematics may be explored with an automatic proving
-system. However, to broaden the range of math that we can address, we
-must move beyond brute force solutions to more intelligent approaches
-which learn rules that are likely to be helpful, based on expressions
-for smaller powers. This would allow us to apply our method for polynomials of 
-higher degrees, making accurate estimation of the partition function for many deep
-networks possible. More broadly, it would bring machine learning techniques
-to the area of automatic theorem proving, which is another domain of
-human intelligence distinct from perceptual tasks (where machine
-learning is already effective). 
-
-%  tackle a broader set of problems We look forward to extend this brute force methods to more intelligible approaches, which
-% could learn based on rules for smaller powers, how to solve problem for larger powers. This would
-% have two-fold implications in machine learning. Firstly, it would bring machine learning techniques
-% to the area of automatic theorem proving, which another domain of human intelligence after perception
-% of vision, or hearing. Secondly, solution to the problem of partition function approximation
-% could have consequences in unsupervised learning of RBMs, deep Bolzmann machines, and deep
-% belief networks. 
-
 
 

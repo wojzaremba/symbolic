@@ -1,12 +1,11 @@
-\section{Dropout marginalization}
+\section{Dropout marginalization}\label{sec:dropout}
 In this section we will perform analogous analisys to the one from Subsection \ref{subsubsec:gx} 
 for a single layer network with $L_2$ loss. 
 First, we derive update rules for weights for a single layer neural networks without any regularization. Then
 we will confront it with dropout network. We will compute marginalization over
-all posible dropout masks (i.e. marginalization over all masks).
-We will describe how it can be discovered for
-more complex networks with our framework. 
-
+all possible dropout masks.
+We will describe how our framework can discover
+such update rules for more complex networks.
 
 Single layer neural network with $L_2$ loss minimizes following objective:
 \begin{equation*}
@@ -25,10 +24,10 @@ Dropout minimizes following objective:
 \begin{equation*}
   \argmin_W \mathbb{E}_M ||W(X .* M) - Y||^2, M \in \{0, 1\}^{f \times b}
 \end{equation*}
-Expectation is over all possible mask assignments, and $.*$ is 
+Above expectation operator acts over all possible mask assignments, and $.*$ is 
 element-wise multiplication. For simplification
 let's assume that we drop neurons with probability $0.5$. Expectation
-can be replaced with sum over all possible masks. Let's compute
+can be replaced with sum over all possible masks. Sd compute
 derivative with respect to weights $W$. 
 \begin{align*}
   \partial W \sim \sum_M (W(X .* M) - Y)(X .* M)^T = \\
@@ -45,13 +44,40 @@ Let's denote $D = \sum_M (X .* M)(X .* M)^T$.
 \end{align*}
 
 Above derivation of dropout marginalization can be discovered by our framework, and can be generalized
-to multiple layer network with rational (quotient of two polynomials) activation functions. 
-More formally, it means that framework is able to discover how to update weights $W$ for the following
-objective:
+to multiple layer network with rational (quotient of two polynomials) activation functions. Our framework
+has to be start with following start symbols: $W, X, Y, I$ (one needs additional symbol for identity).
+
+
+Our framework is able to discover update weights $W$ for networks with more than one layer. 
+For instance, it is able to find update rule for two-layer neural network objective:
 \begin{equation*}
   \argmin_{W_1, W_2} \mathbb{E}_{M_1, M_2} ||W_2(f(W_1(X .* M_1)) .* M_2) - Y||^2
 \end{equation*}
-$f$ in this equation is a rational function.
+$f$ in this equation is a rational function. 
 
 
-\section{Data augmentation marginalization}
+\section{Data augmentation marginalization}\label{sec:augm}
+We discuss in this section how to marginalize augmentation by change of contrast. 
+Contrast is changed according to normal distribution with variance, which was precomputed.
+
+
+Let $A$ be a random variable describing how we want to alter contrast. Linear regression
+with contrast alternation can be described as: 
+\begin{align*}
+& \argmin_{W} \mathbb{E}_A ||W(X + A) - Y||^2\\
+\end{align*}
+Usually contrast alternation is described with continuous distribution. It means that
+expected value will be replaced with integral. Let's assume for simplicity that mean 
+of contrast alternation is zero.
+\begin{align*}
+\partial W & \sim \int_A (W(X + A) - Y)(X + A)^T \\
+   & = \int_A (W(XX^T + AA^T) - YX^T \\
+   & = W(XX^T + \int AA^T) - YX^T 
+\end{align*}
+Update is modified by covariance matrix of contrast matrix. To discover computation,
+which involves contrast alternation our framework would have to have access to 
+expressions involving moments of $A$, and to starting symbols like $W, X, Y$.
+Above derivation could be generalized to multilayer neural network. This would
+give a single update rule consisting with respect to all possible alternated
+input images.
+
