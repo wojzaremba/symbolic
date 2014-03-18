@@ -30,101 +30,47 @@ let's assume that we drop neurons with probability $0.5$. Expectation
 can be replaced with sum over all possible masks. Sd compute
 derivative with respect to weights $W$. 
 \begin{align*}
-  \partial W \sim \sum_M (W(X .* M) - Y)(X .* M)^T = \\
-  \sum_M W(X .* M)(X .* M)^T - Y(X .* M)^T = \\
-  W\sum_M [(X .* M)(X .* M)^T] - 2^{fb - 1}YX^T= \\
+  \partial W & \sim \sum_M (W(X .* M) - Y)(X .* M)^T \\
+  & = \sum_M W(X .* M)(X .* M)^T - Y(X .* M)^T\\
+  & = W\sum_M [(X .* M)(X .* M)^T] - 2^{fb - 1}YX^T\\
 \end{align*}
 Let's denote $D = \sum_M (X .* M)(X .* M)^T$. 
 \begin{align*}
-  D_{i,j} = \sum_M \sum_k X_{i, k} X_{j, k} M_{i, k} M_{j, k} \\
-  D_{i,j} \text{ for } i \neq j = 2^{fg - 2} \sum_k X_{i, k} X_{j, k} = 2^{fg - 2}C_{i, j} \\
-  D_{i,j} \text{ for } i = j = 2^{fg - 1} \sum_k X_{i, k} X_{j, k} = 2^{fg - 1}C_{i, j} \\
-  D = 2^{fg - 2}(XX^T + XX^T .* I) \text { $I$ is identity matrix } \\
-  \partial W \sim \frac{1}{2}W (XX^T + XX^T .* I) - YX^T
+  D_{i,j} & = \sum_M \sum_k X_{i, k} X_{j, k} M_{i, k} M_{j, k} \\
+  D_{i,j, i \neq j} & = 2^{fg - 2} \sum_k X_{i, k} X_{j, k} = 2^{fg - 2}C_{i, j} \\
+  D_{i, i} & = 2^{fg - 1} \sum_k X_{i, k} X_{i, k} = 2^{fg - 1}C_{i, i} \\
+  D & = 2^{fg - 2}(XX^T + XX^T .* I) \text {, $I$ is identity} \\
+  \partial W & \sim \frac{1}{2}W (XX^T + XX^T .* I) - YX^T
 \end{align*}
 
 Above derivation of dropout marginalization can be discovered by our framework, and can be generalized
-to multiple layer network with rational (quotient of two polynomials) activation functions. Our framework
+to multiple layer network with polynomial activation functions. Our framework
 has to be start with following start symbols: $W, X, Y, I$ (one needs additional symbol for identity).
 
 
-Our framework is able to discover update weights $W$ for networks with more than one layer. 
-For instance, it is able to find update rule for two-layer neural network objective:
+Described in this section identity for a single layer network have been discovered multiple times during
+analysis of dropout \cite{chen2013learning, chen2012marginalized, maaten2013learning}. 
+However, researchers so far analysed it just for a single layer with variations in loss function, and noise type.
+In our framework, we can jointly compute update rule to weights for multiple layers. 
+Potentially, dropout from one layer can influence results on other layers. It is not enough
+to consider each layer in separation to derive proper dropout marginalization.
+
+
+Let's consider two layer neural network:
 \begin{equation*}
   \argmin_{W_1, W_2} \mathbb{E}_{M_1, M_2} ||W_2(f(W_1(X .* M_1)) .* M_2) - Y||^2
 \end{equation*}
-$f$ in this equation is a rational function. 
+$f$ in this equation is a polynomial function. 
+
+The close form for derivatives of $W_1$ and $W_2$ for marginalized 
+dropout when $f$ is identity are following:
+\begin{lstlisting}
+W2 * W1 * X * X' * W1' + W2 * W1 * (I1 .* (X * X')) * W1' + W2 * (W1 * X * X' * W1') * I2 + W2 * (W1 * (I1 .* (X * X')) * W1') * I2  - W2 * Y * X' * W1'
+\end{lstlisting}
 
 
-<<<<<<< HEAD
-% \section{Data augmentation marginalization}\label{sec:augm}
-% We discuss in this section how to marginalize augmentation by change of contrast. 
-% Contrast is changed according to normal distribution with variance, which was precomputed.
-=======
-\section{Data augmentation marginalization}\label{sec:augm}
-We discuss in this section how to marginalize augmentation of data translation, and change of contrast. 
->>>>>>> 251402a038e88fa64f9e24232ec610a15175cc14
 
-\subsection{Data jittering}
-For simplification we assume that our samples are one dimensional (instead of two dimensions as in
-vision problems). Task is to find update rule, which integrates over all jitterings of data. This
-corresponds to cropping inner part from the larger vector.
-
-<<<<<<< HEAD
-% Let $A$ be a random variable describing how we want to alter contrast. Linear regression
-% with contrast alternation can be described as: 
-% \begin{align*}
-% & \argmin_{W} \mathbb{E}_A ||W(X + A) - Y||^2\\
-% \end{align*}
-% Usually contrast alternation is described with continuous distribution. It means that
-% expected value will be replaced with integral. Let's assume for simplicity that mean 
-% of contrast alternation is zero.
-% \begin{align*}
-% \partial W & \sim \int_A (W(X + A) - Y)(X + A)^T \\
-%    & = \int_A (W(XX^T + AA^T) - YX^T \\
-%    & = W(XX^T + \int AA^T) - YX^T 
-% \end{align*}
-% Update is modified by covariance matrix of contrast matrix. To discover computation,
-% which involves contrast alternation our framework would have to have access to 
-% expressions involving moments of $A$, and to starting symbols like $W, X, Y$.
-% Above derivation could be generalized to multilayer neural network. This would
-% give a single update rule consisting with respect to all possible alternated
-% input images.
-=======
-\begin{align*}
-& \argmin_{W} \mathbb{E}_A \sum_{i = 0}^t||W(X_{i : (i + f)}) - Y||^2, X \in \mathbb{R}^{(f + t) \times b}\\
-& \partial W \sim \sum_{i = 0}^t(W(X_{i : (i + f)}) - Y) X_{i : (i + f)}^T
-\end{align*}
-
-We denote by $T \in \{0, 1\}^{f \times (f + t)}$ matrix with $1$ up to $t$ values off the diagonal.
-We obtain that:
-\begin{align*}
-\partial W \sim W(TXX^TT^T) - Y(TX)^T 
-\end{align*}
-
-To compute above expression, or one for more complex architectures, one
-has to set $T, W, X, Y$ as starting symbols.
-
-\subsection{Contrast alternation}
-Task is to find update rule of weights, which integrates over all contrast alternations.
-Let $A$ be a random variable describing how we want to alter contrast. Linear regression
-with contrast alternation can be described as: 
-\begin{align*}
-& \argmin_{W} \mathbb{E}_A ||W(X + A) - Y||^2\\
-\end{align*}
-Usually contrast alternation is described with continuous distribution. It means that
-expected value will be replaced with integral. Let's assume for simplicity that mean 
-of contrast alternation is zero.
-\begin{align*}
-\partial W & \sim \int_A (W(X + A) - Y)(X + A)^T \\
-   & = \int_A (W(XX^T + AA^T) - YX^T \\
-   & = W(XX^T + \int AA^T) - YX^T 
-\end{align*}
-Update is modified by covariance matrix of contrast matrix. To discover computation,
-which involves contrast alternation our framework would have to have access to 
-expressions involving moments of $A$, and to starting symbols like $W, X, Y$.
-Above derivation could be generalized to multilayer neural network. This would
-give a single update rule consisting with respect to all possible alternated
-input images.
->>>>>>> 251402a038e88fa64f9e24232ec610a15175cc14
-
+We address entire another publication to dropout marginalization. Close form rules might
+allow us to understand why dropout works, and how to improve it. We would like to 
+employ our framework for more challenging neural network architectures which involves
+convolutions.

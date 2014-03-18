@@ -87,17 +87,13 @@ various problems in machine learning:
   computable in closed-form, and takes polynomial time.
   Naive evaluation of the Taylor-series
   approximation would require summing over the $2^n$ possible states.   
-\item Closed-form computation of Dropout for rational activation functions. 
+\item Closed-form computation of Dropout for polynomial activation functions. 
   Dropout \cite{hinton2012improving}
   involves the  stochastic deletion of outputs within a dense neural
   network layer at training time. For $n$ output units, the $2^n$
   possible deletion patterns are sampled independently for each
   training sample. We use our framework to derive a closed-form
   expression that integrates out over all $2^n$ states (Section \ref{sec:dropout}).
-% \item Data augmentation is for object recognition purposes it consists
-%   translations, rotations, contrast alternation and few others. 
-%   We how to construct update rule to weights which
-%   integrates over all data jitterings, and contrast alternations (Section \ref{sec:augm}).
 \end{enumerate}
 \vspace{-2mm}
 
