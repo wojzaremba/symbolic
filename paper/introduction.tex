@@ -4,10 +4,8 @@ We show how the task of finding equivalent
 mathematical expressions can be automated. Our focus is on finding equivalent
 mathematical formulas (i.e.~which give an identical numerical result
 to the original expression) for marginalization over huge sets. 
-Problems of marginalization are prevalent in machine learning, and 
+Problems involving marginalization are prevalent in machine learning, and 
 exact marginalizations can be a replacement for sampling methods.
-
-
 
 We propose a deterministic, grammar-based framework which discovers
 relations between multi-variable polynomial expressions. First, we
@@ -21,6 +19,9 @@ context-free grammar rules representing admissible operations.
 \begin{minipage}{\linewidth}
 \begin{framed}
 \begin{flushleft}
+Figure 1: A toy example
+\vspace{3mm}
+
 We are given matrices $A \in \mathbb{R}^{n \times m}$, $B \in \mathbb{R}^{m \times k}$. We wish
  to compute \texttt{sum(sum(A*B))}, i.e.~: 
 \vspace{1.5mm} \\ 
@@ -28,12 +29,10 @@ $\sum_{n,k} AB = \sum_{i = 1}^n \sum_{j = 1}^m \sum_{l = 1}^k A_{i, j} B_{j, l} 
 \vspace{1.5mm} \\ 
 which naively takes $O(nmk)$ time. Our framework is able to discover
 an efficient version of the formula, that computes the same result in $O(n(k+m))$
-time:
- \vspace{1mm} \\
-%\begin{verbatim}
-\texttt{	sum(sum(A .* repmat(sum(B, 2), [1, n])'))}
+time: \texttt{sum(sum(A .* repmat(sum(B, 2), [1, n])'))}
  \vspace{1mm} \\ 
-Our framework has four distinct stages:
+Our framework has two  distinct stages:
+ \vspace{-2mm} 
  \begin{enumerate}
 \item The {\em grammar tree} is built (see Algorithm 1). This contains
   an exhaustive set of all valid compositions of expressions from the
@@ -41,28 +40,30 @@ Our framework has four distinct stages:
   given grammar, irrespective of the number of target expressions we
   wish to compute. The figure below shows two branches of the grammar
   tree.
-\item Framework looks for linear combination of tree leafs 
-  to match target expression. This may require solving a linear system.
+\item The framework then looks for a linear combination of tree leaves 
+  to match the target expression (which requires solving a linear system).
   It chooses leafs with smallest computational complexity 
   (see Section \ref{sec:linear}). The two leaves \texttt{L$_1$} and
   \texttt{L$_2$} shown in the tree produce the same result as the target
-  expression. 
+  expression, but the latter is preffered as it has a lower complexity. 
 \end{enumerate}
 
 Empirical tests indicate that our expression is indeed faster to
 compute than the naive one (see Figure \ref{ab}).
 
 \includegraphics[scale=0.4]{img/toy_tree.pdf}
+\vspace{-5mm}
 \end{flushleft}
 \end{framed}
 %\caption{Presents how framework works to compute fast expression sum(sum(A*B)).}
 \label{fig:example_ab}
+
 \end{minipage}
 
 
 \noindent
 By representing the cost of every operation as a synthesized attribute
-(i.e. computed bottom-up from child node attributes) we can search for
+(i.e.~computed bottom-up from child node attributes) we can search for
 formula with low time complexity. Through a linear combination of
 grammar elements, we can find a solution to the desired
 expressions. 
@@ -80,8 +81,9 @@ We demonstrate the flexibility of our technique by applying it to
 various problems in machine learning: 
 \begin{enumerate}
 \vspace{-2mm}
-\item Exact summation for RBM partition function like expression. We can produce an exact 6th order 
-  Taylor of RBM partition function approximation which is
+\item Approximation of the partition function of a binary RBM using a
+  Taylor series. We can produce an exact 6th order 
+  approximation which is
   computable in closed-form, and takes polynomial time.
   Naive evaluation of the Taylor-series
   approximation would require summing over the $2^n$ possible states.   
@@ -92,10 +94,6 @@ various problems in machine learning:
   possible deletion patterns are sampled independently for each
   training sample. We use our framework to derive a closed-form
   expression that integrates out over all $2^n$ states (Section \ref{sec:dropout}).
-\item Data augmentation is for object recognition purposes it consists
-  translations, rotations, contrast alternation and few others. 
-  We how to construct update rule to weights which
-  integrates over all contrast alternations (Section \ref{sec:augm}).
 \end{enumerate}
 \vspace{-2mm}
 

@@ -1,4 +1,4 @@
-\section{Dropout marginalization}\label{sec:dropout}
+\subsection{Dropout marginalization}\label{sec:dropout}
 In this section we will perform analogous analisys to the one from Subsection \ref{subsubsec:gx} 
 for a single layer network with $L_2$ loss. 
 First, we derive update rules for weights for a single layer neural networks without any regularization. Then
@@ -56,28 +56,28 @@ For instance, it is able to find update rule for two-layer neural network object
 $f$ in this equation is a rational function. 
 
 
-\section{Data augmentation marginalization}\label{sec:augm}
-We discuss in this section how to marginalize augmentation by change of contrast. 
-Contrast is changed according to normal distribution with variance, which was precomputed.
+% \section{Data augmentation marginalization}\label{sec:augm}
+% We discuss in this section how to marginalize augmentation by change of contrast. 
+% Contrast is changed according to normal distribution with variance, which was precomputed.
 
 
-Let $A$ be a random variable describing how we want to alter contrast. Linear regression
-with contrast alternation can be described as: 
-\begin{align*}
-& \argmin_{W} \mathbb{E}_A ||W(X + A) - Y||^2\\
-\end{align*}
-Usually contrast alternation is described with continuous distribution. It means that
-expected value will be replaced with integral. Let's assume for simplicity that mean 
-of contrast alternation is zero.
-\begin{align*}
-\partial W & \sim \int_A (W(X + A) - Y)(X + A)^T \\
-   & = \int_A (W(XX^T + AA^T) - YX^T \\
-   & = W(XX^T + \int AA^T) - YX^T 
-\end{align*}
-Update is modified by covariance matrix of contrast matrix. To discover computation,
-which involves contrast alternation our framework would have to have access to 
-expressions involving moments of $A$, and to starting symbols like $W, X, Y$.
-Above derivation could be generalized to multilayer neural network. This would
-give a single update rule consisting with respect to all possible alternated
-input images.
+% Let $A$ be a random variable describing how we want to alter contrast. Linear regression
+% with contrast alternation can be described as: 
+% \begin{align*}
+% & \argmin_{W} \mathbb{E}_A ||W(X + A) - Y||^2\\
+% \end{align*}
+% Usually contrast alternation is described with continuous distribution. It means that
+% expected value will be replaced with integral. Let's assume for simplicity that mean 
+% of contrast alternation is zero.
+% \begin{align*}
+% \partial W & \sim \int_A (W(X + A) - Y)(X + A)^T \\
+%    & = \int_A (W(XX^T + AA^T) - YX^T \\
+%    & = W(XX^T + \int AA^T) - YX^T 
+% \end{align*}
+% Update is modified by covariance matrix of contrast matrix. To discover computation,
+% which involves contrast alternation our framework would have to have access to 
+% expressions involving moments of $A$, and to starting symbols like $W, X, Y$.
+% Above derivation could be generalized to multilayer neural network. This would
+% give a single update rule consisting with respect to all possible alternated
+% input images.
 

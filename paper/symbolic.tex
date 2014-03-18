@@ -91,15 +91,16 @@
 
 \begin{abstract} We present an approach based on attribute grammars
   for automatically discovering efficient ways to compute polynomial
-  expressions. We show how this technique can be used to marginalize
-  over huge sets. For instance, how to marginalize dropout over
-  all possible masks, or how to marginalize process of data augmentation.   
-  Moreover, we show how to compute exactly partition function for RBM like
-  expressions in polynomial time. More generally, our method can be regarded as
-  a graph search algorithm in the space of computations. It can be used
-  to find close form for marginalization of any symmetric enough expression, 
-  which can be expressed as polynomial.
-\end{abstract} 
+  expressions. Our method can be regarded as
+  a graph search algorithm in the space of computations, where we seek
+  branches in the graph that compute the {\em exact} same expression as
+  the original, but have a lower complexity. Amongst other things, it can be used
+  to find a closed form expression for marginalizations involving
+  polynomials. We demonstrate this on two problems which involve an
+  summation over an exoponential number of polymonial terms: (i) a
+  Taylor-series approximation to the partition function of a binary
+  RBM and (ii) a closed-form solution DropOut. 
+ \end{abstract} 
 
 \input{introduction}
 \input{related_work}

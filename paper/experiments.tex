@@ -11,7 +11,7 @@ In addition to the identity shown in Example 1, our approach was also
 able to discover the following similar identities:
 \begin{enumerate}
 \item \texttt{ sum(sum(A*B*C,2),1)} $\iff$ \\ \texttt{sum(A, 1) * (B * sum(C, 2))}
-\item \texttt{ sum(sum(A*A',2),1)} $\iff$ \\ \hspace{-5mm}  \texttt{sum(sum(A .* repmat(sum(A, 2), [1, m])'))}
+\item \texttt{ sum(sum(A*A',2),1)} $\iff$ \\ \hglue -5mm \texttt{ sum(sum(A .* repmat(sum(A, 2), [1, m])'))}
 \item \texttt{ sum(sum(A*A'*A,2),1)} $\iff$ \\ \texttt{sum(sum(((repmat(sum(A, 2), [1, m]) .* repmat(sum(A, 1), [n, 1])) .* A), 2), 1) 
 } 
 \end{enumerate}
