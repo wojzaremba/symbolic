@@ -57,10 +57,29 @@ $f$ in this equation is a rational function.
 
 
 \section{Data augmentation marginalization}\label{sec:augm}
-We discuss in this section how to marginalize augmentation by change of contrast. 
-Contrast is changed according to normal distribution with variance, which was precomputed.
+We discuss in this section how to marginalize augmentation of data translation, and change of contrast. 
 
+\subsection{Data jittering}
+For simplification we assume that our samples are one dimensional (instead of two dimensions as in
+vision problems). Task is to find update rule, which integrates over all jitterings of data. This
+corresponds to cropping inner part from the larger vector.
 
+\begin{align*}
+& \argmin_{W} \mathbb{E}_A \sum_{i = 0}^t||W(X_{i : (i + f)}) - Y||^2, X \in \mathbb{R}^{(f + t) \times b}\\
+& \partial W \sim \sum_{i = 0}^t(W(X_{i : (i + f)}) - Y) X_{i : (i + f)}^T
+\end{align*}
+
+We denote by $T \in \{0, 1\}^{f \times (f + t)}$ matrix with $1$ up to $t$ values off the diagonal.
+We obtain that:
+\begin{align*}
+\partial W \sim W(TXX^TT^T) - Y(TX)^T 
+\end{align*}
+
+To compute above expression, or one for more complex architectures, one
+has to set $T, W, X, Y$ as starting symbols.
+
+\subsection{Contrast alternation}
+Task is to find update rule of weights, which integrates over all contrast alternations.
 Let $A$ be a random variable describing how we want to alter contrast. Linear regression
 with contrast alternation can be described as: 
 \begin{align*}
