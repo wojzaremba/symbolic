@@ -17,11 +17,16 @@ function [objective, dW1, dW2] = dropout_two_layers(X, Y, W1, W2)
             for k = 0 : (G * B - 1)
                 M2(k + 1) = logical(bitand(j, 2^k));
             end    
+%             M1(:) = 1;
+%             M2(:) = 1;            
+            
+            
             objective = objective + sum(sum((W2 * ((W1 * (X .* M1)) .* M2) - Y) .^ 2));
             dW2 = dW2 + 2 * (W2 * (((W1 * (X .* M1)) .* M2)) - Y) * ((W1 * (X .* M1)) .* M2)';
             
 %             dW1 = dW1 + 2 * (W2' * (W2 * ((W1 * (X .* M1)) .* M2) - Y) .* M2) * (X .* M1)';
-            dW1 = dW1 + 2 * (W2' * W2 * ((W1 * (X .* M1)) .* M2) .* M2) * (X .* M1)' - ((W2' * Y) .* M2) * (X .* M1)';      
+            dW1 = dW1 + 2 * (W2' * (W2 * ((W1 * (X .* M1)) .* M2)) .* M2) * (X .* M1)';
+            dW1 = dW1 - 2 * ((W2' * Y) .* M2) * (X .* M1)';
         end        
     end
 end

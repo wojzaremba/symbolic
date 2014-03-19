@@ -30,10 +30,14 @@ I1 = eye(F);
 I2 = eye(G);
 
 dW2_short = W2 * W1 * (X * X') * W1' + W2 * W1 * ((X * X') .* I1) * W1' + W2 * ((W1 * ((X * X') .* I1) * W1') .* I2) + W2 * ((W1 * (X * X') * W1') .* I2) - 4 * Y * X' * W1';
+dW1_short = (W2' * W2) * W1 * (X * X') + ...
+            ((W2' * W2) .* I2) * W1 * (X * X') + ...
+            ((W2' * W2) .* I2) * W1 * ((X * X') .* I1) + ...
+            (W2' * W2) * W1 * ((X * X') .* I1) - ...
+            4 *(W2' * Y) * X';
 
+dW1(:) ./ dW1_short(:)
+assert(std(dW1(:) ./ dW1_short(:)) < 1e-4);
 
 dW2(:) ./ dW2_short(:)
 assert(std(dW2(:) ./ dW2_short(:)) < 1e-4);
-
-% dW1(:) ./ dW1_short(:)
-% assert(std(dW1(:) ./ dW1_short(:)) < 1e-4);
