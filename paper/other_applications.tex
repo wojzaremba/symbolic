@@ -65,9 +65,15 @@ $f$ in this equation is a polynomial function.
 The close form for derivatives of $W_1$ and $W_2$ for marginalized 
 dropout when $f$ is identity are following:
 \begin{lstlisting}
-W2 * W1 * X * X' * W1' + W2 * W1 * (I1 .* (X * X')) * W1' + W2 * (W1 * X * X' * W1') * I2 + W2 * (W1 * (I1 .* (X * X')) * W1') * I2  - W2 * Y * X' * W1'
+C = X * X';
+dW1 = 
+dW2 = W2 * W1 * C * W1' + ...
+W2 * W1 * (C .* I1) * W1' + ...
+W2 * ((W1 * (C .* I1) * W1') .* I2) + ...
+W2 * ((W1 * C * W1') .* I2) - ...
+4 * Y * X' * W1';
 \end{lstlisting}
-
+I1 is a identity matrix of size $F \times F$, and I2 is a identity matrix of size $G \times G$.
 
 
 We address entire another publication to dropout marginalization. Close form rules might

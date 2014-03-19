@@ -1,35 +1,39 @@
+% clear all
+% F = 2;
+% B = 3;
+% G = 4;
+% H = 5;
 F = 2;
-B = 4;
-G = 2;
+B = 3;
+G = 3;
 H = 3;
 
+randn('seed', 1);
 W1 = randn(G, F);
 W2 = randn(H, G);
 X = randn(F, B);
 Y = randn(H, B);
+eps = 1e-6;
 
-dW1 = zeros(size(W1));
-dW2 = zeros(size(W2));
-for i = 0 : (2^(F * B) - 1)
-    M1 = zeros(F, B);
-    for k = 0 : (F * B - 1)
-        M1(k + 1) = logical(bitand(i, 2^k));
-    end
-    
-    for j = 0 : (2^(G * B) - 1)
-        M2 = zeros(G, B);
-        for k = 0 : (G * B - 1)
-            M2(k + 1) = logical(bitand(i, 2^k));
-        end    
-    end
-%     objective = (W2 * (W1 * (X .* M1) .* M2) - Y)
-%     dW2 = dW2 + (W2 * ((W1 * (X .* M1)) .* M2) - Y) * ((W1 * (X .* M1)) .* M2)';
-%     dW2 = dW2 - Y * ((W1 * (X .* M1)) .* M2)';
-    dW2 = dW2 - Y * ((W1 * (X )) .* M2)';
-end
+% W2(1) = W2(1) + eps;
+W1(1) = W1(1) + eps;
+[objective1, dW1, dW2] = dropout_two_layers(X, Y, W1, W2);
+% W2(1) = W2(1) - 2 * eps;
+W1(1) = W1(1) - 2 * eps;
+[objective2, dW1, dW2] = dropout_two_layers(X, Y, W1, W2);
 
-I = eye(F);
+% assert(norm(dW2(1) - (objective1 - objective2) / (2 * eps)) / norm(dW2(1)) < 1e-3);
+assert(norm(dW1(1) - (objective1 - objective2) / (2 * eps)) / norm(dW1(1)) < 1e-3);
 
-dW2_short = Y * X' * W1';
+fprintf('objective = %f\n', objective1);
+I1 = eye(F);
+I2 = eye(G);
 
+dW2_short = W2 * W1 * (X * X') * W1' + W2 * W1 * ((X * X') .* I1) * W1' + W2 * ((W1 * ((X * X') .* I1) * W1') .* I2) + W2 * ((W1 * (X * X') * W1') .* I2) - 4 * Y * X' * W1';
+
+
+dW2(:) ./ dW2_short(:)
 assert(std(dW2(:) ./ dW2_short(:)) < 1e-4);
+
+% dW1(:) ./ dW1_short(:)
+% assert(std(dW1(:) ./ dW1_short(:)) < 1e-4);

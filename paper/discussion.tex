@@ -36,6 +36,13 @@ then include productions like matrix inverse and element-wise inverse of
 a matrix.  Another direction would be to generalize matrices to arbitrary tensors
 for which it is even harder for humans to spot useful relations.
 
+Moreover, we would like to enhance our rules with convolution operator (which is
+a linear tensor operator). Many tasks in computer vision can be solved efficiently
+by use of this operator, and there are available extremely fast implementations of it.
+It would be great to discover how to marginalize dropout for convolution operator, 
+and how to optimize some of computation involving convolution.
+
+
 Finally, we are interested in exploiting productions which could discover 
 recurrences. This would allow the discovery the fast Fourier transform, or
 Strassen's algorithm for fast matrix multiplication. This family of problems is quite broad,
