@@ -50,11 +50,14 @@ where $I$ is the identity matrix.
 
 The derivation above has been presented in several previously works
 analyzing dropout \cite{chen2013learning, chen2012marginalized, maaten2013learning}. 
-However, these just consider a single layer network with variations in loss function, and noise type.
+However, these just consider a single layer network with variations in loss function, and noise type, 
+or approximate schemas. \cite{baldi2014dropout} considers exact marginalization 
+for deep linear networks, but approximate marginalization for non-linear activation functions.
 
-However, our framework is not only capable of discovering the derivation above,
-but can also analyze multiple layers of dropout, as typically used in
-big networks:
+
+Our framework is not only capable of discovering the derivation above,
+but can also analyze multiple layers of dropout with activation functions as polynomials, 
+as typically used in big networks:
 
 % In our framework, we can jointly compute update rule to weights for
 % multiple layers.
@@ -69,7 +72,7 @@ big networks:
 \begin{equation*}
   \argmin_{W_1, W_2} \mathbb{E}_{M_1, M_2} \frac{1}{2}||W_2(f(W_1(X .* M_1)) .* M_2) - Y||^2
 \end{equation*}
-In our analysis, we consider the function $f$ to be the identity
+In our analysis, we consider the function $f$ to be just linear 
 function.  Applying our approach, we find that the closed-form derivatives for $W_1$ and $W_2$ for marginalized 
 dropout are:
 \begin{lstlisting}
