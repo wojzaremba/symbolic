@@ -1,5 +1,5 @@
 \subsection{Dropout marginalization}\label{sec:dropout}
-In this section we will perform analogous analisys to the one from Subsection \ref{subsubsec:gx} 
+In this section we will perform analogous analysis to the one from Subsection \ref{subsubsec:gx} 
 for a single layer network with $L_2$ loss. 
 First, we derive update rules for weights for a single layer neural networks without any regularization. Then
 we will confront it with dropout network. We will compute marginalization over
@@ -9,61 +9,69 @@ such update rules for more complex networks.
 
 Single layer neural network with $L_2$ loss minimizes following objective:
 \begin{equation*}
-  \min_W ||WX - Y||^2, X \in \mathbb{R}^{f \times b}, Y \in \mathbb{R}^{g \times b}, W \in \mathbb{R}^{g \times f}
+  \min_W \frac{1}{2} ||WX - Y||^2, X \in \mathbb{R}^{f \times b}, Y \in \mathbb{R}^{g \times b}, W \in \mathbb{R}^{g \times f}
 \end{equation*}
 By differentiating above equation one gets gradient descent update rule
-on $W$ (sign $\sim$ indicates that we drop multiplicative constants)
+on $W$:
 \begin{equation*}
- \partial W = 2(WX - Y)X^T \sim WXX^T - YX^T
+ \partial W = (WX - Y)X^T  = WXX^T - YX^T
 \end{equation*}
 We note for further derivation that $C = XX^T$ is the covariance matrix of
 $X$, and that $C_{i,j} = \sum_k X_{i, k}X_{j, k}$.
-
-
 Dropout minimizes following objective:
 \begin{equation*}
-  \argmin_W \mathbb{E}_M ||W(X .* M) - Y||^2, M \in \{0, 1\}^{f \times b}
+  \argmin_W \mathbb{E}_M \frac{1}{2}||W(X .* M) - Y||^2, M \in \{0, 1\}^{f \times b}
 \end{equation*}
-Above expectation operator acts over all possible mask assignments, and $.*$ is 
-element-wise multiplication. For simplification
-let's assume that we drop neurons with probability $0.5$. Expectation
-can be replaced with sum over all possible masks. Sd compute
-derivative with respect to weights $W$. 
+where $.*$ is element-wise multiplication and the expectation operator
+acts over all possible mask assignments. For simplicity, we assume
+that we drop neurons with probability $0.5$. Then expectation can then
+be replaced with a sum over all possible masks. We then compute the
+derivative with respect to weights $W$.
 \begin{align*}
-  \partial W & \sim \sum_M (W(X .* M) - Y)(X .* M)^T \\
+  \partial W & = \sum_M (W(X .* M) - Y)(X .* M)^T \\
   & = \sum_M W(X .* M)(X .* M)^T - Y(X .* M)^T\\
   & = W\sum_M [(X .* M)(X .* M)^T] - 2^{fb - 1}YX^T\\
 \end{align*}
-Let's denote $D = \sum_M (X .* M)(X .* M)^T$. 
+Let  $D = \sum_M (X .* M)(X .* M)^T$. 
 \begin{align*}
   D_{i,j} & = \sum_M \sum_k X_{i, k} X_{j, k} M_{i, k} M_{j, k} \\
   D_{i,j, i \neq j} & = 2^{fg - 2} \sum_k X_{i, k} X_{j, k} = 2^{fg - 2}C_{i, j} \\
   D_{i, i} & = 2^{fg - 1} \sum_k X_{i, k} X_{i, k} = 2^{fg - 1}C_{i, i} \\
-  D & = 2^{fg - 2}(XX^T + XX^T .* I) \text {, $I$ is identity} \\
-  \partial W & \sim \frac{1}{2}W (XX^T + XX^T .* I) - YX^T
+  D & = 2^{fg - 2}(XX^T + XX^T .* I) \\
+  \partial W & = \frac{1}{2}W (XX^T + XX^T .* I) - YX^T
 \end{align*}
-
-Above derivation of dropout marginalization can be discovered by our framework, and can be generalized
-to multiple layer network with polynomial activation functions. Our framework
-has to be start with following start symbols: $W, X, Y, I$ (one needs additional symbol for identity).
+where $I$ is the identity matrix. 
 
 
-Described in this section identity for a single layer network have been discovered multiple times during
-analysis of dropout \cite{chen2013learning, chen2012marginalized, maaten2013learning}. 
-However, researchers so far analysed it just for a single layer with variations in loss function, and noise type.
-In our framework, we can jointly compute update rule to weights for multiple layers. 
-Potentially, dropout from one layer can influence results on other layers. It is not enough
-to consider each layer in separation to derive proper dropout marginalization.
+% The above derivation of dropout
+% marginalization can be discovered by our framework, and can be
+% generalized to multiple layer network with polynomial activation
+% functions. 
+
+The derivation above has been presented in several previously works
+analyzing dropout \cite{chen2013learning, chen2012marginalized, maaten2013learning}. 
+However, these just consider a single layer network with variations in loss function, and noise type.
+
+However, our framework is not only capable of discovering the derivation above,
+but can also analyze multiple layers of dropout, as typically used in
+big networks:
+
+% In our framework, we can jointly compute update rule to weights for
+% multiple layers.
 
 
-Let's consider two layer neural network:
+ 
+% Potentially, dropout from one layer can influence results on other layers. It is not enough
+% to consider each layer in separation to derive proper dropout marginalization.
+
+
+% Let's consider two layer neural network:
 \begin{equation*}
-  \argmin_{W_1, W_2} \mathbb{E}_{M_1, M_2} ||W_2(f(W_1(X .* M_1)) .* M_2) - Y||^2
+  \argmin_{W_1, W_2} \mathbb{E}_{M_1, M_2} \frac{1}{2}||W_2(f(W_1(X .* M_1)) .* M_2) - Y||^2
 \end{equation*}
-$f$ in this equation is a polynomial function. 
-
-The close form for derivatives of $W_1$ and $W_2$ for marginalized 
-dropout when $f$ is identity are following:
+In our analysis, we consider the function $f$ to be the identity
+function.  Applying our approach, we find that the closed-form derivatives for $W_1$ and $W_2$ for marginalized 
+dropout are:
 \begin{lstlisting}
 I1 = eye(F);
 I2 = eye(G);
@@ -81,7 +89,8 @@ W2 * ((W1 * C * W1') .* I2) - ...
 4 * Y * X' * W1';
 \end{lstlisting}
 
-We address entire another publication to dropout marginalization. Close form rules might
-allow us to understand why dropout works, and how to improve it. We would like to 
-employ our framework for more challenging neural network architectures which involves
+In future work, we intend to extend our analysis of dropout to
+non-linear functions $f$. The closed-form rules might
+allow us to understand why dropout works, and how to improve it. We
+would also like to  employ our framework for more challenging neural network architectures involving
 convolutions.
