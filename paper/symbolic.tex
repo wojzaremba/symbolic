@@ -1,32 +1,21 @@
-%\documentclass{article} 
-\documentclass[]{article}
-\usepackage{proceed2e}
-
-\title{Efficient Computation Discovery for Polynomials}
+\documentclass{article} % For LaTeX2e
+\usepackage{nips14submit_e,times}
+\usepackage{hyperref}
+\usepackage{url}
 
 \usepackage{graphicx} % more modern
 \usepackage{subfigure} 
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{amsthm}
-
-\numberwithin{equation}{section}
-% For table captions on top
-\usepackage{floatrow}
-\floatsetup[table]{capposition=top}
-
-% For citations
 \usepackage{natbib}
 
-% For algorithms
-\usepackage{comment}
 \usepackage{framed}
+
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{epstopdf} 
-%\usepackage{algorithmicx}
-%\usepackage{algpseudocode}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 \usepackage{hyperref}
@@ -38,55 +27,44 @@
 \makeatletter
 \let\orgdescriptionlabel\descriptionlabel
 \renewcommand*{\descriptionlabel}[1]{%
-  \let\orglabel\label
-  \let\label\@gobble
-  \phantomsection
-  \edef\@currentlabel{#1}%
-  %\edef\@currentlabelname{#1}%
-  \let\label\orglabel
-  \orgdescriptionlabel{#1}%
+ \let\orglabel\label
+ \let\label\@gobble
+ \phantomsection
+ \edef\@currentlabel{#1}%
+ %\edef\@currentlabelname{#1}%
+ \let\label\orglabel
+ \orgdescriptionlabel{#1}%
 }
-\makeatother
 
-
-\allowdisplaybreaks
-
-\newcommand{\theHalgorithm}{\arabic{algorithm}}
-
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{conjecture}[theorem]{Conjecture}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{corollary}[theorem]{Corollary}
-
-\renewcommand{\algorithmicrequire}{\textbf{Input:}}
-\renewcommand{\algorithmicensure}{\textbf{Output:}}
-
-\newcommand{\rob}[1]{\textbf{\textcolor{green}{#1}}}
-\newcommand{\karol}[1]{\textbf{\textcolor{blue}{#1}}}
-\newcommand{\wojceich}[1]{\textbf{\textcolor{red}{#1}}}
-
-% From https://tex.stackexchange.com/questions/2441/how-to-add-a-forced-line-break-inside-a-table-cell
 \newcommand{\specialcell}[2][c]{%
-    \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 
-\begin{document} 
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 
-\maketitle
 
-%\icmltitle{Efficient Computation Discovery for Polynomials}
-
+\title{Computation Discovery}
 
 %\icmlauthor{Wojciech Zaremba}{zaremba@cs.nyu.edu}
 %\icmlauthor{Karol Kurach}{kkurach@google.com}
 %\icmlauthor{Rob Fergus}{fergus@cs.nyu.edu}
 
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
 
-%\icmlkeywords{machine learning, optimization, automatic theorem proving, RBM, NP, Boltzmann machine}
- 
-%\vspace{-30mm} % Rob: huge whitespace below title seems normal
-% (sample paper had it too), so leave there.
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+
+\maketitle
 
 \begin{abstract} We present an approach based on attribute grammars
   for automatically discovering efficient ways to compute polynomial

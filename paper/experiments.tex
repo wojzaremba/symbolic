@@ -151,6 +151,18 @@ computational patterns automatically, thus can be used for larger
 $k$. In the supplementary material we provide the expressions derived
 for $k=3,4,5,6$.  
 
+\subsection{Approximation basis}
+Taylor approximation converges uniformly on any finite set. One
+might need vast number of terms to achieve accurate solution (which is
+dependent on magnitude of $W$). Previous subsections
+propose that partition function, which has growth rate $O(exp(W))$ could we approximated
+with polynomial expressions involving $W$. Instead, we found that it is better
+to use as a starting symbol $exp(W)$ (where exponent is applied element-wise). 
+$exp(W)$ can be also viewed as a polynomial, and we can use the same framework
+to match target expression. Our match is exact up to finite number of powers, and 
+above it ``hopefully'' greatly agree with target. We refer to solution achieved
+with $W$, $exp(W)$ used as the starting symbol as natural-basis, and exponential-basis solution. 
+
 \subsubsection{RBM Experiments}
 
 As we showed above, we can manually find
@@ -169,12 +181,112 @@ Table \ref{eval} shows number of terms necessary to derive $g(x
 \rightarrow x^k, W)$ for various $k$. Figure \ref{approximations}
 shows how well partition function is approximated with finite Taylor
 expansion. Figure \ref{error_approx} shows the approximation error of
-the Taylor series for $W$. When the weights are small so is the energy
+the Taylor series for $W$ with natural-basis, and exponential-basis. When the weights are small so is the energy
 and our approximation is accurate. With larger weights (and hence
 energy) the accuracy is diminished and more Taylor terms are needed. Finally,
 Figure \ref{time_approx} compares computation time of derived rules to
 the computation time of naive exponential time algorithm.
-These results show our method can be used on problems of real interets
+These results show our method can be used on problems of real interest
 and, for certain weight matrices, provide a novel way of computing accurate solutions. 
-\input{table_grammars}
-\input{experimental_figures}
+
+
+\begin{table}[t]
+\tiny
+\centering
+\begin{tabular}{lccc}
+\hline
+Degree & \multicolumn{3}{r}{Relative error for natural-basis} \\
+       & $\sigma = 0.25$ & $\sigma = 1$ & $\sigma = 4$  \\
+\hline
+1      &-0.038                 &-0.33              &-0.76 \\
+2      &-0.012                 &-0.29              &-0.76 \\
+3      &-0.016                 &-0.27              &-0.73 \\
+4      &-0.004                 &-0.24              &-0.73 \\
+5      &-0.006                 &-0.23              &-0.70 \\
+\hline
+       & \multicolumn{3}{r}{Relative error for exponential-basis} \\
+\hline
+1      &-0.007                 &-0.27              &-0.73 \\
+2      & 0.002                 &-0.22              &-0.67 \\
+3      & 0.010                 &-0.16              &-0.62 \\
+4      & 0.008                 &-0.12              &-0.58 \\
+5      &                       &                   & \\
+\hline
+\end{tabular}
+\caption{Table presents relative approximation error of the partition function for different
+degrees of Taylor approximation for natural-basis approximation, and exponential-basis
+approximation. We ran 100
+different trials for $W$ of size $5 \times 50$, with $W_{ij} \sim
+\mathcal{N}(0, \sigma)$ and $\sigma=0.25, 1, 4$, and table contains median.
+For such matrices, we could compute exact value of partition function.}
+\label{error_approx}
+\end{table}
+
+
+
+\begin{table}[t]
+\tiny
+\centering
+\begin{tabular}{rrr}
+\hline
+Degree & Grammar size & Time (s) \\
+\hline
+2 & 5 & 17 \\
+3 & 15 & 188 \\
+4 & 48 & 2535\\
+5 & 139 & 31320 \\
+6 & 437 & 434681 \\
+\hline
+\end{tabular}
+\caption{A summary of size and computational time for grammars of a specific degree. 
+  All computation here is performed on {\em expressions}, and has
+  nothing to do with computation time on their instantiations (this is
+  shown in Table \ref{eval}). Note that this procedure has to be executed only once.}
+\label{grammars}
+\vspace{-4mm}
+\end{table}
+
+
+\begin{table}[t]
+\tiny
+\centering
+\begin{tabular}{rrr}
+\hline
+Degree & Num. terms \\
+\hline
+2 & 4   \\
+3 & 5   \\
+4 & 21  \\
+5 & 30  \\
+6 & 106 \\
+\hline
+\end{tabular}
+\caption{A summary of the complexity of computation for $g(x \rightarrow x^k, W)$.
+  The naive computation is 
+  exponential in $n$ (see Figure \ref{time_approx}).} 
+\label{eval}
+\vspace{-4mm}
+\end{table}
+
+
+\begin{figure}[t]
+\centering
+\vspace{-3mm}
+\mbox{
+  \subfigure[Computation time for $\sum AB$ using standard algorithm vs our inferred optimal algorithm.]{
+      \includegraphics[width=0.55\linewidth]{img/ab.eps}
+      \label{ab}
+  }\quad
+\subfigure[Approximations of $e^x$ using Taylor series.]{
+  \includegraphics[width=0.32\linewidth]{img/approximations.eps} 
+  \label{approximations}
+  }
+}
+
+\subfigure[Comparison of computation time for naive exponential time algorithm vs our optimized derivation.]{
+  \includegraphics[scale=0.24]{img/time_approx.eps}
+  \label{time_approx}
+}
+\vspace{-7mm}
+\end{figure}
+

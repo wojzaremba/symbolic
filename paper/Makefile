@@ -20,6 +20,7 @@ clean:
 	rm -f symbolic.log symbolic.blg symbolic.aux symbolic.bbl symbolic.pdf symbolic.4tc symbolic.xref symbolic.tmp symbolic.dvi symbolic.bbl 
 	rm -f supplementary.log supplementary.blg supplementary.aux supplementary.bbl supplementary.pdf supplementary.4tc supplementary.xref supplementary.tmp supplementary.dvi supplementary.bbl 
 	rm -rf ~*
+	rm -rf .*.swp
 	rm -rf *.tmp
 	rm -rf *.4om
 	rm -rf *~
